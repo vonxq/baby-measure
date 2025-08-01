@@ -1,0 +1,44 @@
+<view class="container">
+  <!-- 宝宝信息卡片 -->
+  <view class="baby-info-card">
+    <view class="baby-avatar">
+      <text class="baby-avatar-text">👶</text>
+    </view>
+    <view class="baby-details">
+      <view class="baby-name">{{currentBaby.nickname}}</view>
+      <view class="baby-age">{{babyAge}}个月</view>
+      <view class="baby-birthday">{{currentBaby.birthday}}</view>
+    </view>
+    <view class="switch-baby-btn" bindtap="switchBaby">切换</view>
+  </view>
+
+  <!-- 时间轴 -->
+  <view class="timeline-card">
+    <view class="timeline-header">
+      <view class="timeline-title">成长时间轴</view>
+      <view class="timeline-subtitle">记录宝宝的每一个重要时刻</view>
+    </view>
+    
+    <view class="timeline-list">
+      <view class="timeline-item" wx:for="{{timelineData}}" wx:key="id">
+        <view class="timeline-date">
+          <view class="date-day">{{item.day}}</view>
+          <view class="date-month">{{item.month}}</view>
+        </view>
+        <view class="timeline-content">
+          <view class="timeline-title">{{item.title}}</view>
+          <view class="timeline-age">{{item.age}}个月</view>
+          <view class="timeline-score" wx:if="{{item.score}}">得分：{{item.score}}分</view>
+          <view class="timeline-rank" wx:if="{{item.rank}}">排名：第{{item.rank}}名</view>
+        </view>
+        <view class="timeline-icon">{{item.icon}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快速操作 -->
+  <view class="quick-actions">
+    <button class="btn-primary" bindtap="startAssessment">开始评估</button>
+    <button class="btn-secondary" bindtap="viewRecords">查看记录</button>
+  </view>
+</view> 

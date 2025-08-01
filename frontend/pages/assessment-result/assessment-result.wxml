@@ -1,0 +1,54 @@
+<view class="container">
+  <!-- 结果标题 -->
+  <view class="result-header">
+    <view class="result-title">🎉 评估完成！</view>
+    <view class="result-subtitle">恭喜宝宝完成{{assessmentAge}}个月发育评估</view>
+  </view>
+
+  <!-- 评估信息 -->
+  <view class="assessment-info">
+    <view class="info-item">
+      <text class="info-label">评估月龄：</text>
+      <text class="info-value">{{assessmentAge}}个月</text>
+    </view>
+    <view class="info-item">
+      <text class="info-label">实际月龄：</text>
+      <text class="info-value">{{actualAge}}个月</text>
+    </view>
+  </view>
+
+  <!-- 分数展示 -->
+  <view class="score-display">
+    <view class="score-number">{{score}}</view>
+    <view class="score-label">总分</view>
+  </view>
+
+  <!-- 排名信息 -->
+  <view class="rank-info">
+    <view class="rank-text">在同月龄宝宝中排名</view>
+    <view class="rank-number">第{{rank}}名</view>
+  </view>
+
+  <!-- 评估描述 -->
+  <view class="result-description">
+    <view class="description-title">评估建议</view>
+    <view class="description-content">{{description}}</view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="btn-secondary" bindtap="viewRecords">
+      查看记录
+    </button>
+    <button class="btn-primary" bindtap="backToHome">
+      返回主页
+    </button>
+  </view>
+
+  <!-- 分享按钮 -->
+  <view class="share-section">
+    <button class="btn-share" bindtap="shareResult">
+      分享结果
+    </button>
+  </view>
+</view> 

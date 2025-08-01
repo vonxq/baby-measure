@@ -1,0 +1,166 @@
+.baby-info-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(255, 182, 193, 0.1);
+}
+
+.baby-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  overflow: hidden;
+  margin-right: 30rpx;
+  background: #FFF5F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.baby-avatar-text {
+  font-size: 60rpx;
+}
+
+.baby-details {
+  flex: 1;
+}
+
+.baby-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.baby-age {
+  font-size: 28rpx;
+  color: #FFB6C1;
+  font-weight: bold;
+  margin-bottom: 5rpx;
+}
+
+.baby-birthday {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.switch-baby-btn {
+  padding: 10rpx 20rpx;
+  background: #FFB6C1;
+  color: white;
+  border-radius: 20rpx;
+  font-size: 24rpx;
+}
+
+.timeline-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(255, 182, 193, 0.1);
+}
+
+.timeline-header {
+  text-align: center;
+  margin-bottom: 30rpx;
+}
+
+.timeline-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.timeline-subtitle {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #FFF5F5;
+  border-radius: 15rpx;
+  position: relative;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 80rpx;
+  top: 50%;
+  width: 2rpx;
+  height: 60rpx;
+  background: #FFB6C1;
+  transform: translateY(-50%);
+}
+
+.timeline-date {
+  text-align: center;
+  margin-right: 30rpx;
+  min-width: 80rpx;
+}
+
+.date-day {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #FFB6C1;
+  margin-bottom: 5rpx;
+}
+
+.date-month {
+  font-size: 22rpx;
+  color: #666;
+}
+
+.timeline-content {
+  flex: 1;
+}
+
+.timeline-content .timeline-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.timeline-age {
+  font-size: 24rpx;
+  color: #FFB6C1;
+  font-weight: bold;
+  margin-bottom: 5rpx;
+}
+
+.timeline-score,
+.timeline-rank {
+  font-size: 22rpx;
+  color: #666;
+  margin-bottom: 3rpx;
+}
+
+.timeline-icon {
+  font-size: 40rpx;
+  margin-left: 20rpx;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 20rpx;
+}
+
+.quick-actions .btn-primary,
+.quick-actions .btn-secondary {
+  flex: 1;
+  margin: 0;
+} 

@@ -1,0 +1,68 @@
+<view class="container">
+  <view class="header-card">
+    <view class="header-title">设置</view>
+    <view class="header-subtitle">管理宝宝信息和账户设置</view>
+  </view>
+
+  <!-- 当前宝宝信息 -->
+  <view class="current-baby-card">
+    <view class="card-title">当前宝宝</view>
+    <view class="baby-info" wx:if="{{currentBaby}}">
+      <view class="baby-avatar">
+        <text class="baby-avatar-text">👶</text>
+      </view>
+      <view class="baby-details">
+        <view class="baby-name">{{currentBaby.nickname}}</view>
+        <view class="baby-age">{{currentBabyAge}}个月</view>
+        <view class="baby-birthday">{{currentBaby.birthday}}</view>
+      </view>
+      <view class="edit-btn" bindtap="editBaby">编辑</view>
+    </view>
+    <view class="no-baby" wx:else>
+      <text>暂未选择宝宝</text>
+    </view>
+  </view>
+
+  <!-- 宝宝列表 -->
+  <view class="babies-list-card">
+    <view class="card-title">宝宝列表</view>
+    <view class="baby-item" wx:for="{{babiesList}}" wx:key="id">
+      <view class="baby-info">
+        <view class="baby-avatar">
+          <text class="baby-avatar-text">👶</text>
+        </view>
+        <view class="baby-details">
+          <view class="baby-name">{{item.nickname}}</view>
+          <view class="baby-age">{{item.ageInMonths}}个月</view>
+        </view>
+      </view>
+      <view class="baby-actions">
+        <view class="switch-btn {{currentBaby.id === item.id ? 'active' : ''}}" 
+              bindtap="switchBaby" data-id="{{item.id}}">
+          {{currentBaby.id === item.id ? '当前' : '切换'}}
+        </view>
+        <view class="delete-btn" bindtap="deleteBaby" data-id="{{item.id}}">删除</view>
+      </view>
+    </view>
+    <button class="btn-primary" bindtap="addBaby">添加新宝宝</button>
+  </view>
+
+  <!-- 账户设置 -->
+  <view class="account-card">
+    <view class="card-title">账户设置</view>
+    <view class="setting-item" bindtap="showUserInfo">
+      <view class="setting-label">微信信息</view>
+      <view class="setting-value">{{userInfo.nickName || '未授权'}}</view>
+      <view class="setting-arrow">></view>
+    </view>
+    <view class="setting-item" bindtap="clearCache">
+      <view class="setting-label">清除缓存</view>
+      <view class="setting-arrow">></view>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-card">
+    <button class="btn-logout" bindtap="logout">退出登录</button>
+  </view>
+</view> 

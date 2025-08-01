@@ -1,0 +1,77 @@
+<view class="container">
+  <!-- 月龄选择 -->
+  <view class="age-selector-card" wx:if="{{!showQuestions}}">
+    <view class="card-title">选择评估月龄</view>
+    <view class="card-subtitle">根据宝宝实际月龄选择合适的评估内容</view>
+    
+    <view class="age-info">
+      <view class="actual-age">宝宝实际月龄：{{actualAge}}个月</view>
+      <view class="suggested-age">建议评估月龄：{{suggestedAge}}个月</view>
+    </view>
+    
+    <view class="age-options">
+      <view class="age-option {{selectedAge === item.month ? 'selected' : ''}}" 
+            wx:for="{{availableAges}}" wx:key="month"
+            bindtap="selectAge" data-age="{{item.month}}">
+        <view class="age-number">{{item.month}}个月</view>
+        <view class="age-title">{{item.title}}</view>
+      </view>
+    </view>
+    
+    <button class="btn-primary" bindtap="startAssessment" wx:if="{{selectedAge}}">
+      开始{{selectedAge}}个月评估
+    </button>
+  </view>
+
+  <!-- 评估进度 -->
+  <view class="progress-bar" wx:if="{{showQuestions}}">
+    <view class="progress-text">第{{currentQuestion + 1}}题 / 共{{questions.length}}题</view>
+    <view class="progress-line">
+      <view class="progress-fill" style="width: {{(currentQuestion + 1) / questions.length * 100}}%"></view>
+    </view>
+  </view>
+
+  <!-- 评估问题 -->
+  <view class="question-card" wx:if="{{showQuestions && currentQuestion < questions.length}}">
+    <view class="question-title">{{questions[currentQuestion].title}}</view>
+    <view class="question-description">{{questions[currentQuestion].description}}</view>
+    
+    <view class="options-list">
+      <view 
+        class="option-item {{selectedAnswer === index ? 'selected' : ''}}" 
+        wx:for="{{questions[currentQuestion].options}}" 
+        wx:key="index"
+        bindtap="selectOption"
+        data-index="{{index}}"
+      >
+        <view class="option-text">{{item.text}}</view>
+        <view class="option-score">{{item.score}}分</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 导航按钮 -->
+  <view class="navigation-buttons">
+    <button 
+      class="btn-secondary" 
+      bindtap="previousQuestion" 
+      wx:if="{{currentQuestion > 0 && showQuestions}}"
+    >
+      上一题
+    </button>
+    <button 
+      class="btn-primary" 
+      bindtap="nextQuestion" 
+      wx:if="{{currentQuestion < questions.length - 1 && showQuestions}}"
+    >
+      下一题
+    </button>
+    <button 
+      class="btn-primary" 
+      bindtap="finishAssessment" 
+      wx:if="{{currentQuestion === questions.length - 1 && showQuestions}}"
+    >
+      完成评估
+    </button>
+  </view>
+</view> 

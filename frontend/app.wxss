@@ -1,0 +1,85 @@
+/* 全局样式 */
+page {
+  background-color: #FFF5F5;
+  font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.container {
+  padding: 20rpx;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #FFB6C1, #FF69B4);
+  color: white;
+  border-radius: 50rpx;
+  border: none;
+  font-size: 32rpx;
+  padding: 20rpx 40rpx;
+  width: 100%;
+  margin: 20rpx 0;
+}
+
+.btn-secondary {
+  background: white;
+  color: #FFB6C1;
+  border: 2rpx solid #FFB6C1;
+  border-radius: 50rpx;
+  font-size: 32rpx;
+  padding: 20rpx 40rpx;
+  width: 100%;
+  margin: 20rpx 0;
+}
+
+.card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  margin: 20rpx 0;
+  box-shadow: 0 4rpx 20rpx rgba(255, 182, 193, 0.1);
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 15rpx;
+}
+
+.form-item {
+  margin-bottom: 30rpx;
+}
+
+.form-label {
+  display: block;
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 80rpx;
+  border: 2rpx solid #E0E0E0;
+  border-radius: 10rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  background: white;
+}
+
+.picker-text {
+  width: 100%;
+  height: 80rpx;
+  border: 2rpx solid #E0E0E0;
+  border-radius: 10rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  background: white;
+  line-height: 80rpx;
+  color: #333;
+} 

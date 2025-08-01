@@ -1,0 +1,25 @@
+<view class="container">
+  <view class="welcome-card">
+    <view class="welcome-icon">👶</view>
+    <view class="welcome-title">欢迎来到宝宝成长评估</view>
+    <view class="welcome-subtitle">让我们一起记录宝宝的成长轨迹</view>
+  </view>
+
+  <view class="form-card">
+    <view class="form-title">创建宝宝档案</view>
+    
+    <view class="form-item">
+      <text class="form-label">宝宝名字</text>
+      <input class="form-input" placeholder="请输入宝宝名字" model:value="{{nickname}}" />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">宝宝生日</text>
+      <picker mode="date" value="{{birthday}}" bindchange="onBirthdayChange">
+        <view class="picker-text">{{birthday || '请选择宝宝生日'}}</view>
+      </picker>
+    </view>
+
+    <button class="btn-primary" bindtap="createBaby">开始记录成长</button>
+  </view>
+</view> 
