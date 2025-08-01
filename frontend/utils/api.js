@@ -46,8 +46,9 @@ const api = {
   getRecords(babyId) {
     return new Promise((resolve, reject) => {
       wx.request({
-        url: `${this.baseUrl}/assessment/records/${babyId}`,
+        url: `${this.baseUrl}/records`,
         method: 'GET',
+        data: { babyId },
         success: resolve,
         fail: reject
       })

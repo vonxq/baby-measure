@@ -60,16 +60,19 @@ Page({
 
     // 从后端API获取时间轴数据
     wx.request({
-      url: `${app.globalData.baseUrl}/records/${this.data.currentBaby.id}`,
+      url: `${app.globalData.baseUrl}/records`,
       method: 'GET',
+      data: {
+        babyId: this.data.currentBaby.id
+      },
       success: (res) => {
         if (res.data.success && res.data.data) {
           const timelineData = res.data.data.map(record => ({
             id: record.id,
             day: new Date(record.assessmentDate).getDate().toString(),
             month: `${new Date(record.assessmentDate).getMonth() + 1}月`,
-            title: `${record.assessmentAge}个月评估`,
-            age: record.assessmentAge,
+            title: `${record.assessmentAge || this.data.babyAge}个月评估`,
+            age: record.assessmentAge || this.data.babyAge,
             score: record.score,
             rank: record.rank,
             icon: '📊',

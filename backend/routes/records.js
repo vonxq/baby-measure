@@ -42,7 +42,9 @@ router.get('/', (req, res) => {
         score: row.score,
         rank: row.rank,
         answers: answers,
-        assessmentDate: row.assessment_date
+        assessmentDate: row.assessment_date,
+        assessmentAge: row.assessment_age,
+        actualAge: row.actual_age
       }
     })
     
@@ -92,7 +94,9 @@ router.get('/:id', (req, res) => {
         score: row.score,
         rank: row.rank,
         answers: answers,
-        assessmentDate: row.assessment_date
+        assessmentDate: row.assessment_date,
+        assessmentAge: row.assessment_age,
+        actualAge: row.actual_age
       }
     })
   })
