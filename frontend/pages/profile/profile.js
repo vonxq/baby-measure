@@ -2,41 +2,40 @@ const app = getApp()
 
 Page({
   data: {
+    userInfo: null,
     currentBaby: null,
-    babyAge: 0,
     babyAgeText: ''
   },
 
   onLoad() {
-    this.checkLoginAndBaby()
+    this.checkLogin()
   },
 
   onShow() {
+    this.loadUserInfo()
     this.loadCurrentBaby()
   },
 
-  checkLoginAndBaby() {
+  checkLogin() {
     if (!app.isLoggedIn()) {
       wx.redirectTo({
         url: '/pages/login/login'
       })
       return
     }
+  },
 
-    if (!app.hasCurrentBaby()) {
-      wx.redirectTo({
-        url: '/pages/welcome/welcome'
-      })
-      return
+  loadUserInfo() {
+    const userInfo = app.globalData.userInfo
+    if (userInfo) {
+      this.setData({ userInfo })
     }
   },
 
   loadCurrentBaby() {
     const currentBaby = app.globalData.currentBaby
     if (currentBaby) {
-      this.setData({
-        currentBaby: currentBaby
-      })
+      this.setData({ currentBaby })
       this.calculateAge()
     }
   },
@@ -62,35 +61,39 @@ Page({
       }
     }
     
-    this.setData({
-      babyAge: ageInMonths,
-      babyAgeText: ageText
-    })
+    this.setData({ babyAgeText: ageText })
   },
 
-  startAssessment() {
-    if (!this.data.currentBaby) {
-      wx.showToast({
-        title: '请先选择宝宝',
-        icon: 'none'
-      })
-      return
-    }
-    
+  editUserInfo() {
     wx.navigateTo({
-      url: '/pages/assessment/assessment'
+      url: '/pages/user-edit/user-edit'
     })
   },
 
-  viewRecords() {
-    wx.switchTab({
-      url: '/pages/records/records'
+  switchBaby() {
+    wx.navigateTo({
+      url: '/pages/baby-manage/baby-manage'
     })
   },
 
-  goToProfile() {
-    wx.switchTab({
-      url: '/pages/profile/profile'
+  goToSettings() {
+    wx.navigateTo({
+      url: '/pages/settings/settings'
+    })
+  },
+
+  logout() {
+    wx.showModal({
+      title: '确认退出',
+      content: '确定要退出登录吗？',
+      success: (res) => {
+        if (res.confirm) {
+          app.logout()
+          wx.redirectTo({
+            url: '/pages/login/login'
+          })
+        }
+      }
     })
   }
 }) 

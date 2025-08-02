@@ -3,7 +3,9 @@ const api = require('../../utils/api.js')
 
 Page({
   data: {
-    records: []
+    records: [],
+    currentTab: 0, // 0: 时间轴, 1: 趋势图
+    tabs: ['时间轴', '趋势图']
   },
 
   onLoad() {
@@ -43,7 +45,6 @@ Page({
       }
     }).catch(err => {
       console.error('请求记录失败:', err)
-      // 如果没有记录，显示空状态
       this.setData({ records: [] })
       this.drawChart()
     })
@@ -54,12 +55,9 @@ Page({
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
   },
 
-  calculateAgeInMonths(assessmentDate) {
-    const currentBaby = app.globalData.currentBaby
-    const birthday = new Date(currentBaby.birthday)
-    const assessment = new Date(assessmentDate)
-    return (assessment.getFullYear() - birthday.getFullYear()) * 12 + 
-           (assessment.getMonth() - birthday.getMonth())
+  switchTab(e) {
+    const index = e.currentTarget.dataset.index
+    this.setData({ currentTab: index })
   },
 
   drawChart() {
@@ -90,7 +88,7 @@ Page({
 
     // 绘制连线
     ctx.beginPath()
-    ctx.setStrokeStyle('#FFB6C1')
+    ctx.setStrokeStyle('#FF6B9D')
     ctx.setLineWidth(3)
     dataPoints.forEach((point, index) => {
       if (index === 0) {
@@ -102,7 +100,7 @@ Page({
     ctx.stroke()
 
     // 绘制数据点
-    ctx.setFillStyle('#FF69B4')
+    ctx.setFillStyle('#FF6B9D')
     dataPoints.forEach(point => {
       ctx.beginPath()
       ctx.arc(point.x, point.y, 4, 0, 2 * Math.PI)

@@ -1,0 +1,147 @@
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding: 30rpx;
+}
+
+/* 宝宝列表 */
+.baby-list {
+  margin-bottom: 40rpx;
+}
+
+.baby-item {
+  background: white;
+  border-radius: 20rpx;
+  padding: 25rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+.baby-info {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.baby-avatar {
+  position: relative;
+  margin-right: 25rpx;
+}
+
+.baby-avatar image {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  border: 4rpx solid #f0f0f0;
+}
+
+.current-badge {
+  position: absolute;
+  top: -5rpx;
+  right: -5rpx;
+  background: #FF6B9D;
+  color: white;
+  font-size: 20rpx;
+  padding: 4rpx 8rpx;
+  border-radius: 10rpx;
+}
+
+.baby-details {
+  flex: 1;
+}
+
+.baby-name {
+  display: block;
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.baby-birthday {
+  display: block;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.baby-actions {
+  display: flex;
+  gap: 15rpx;
+}
+
+.action-btn {
+  padding: 12rpx 20rpx;
+  border-radius: 15rpx;
+  font-size: 24rpx;
+  font-weight: bold;
+}
+
+.action-btn.edit {
+  background: #667eea;
+  color: white;
+}
+
+.action-btn.delete {
+  background: #ff4757;
+  color: white;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 100rpx 30rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 添加按钮 */
+.add-section {
+  position: fixed;
+  bottom: 40rpx;
+  left: 30rpx;
+  right: 30rpx;
+}
+
+.add-btn {
+  width: 100%;
+  background: #FF6B9D;
+  color: white;
+  border: none;
+  border-radius: 25rpx;
+  padding: 25rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: bold;
+  box-shadow: 0 8rpx 30rpx rgba(255, 107, 157, 0.3);
+}
+
+.add-icon {
+  font-size: 36rpx;
+  margin-right: 15rpx;
+  font-weight: bold;
+}
+
+.add-text {
+  font-size: 30rpx;
+  font-weight: bold;
+} 

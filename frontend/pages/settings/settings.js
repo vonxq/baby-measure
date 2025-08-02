@@ -5,12 +5,20 @@ Page({
     userInfo: {},
     currentBaby: null,
     currentBabyAge: 0,
-    babiesList: []
+    babiesList: [],
+    currentTheme: 'default',
+    themes: [
+      { id: 'default', name: '默认主题', color: '#FF6B9D' },
+      { id: 'blue', name: '蓝色主题', color: '#667eea' },
+      { id: 'green', name: '绿色主题', color: '#4CAF50' },
+      { id: 'purple', name: '紫色主题', color: '#9C27B0' }
+    ]
   },
 
   onLoad() {
     this.loadUserInfo()
     this.loadBabiesList()
+    this.loadCurrentTheme()
   },
 
   onShow() {
@@ -176,15 +184,35 @@ Page({
     })
   },
 
+  loadCurrentTheme() {
+    const currentTheme = wx.getStorageSync('currentTheme') || 'default'
+    this.setData({ currentTheme })
+  },
+
+  switchTheme(e) {
+    const themeId = e.currentTarget.dataset.theme
+    this.setData({ currentTheme: themeId })
+    wx.setStorageSync('currentTheme', themeId)
+    
+    wx.showToast({
+      title: '主题切换成功',
+      icon: 'success'
+    })
+  },
+
+  goToTheme() {
+    wx.navigateTo({
+      url: '/pages/theme/theme'
+    })
+  },
+
   logout() {
     wx.showModal({
-      title: '退出登录',
+      title: '确认退出',
       content: '确定要退出登录吗？',
       success: (res) => {
         if (res.confirm) {
-          wx.clearStorageSync()
-          app.globalData.userInfo = null
-          app.globalData.currentBaby = null
+          app.logout()
           wx.redirectTo({
             url: '/pages/login/login'
           })

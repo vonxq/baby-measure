@@ -61,8 +61,38 @@
     </view>
   </view>
 
+  <!-- 主题设置 -->
+  <view class="section">
+    <view class="section-title">主题设置</view>
+    <view class="theme-grid">
+      <view 
+        class="theme-item {{currentTheme === item.id ? 'active' : ''}}" 
+        wx:for="{{themes}}" 
+        wx:key="id"
+        bindtap="switchTheme"
+        data-theme="{{item.id}}"
+      >
+        <view class="theme-color" style="background: {{item.color}}"></view>
+        <text class="theme-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 其他设置 -->
+  <view class="section">
+    <view class="section-title">其他设置</view>
+    <view class="menu-item" bindtap="goToTheme">
+      <view class="menu-icon">🎨</view>
+      <view class="menu-content">
+        <text class="menu-title">主题设置</text>
+        <text class="menu-desc">自定义应用主题颜色</text>
+      </view>
+      <view class="menu-arrow">→</view>
+    </view>
+  </view>
+
   <!-- 退出登录 -->
-  <view class="logout-card">
-    <button class="btn-logout" bindtap="logout">退出登录</button>
+  <view class="logout-section">
+    <button class="logout-btn" bindtap="logout">退出登录</button>
   </view>
 </view> 

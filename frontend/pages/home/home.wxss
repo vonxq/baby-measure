@@ -1,34 +1,78 @@
-.baby-info-card {
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0;
+}
+
+/* 顶部用户信息 */
+.header {
+  padding: 40rpx 30rpx 20rpx;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10rpx);
+}
+
+.user-info {
   display: flex;
   align-items: center;
-  background: white;
+  padding: 20rpx;
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 20rpx rgba(255, 182, 193, 0.1);
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+}
+
+.avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+}
+
+.user-details {
+  flex: 1;
+}
+
+.nickname {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.age {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 宝宝信息卡片 */
+.baby-card {
+  margin: 30rpx;
+  background: white;
+  border-radius: 25rpx;
+  padding: 40rpx;
+  box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
 }
 
 .baby-avatar {
+  margin-right: 30rpx;
+}
+
+.baby-avatar image {
   width: 120rpx;
   height: 120rpx;
-  border-radius: 60rpx;
-  overflow: hidden;
-  margin-right: 30rpx;
-  background: #FFF5F5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 50%;
+  border: 6rpx solid #f0f0f0;
 }
 
-.baby-avatar-text {
-  font-size: 60rpx;
-}
-
-.baby-details {
+.baby-info {
   flex: 1;
 }
 
 .baby-name {
+  display: block;
   font-size: 36rpx;
   font-weight: bold;
   color: #333;
@@ -36,131 +80,111 @@
 }
 
 .baby-age {
+  display: block;
   font-size: 28rpx;
-  color: #FFB6C1;
+  color: #FF6B9D;
   font-weight: bold;
-  margin-bottom: 5rpx;
+  margin-bottom: 8rpx;
 }
 
 .baby-birthday {
+  display: block;
   font-size: 24rpx;
-  color: #666;
+  color: #999;
 }
 
-.switch-baby-btn {
-  padding: 10rpx 20rpx;
-  background: #FFB6C1;
-  color: white;
-  border-radius: 20rpx;
-  font-size: 24rpx;
-}
-
-.timeline-card {
-  background: white;
-  border-radius: 20rpx;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
-  box-shadow: 0 4rpx 20rpx rgba(255, 182, 193, 0.1);
-}
-
-.timeline-header {
-  text-align: center;
-  margin-bottom: 30rpx;
-}
-
-.timeline-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10rpx;
-}
-
-.timeline-subtitle {
-  font-size: 26rpx;
-  color: #666;
-}
-
-.timeline-list {
+/* 快速操作 */
+.quick-actions {
+  margin: 30rpx;
   display: flex;
   flex-direction: column;
   gap: 20rpx;
 }
 
-.timeline-item {
+.action-card {
+  background: white;
+  border-radius: 20rpx;
+  padding: 30rpx;
   display: flex;
   align-items: center;
-  padding: 20rpx;
-  background: #FFF5F5;
-  border-radius: 15rpx;
-  position: relative;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 }
 
-.timeline-item::before {
-  content: '';
-  position: absolute;
-  left: 80rpx;
-  top: 50%;
-  width: 2rpx;
-  height: 60rpx;
-  background: #FFB6C1;
-  transform: translateY(-50%);
+.action-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
 }
 
-.timeline-date {
-  text-align: center;
-  margin-right: 30rpx;
-  min-width: 80rpx;
+.action-card.primary {
+  background: linear-gradient(135deg, #FF6B9D, #FF8E9E);
 }
 
-.date-day {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #FFB6C1;
-  margin-bottom: 5rpx;
+.action-card.secondary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
 }
 
-.date-month {
-  font-size: 22rpx;
-  color: #666;
+.action-icon {
+  font-size: 48rpx;
+  margin-right: 25rpx;
 }
 
-.timeline-content {
+.action-content {
   flex: 1;
 }
 
-.timeline-content .timeline-title {
-  font-size: 28rpx;
+.action-title {
+  display: block;
+  font-size: 32rpx;
   font-weight: bold;
-  color: #333;
+  color: white;
   margin-bottom: 8rpx;
 }
 
-.timeline-age {
+.action-desc {
+  display: block;
   font-size: 24rpx;
-  color: #FFB6C1;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.action-arrow {
+  font-size: 32rpx;
+  color: white;
   font-weight: bold;
-  margin-bottom: 5rpx;
 }
 
-.timeline-score,
-.timeline-rank {
-  font-size: 22rpx;
-  color: #666;
-  margin-bottom: 3rpx;
-}
-
-.timeline-icon {
-  font-size: 40rpx;
-  margin-left: 20rpx;
-}
-
-.quick-actions {
+/* 温馨提示 */
+.tips-card {
+  margin: 30rpx;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 20rpx;
+  padding: 30rpx;
   display: flex;
-  gap: 20rpx;
+  align-items: flex-start;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
 }
 
-.quick-actions .btn-primary,
-.quick-actions .btn-secondary {
+.tips-icon {
+  font-size: 40rpx;
+  margin-right: 20rpx;
+  margin-top: 5rpx;
+}
+
+.tips-content {
   flex: 1;
-  margin: 0;
+}
+
+.tips-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.tips-text {
+  display: block;
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.5;
 } 

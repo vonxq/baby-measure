@@ -1,53 +1,60 @@
 <view class="container">
-  <view class="header-card">
-    <view class="header-title">评估记录</view>
-    <view class="header-subtitle">查看宝宝的成长轨迹</view>
-  </view>
-
-  <view class="records-list" wx:if="{{records.length > 0}}">
-    <view class="record-item" wx:for="{{records}}" wx:key="id">
-      <view class="record-header">
-        <view class="record-date">{{item.assessmentDate}}</view>
-        <view class="record-ages">
-          <view class="age-badge actual">实际{{item.actualAge}}个月</view>
-          <view class="age-badge assessment">测评{{item.assessmentAge}}个月</view>
-        </view>
-      </view>
-      
-      <view class="record-content">
-        <view class="score-section">
-          <view class="score-label">评估分数</view>
-          <view class="score-value">{{item.score}}分</view>
-        </view>
-        
-        <view class="rank-section">
-          <view class="rank-label">同月龄排名</view>
-          <view class="rank-value">第{{item.rank}}名</view>
-        </view>
-      </view>
-      
-      <view class="record-footer">
-        <view class="progress-indicator">
-          <view class="progress-text">发育水平</view>
-          <view class="progress-bar">
-            <view class="progress-fill" style="width: {{item.score / 25 * 100}}%"></view>
-          </view>
-        </view>
-      </view>
+  <!-- Tab切换 -->
+  <view class="tab-header">
+    <view 
+      class="tab-item {{currentTab === index ? 'active' : ''}}" 
+      wx:for="{{tabs}}" 
+      wx:key="index"
+      bindtap="switchTab"
+      data-index="{{index}}"
+    >
+      {{item}}
     </view>
   </view>
 
-  <view class="empty-state" wx:if="{{records.length === 0}}">
-    <view class="empty-icon">📊</view>
-    <view class="empty-title">暂无评估记录</view>
-    <view class="empty-subtitle">开始第一次评估，记录宝宝的成长</view>
-    <button class="btn-primary" bindtap="goToAssessment">开始评估</button>
+  <!-- 时间轴视图 -->
+  <view class="timeline-view" wx:if="{{currentTab === 0}}">
+    <view class="timeline-list" wx:if="{{records.length > 0}}">
+      <view class="timeline-item" wx:for="{{records}}" wx:key="id">
+        <view class="timeline-date">
+          <view class="date-day">{{item.assessmentDate.split('-')[2]}}</view>
+          <view class="date-month">{{item.assessmentDate.split('-')[1]}}月</view>
+        </view>
+        <view class="timeline-content">
+          <view class="timeline-title">{{item.assessmentAge}}个月评估</view>
+          <view class="timeline-age">{{item.assessmentAge}}个月</view>
+          <view class="timeline-score" wx:if="{{item.score}}">得分：{{item.score}}分</view>
+          <view class="timeline-rank" wx:if="{{item.rank}}">排名：第{{item.rank}}名</view>
+        </view>
+        <view class="timeline-icon">📊</view>
+      </view>
+    </view>
+    
+    <view class="empty-state" wx:else>
+      <view class="empty-icon">📊</view>
+      <view class="empty-text">暂无评估记录</view>
+      <view class="empty-desc">开始第一次评估吧</view>
+      <button class="empty-btn" bindtap="goToAssessment">开始评估</button>
+    </view>
   </view>
 
-  <view class="chart-card" wx:if="{{records.length > 0}}">
-    <view class="chart-title">成长趋势</view>
-    <view class="chart-container">
+  <!-- 趋势图视图 -->
+  <view class="chart-view" wx:if="{{currentTab === 1}}">
+    <view class="chart-container" wx:if="{{records.length > 0}}">
       <canvas canvas-id="growthChart" class="growth-chart"></canvas>
+      <view class="chart-legend">
+        <view class="legend-item">
+          <view class="legend-color"></view>
+          <text class="legend-text">发育评分趋势</text>
+        </view>
+      </view>
+    </view>
+    
+    <view class="empty-state" wx:else>
+      <view class="empty-icon">📈</view>
+      <view class="empty-text">暂无趋势数据</view>
+      <view class="empty-desc">完成评估后查看趋势图</view>
+      <button class="empty-btn" bindtap="goToAssessment">开始评估</button>
     </view>
   </view>
 </view> 

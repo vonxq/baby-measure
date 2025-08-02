@@ -1,0 +1,55 @@
+<view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="user-card" bindtap="editUserInfo">
+    <view class="user-avatar">
+      <image src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+    </view>
+    <view class="user-info">
+      <text class="user-name">{{userInfo.nickName || '未设置昵称'}}</text>
+      <text class="user-desc">点击编辑个人信息</text>
+    </view>
+    <view class="edit-icon">✏️</view>
+  </view>
+
+  <!-- 当前宝宝信息 -->
+  <view class="baby-section">
+    <view class="section-title">当前宝宝</view>
+    <view class="baby-card" bindtap="switchBaby">
+      <view class="baby-avatar">
+        <image src="{{currentBaby.avatarUrl || '/images/default-baby.png'}}" mode="aspectFill"></image>
+      </view>
+      <view class="baby-info">
+        <text class="baby-name">{{currentBaby.nickname}}</text>
+        <text class="baby-age">{{babyAgeText}}</text>
+        <text class="baby-birthday">生日：{{currentBaby.birthday}}</text>
+      </view>
+      <view class="switch-icon">🔄</view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-item" bindtap="goToSettings">
+      <view class="menu-icon">⚙️</view>
+      <view class="menu-content">
+        <text class="menu-title">设置</text>
+        <text class="menu-desc">主题设置、退出登录</text>
+      </view>
+      <view class="menu-arrow">→</view>
+    </view>
+
+    <view class="menu-item" bindtap="switchBaby">
+      <view class="menu-icon">👶</view>
+      <view class="menu-content">
+        <text class="menu-title">宝宝管理</text>
+        <text class="menu-desc">添加、删除、切换宝宝</text>
+      </view>
+      <view class="menu-arrow">→</view>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section">
+    <button class="logout-btn" bindtap="logout">退出登录</button>
+  </view>
+</view> 

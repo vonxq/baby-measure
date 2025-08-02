@@ -1,44 +1,54 @@
 <view class="container">
-  <!-- 宝宝信息卡片 -->
-  <view class="baby-info-card">
-    <view class="baby-avatar">
-      <text class="baby-avatar-text">👶</text>
+  <!-- 顶部用户信息 -->
+  <view class="header">
+    <view class="user-info" bindtap="goToProfile">
+      <image class="avatar" src="{{currentBaby.avatarUrl || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="user-details">
+        <text class="nickname">{{currentBaby.nickname}}</text>
+        <text class="age">{{babyAgeText}}</text>
+      </view>
     </view>
-    <view class="baby-details">
-      <view class="baby-name">{{currentBaby.nickname}}</view>
-      <view class="baby-age">{{babyAge}}个月</view>
-      <view class="baby-birthday">{{currentBaby.birthday}}</view>
-    </view>
-    <view class="switch-baby-btn" bindtap="switchBaby">切换</view>
   </view>
 
-  <!-- 时间轴 -->
-  <view class="timeline-card">
-    <view class="timeline-header">
-      <view class="timeline-title">成长时间轴</view>
-      <view class="timeline-subtitle">记录宝宝的每一个重要时刻</view>
+  <!-- 宝宝信息卡片 -->
+  <view class="baby-card">
+    <view class="baby-avatar">
+      <image src="{{currentBaby.avatarUrl || '/images/default-baby.png'}}" mode="aspectFill"></image>
     </view>
-    
-    <view class="timeline-list">
-      <view class="timeline-item" wx:for="{{timelineData}}" wx:key="id">
-        <view class="timeline-date">
-          <view class="date-day">{{item.day}}</view>
-          <view class="date-month">{{item.month}}</view>
-        </view>
-        <view class="timeline-content">
-          <view class="timeline-title">{{item.title}}</view>
-          <view class="timeline-age">{{item.age}}个月</view>
-          <view class="timeline-score" wx:if="{{item.score}}">得分：{{item.score}}分</view>
-          <view class="timeline-rank" wx:if="{{item.rank}}">排名：第{{item.rank}}名</view>
-        </view>
-        <view class="timeline-icon">{{item.icon}}</view>
-      </view>
+    <view class="baby-info">
+      <text class="baby-name">{{currentBaby.nickname}}</text>
+      <text class="baby-age">{{babyAgeText}}</text>
+      <text class="baby-birthday">生日：{{currentBaby.birthday}}</text>
     </view>
   </view>
 
   <!-- 快速操作 -->
   <view class="quick-actions">
-    <button class="btn-primary" bindtap="startAssessment">开始评估</button>
-    <button class="btn-secondary" bindtap="viewRecords">查看记录</button>
+    <view class="action-card primary" bindtap="startAssessment">
+      <view class="action-icon">📊</view>
+      <view class="action-content">
+        <text class="action-title">开始评估</text>
+        <text class="action-desc">为宝宝进行发育评估</text>
+      </view>
+      <view class="action-arrow">→</view>
+    </view>
+
+    <view class="action-card secondary" bindtap="viewRecords">
+      <view class="action-icon">📈</view>
+      <view class="action-content">
+        <text class="action-title">查看记录</text>
+        <text class="action-desc">查看历史评估记录</text>
+      </view>
+      <view class="action-arrow">→</view>
+    </view>
+  </view>
+
+  <!-- 温馨提示 -->
+  <view class="tips-card">
+    <view class="tips-icon">💡</view>
+    <view class="tips-content">
+      <text class="tips-title">温馨提示</text>
+      <text class="tips-text">建议每{{babyAge < 12 ? '1' : '3'}}个月为宝宝进行一次发育评估，及时了解宝宝的成长情况。</text>
+    </view>
   </view>
 </view> 
