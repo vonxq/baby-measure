@@ -1,0 +1,43 @@
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="header">
+    <text class="title">主题设置</text>
+    <text class="subtitle">选择您喜欢的主题颜色</text>
+  </view>
+
+  <!-- 主题网格 -->
+  <view class="theme-grid">
+    <view 
+      class="theme-item {{currentTheme === item.id ? 'active' : ''}}" 
+      wx:for="{{themes}}" 
+      wx:key="id"
+      bindtap="switchTheme"
+      data-theme="{{item.id}}"
+    >
+      <view class="theme-preview">
+        <view class="theme-color" style="background: {{item.color}}"></view>
+        <view class="theme-check" wx:if="{{currentTheme === item.id}}">✓</view>
+      </view>
+      <view class="theme-info">
+        <text class="theme-name">{{item.name}}</text>
+        <text class="theme-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 预览按钮 -->
+  <view class="preview-section">
+    <button class="preview-btn" bindtap="previewTheme" data-theme="{{currentTheme}}">
+      预览当前主题
+    </button>
+  </view>
+
+  <!-- 说明 -->
+  <view class="tips-section">
+    <view class="tips-icon">💡</view>
+    <view class="tips-content">
+      <text class="tips-title">主题说明</text>
+      <text class="tips-text">主题颜色会影响应用的整体视觉效果，包括按钮、图标和强调色等元素。</text>
+    </view>
+  </view>
+</view> 
