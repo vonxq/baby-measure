@@ -1,0 +1,248 @@
+{
+  "scaleInfo": {
+    "name": "0岁～6岁儿童发育行为评估量表（儿心量表-Ⅱ）",
+    "standard": "WS/T 580—2017",
+    "description": "本标准规定了0岁～6岁（未满7周岁）儿童发育行为评估量表的评估内容、测查方法、发育商参考范围以及量表的使用。",
+    "categories": [
+      "大运动",
+      "精细动作", 
+      "语言",
+      "适应能力",
+      "社会行为"
+    ],
+    "ageRanges": [
+      {"min": 1, "max": 12, "score": 1.0},
+      {"min": 15, "max": 36, "score": 3.0},
+      {"min": 42, "max": 84, "score": 6.0}
+    ],
+    "developmentLevels": [
+      {"min": 130, "level": "优秀"},
+      {"min": 110, "max": 129, "level": "良好"},
+      {"min": 80, "max": 109, "level": "中等"},
+      {"min": 70, "max": 79, "level": "临界偏低"},
+      {"max": 70, "level": "智力发育障碍"}
+    ]
+  },
+  "items": [
+    {
+      "id": 1,
+      "age": 1,
+      "category": "大运动",
+      "description": "抬肩坐起头竖直片刻",
+      "operation": "婴儿仰卧，主试者面向婴儿站立，对婴儿微笑、说话，直到婴儿注视到主试者的脸。这时主试者轻轻握住婴儿双肩（四指并拢置于肩胛骨外侧，食指不能触碰颈部），将婴儿拉坐起来，观察婴儿控制头的能力",
+      "requirement": "婴儿头可竖直保持2s或以上",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 2,
+      "age": 1,
+      "category": "大运动",
+      "description": "俯卧头部翘动",
+      "operation": "婴儿俯卧，前臂屈曲支撑，用玩具逗引婴儿抬头，观察其反应",
+      "requirement": "婴儿有头部翘动即可通过",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 3,
+      "age": 1,
+      "category": "精细动作",
+      "description": "触碰手掌紧握拳",
+      "operation": "婴儿仰卧，主试者将食指从尺侧放入婴儿手掌中",
+      "requirement": "婴儿能将拳头握紧",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 4,
+      "age": 1,
+      "category": "精细动作",
+      "description": "手的自然状态",
+      "operation": "主试者观察婴儿清醒时手的自然状态",
+      "requirement": "双手拇指内收不达掌心，无发紧即通过",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 5,
+      "age": 1,
+      "category": "适应能力",
+      "description": "看黑白靶",
+      "operation": "婴儿仰卧，主试者将黑白靶拿在距婴儿脸部上方20cm处移动，吸引婴儿注意",
+      "requirement": "婴儿眼睛可明确注视黑白靶",
+      "isParentReport": false,
+      "isAttention": true,
+      "score": 1.0
+    },
+    {
+      "id": 6,
+      "age": 1,
+      "category": "适应能力",
+      "description": "眼跟红球过中线",
+      "operation": "婴儿仰卧，主试者手提红球，在婴儿脸部上方20cm处轻轻晃动以引起婴儿注意，然后把红球慢慢移动，从头的一侧沿着弧形，移向中央，再移向头的另一侧，观察婴儿头部和眼睛的活动",
+      "requirement": "当主试者把红球移向中央时，婴儿用眼睛跟踪看着红球转过中线，三试一成",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 7,
+      "age": 1,
+      "category": "语言",
+      "description": "自发细小喉音",
+      "operation": "婴儿仰卧、清醒。注意其发音",
+      "requirement": "观察或询问，小儿能发出任何一种细小柔和的喉音",
+      "isParentReport": true,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 8,
+      "age": 1,
+      "category": "语言",
+      "description": "听声音有反应",
+      "operation": "婴儿仰卧，在其一侧耳上方10cm～15cm处轻摇铜铃，观察婴儿的反应。（双侧均做，一侧通过即可）",
+      "requirement": "婴儿听到铃声有一种或多种反应",
+      "isParentReport": false,
+      "isAttention": true,
+      "score": 1.0
+    },
+    {
+      "id": 9,
+      "age": 1,
+      "category": "社会行为",
+      "description": "对发声的人有注视",
+      "operation": "主试者面对婴儿的脸微笑并对其说话。但不能触碰婴儿的面孔或身体",
+      "requirement": "婴儿能注视主试者的脸",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 10,
+      "age": 1,
+      "category": "社会行为",
+      "description": "眼跟踪走动的人",
+      "operation": "婴儿横放在床上或斜躺在家长臂弯里，主试者站立（直立位，勿弯腰）逗引婴儿引起其注意后左右走动，观察婴儿眼睛是否追随主试者",
+      "requirement": "眼睛随走动的人转动",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 11,
+      "age": 2,
+      "category": "大运动",
+      "description": "拉腕坐起头竖直短时",
+      "operation": "婴儿仰卧，主试者将拇指置于婴儿掌心，余四指握住腕部轻拉婴儿坐起，观察婴儿控制头部的能力",
+      "requirement": "当把婴儿拉起成坐位时婴儿头可自行竖直，保持5s或以上",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 12,
+      "age": 2,
+      "category": "大运动",
+      "description": "俯卧头抬离床面",
+      "operation": "婴儿俯卧，前臂屈曲支撑，用玩具逗引婴儿抬头，观察其反应",
+      "requirement": "婴儿可自行将头抬离床面达2s或以上",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 13,
+      "age": 2,
+      "category": "精细动作",
+      "description": "花铃棒留握片刻",
+      "operation": "婴儿仰卧，将花铃棒放在婴儿手中",
+      "requirement": "握住花铃棒不松手达2s或以上",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 14,
+      "age": 2,
+      "category": "精细动作",
+      "description": "拇指轻叩可分开",
+      "operation": "主试者分别轻叩婴儿双手手背，观察拇指自然放松的状态",
+      "requirement": "婴儿双手握拳稍紧，拇指稍内收，但经轻叩即可打开",
+      "isParentReport": false,
+      "isAttention": true,
+      "score": 1.0
+    },
+    {
+      "id": 15,
+      "age": 2,
+      "category": "适应能力",
+      "description": "即刻注意大玩具",
+      "operation": "婴儿仰卧，用娃娃在婴儿脸部上方20cm处晃动，观察其反应",
+      "requirement": "可立刻注意到娃娃，三试一成",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 16,
+      "age": 2,
+      "category": "适应能力",
+      "description": "眼跟红球上下移动",
+      "operation": "婴儿仰卧，主试者提起红球，在婴儿脸部上方20cm处轻轻晃动以引起婴儿注意，先慢慢向上移动，然后再从头顶向下颏处移动",
+      "requirement": "婴儿眼睛能上或下跟随红球",
+      "isParentReport": false,
+      "isAttention": true,
+      "score": 1.0
+    },
+    {
+      "id": 17,
+      "age": 2,
+      "category": "语言",
+      "description": "发a、o、e等母音",
+      "operation": "询问或逗引婴儿发音",
+      "requirement": "能从喉部发出a、o、e等元音来",
+      "isParentReport": true,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 18,
+      "age": 2,
+      "category": "语言",
+      "description": "听声音有复杂反应",
+      "operation": "婴儿仰卧，在其一侧耳上方10cm～15cm处轻摇铜铃，观察婴儿的反应。（双侧均做，一侧通过即可）",
+      "requirement": "婴儿听到声音有表情和肢体动作的变化",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 19,
+      "age": 2,
+      "category": "社会行为",
+      "description": "自发微笑",
+      "operation": "观察或询问婴儿在无外界逗引时是否有自发微笑的情况",
+      "requirement": "婴儿能自发出现微笑，但不一定出声。睡眠时微笑不通过",
+      "isParentReport": true,
+      "isAttention": false,
+      "score": 1.0
+    },
+    {
+      "id": 20,
+      "age": 2,
+      "category": "社会行为",
+      "description": "逗引时有反应",
+      "operation": "婴儿仰卧，主试者弯腰，对婴儿点头微笑或说话进行逗引，观察其反应。但不能触碰婴儿的面孔或身体",
+      "requirement": "经逗引，婴儿会出现微笑、发声、手脚乱动等一种或多种表现",
+      "isParentReport": false,
+      "isAttention": false,
+      "score": 1.0
+    }
+  ]
+} 

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>儿童发育评估助手 - 测查项目</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f8ff;
+        }
+        .header {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .child-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .progress {
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            background: #4a90e2;
+            height: 100%;
+            border-radius: 5px;
+            width: 35%;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background: #4a90e2;
+            color: white;
+        }
+        .item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .item-title {
+            font-weight: bold;
+            color: #333;
+        }
+        .item-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .item-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #4a90e2;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="child-info">
+            <div>
+                <h2>小明 - 2岁3个月</h2>
+                <p>主测月龄: 24个月 | 测查范围: 22-26个月</p>
+            </div>
+            <div>
+                <p>总体进度: 35%</p>
+                <div class="progress">
+                    <div class="progress-bar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab active">大运动</button>
+        <button class="tab">精细动作</button>
+        <button class="tab">语言</button>
+        <button class="tab">适应能力</button>
+        <button class="tab">社会行为</button>
+    </div>
+    
+    <div class="item">
+        <div class="item-header">
+            <div class="item-title">独站片刻</div>
+            <div class="item-status status-completed">已完成</div>
+        </div>
+        <div class="item-description">
+            将婴儿置于立位，待婴儿站稳后松开双手，观察其站立情况
+        </div>
+        <div class="item-actions">
+            <button class="btn btn-secondary">查看详情</button>
+            <button class="btn btn-primary">重新测查</button>
+        </div>
+    </div>
+    
+    <div class="item">
+        <div class="item-header">
+            <div class="item-title">扶物下蹲取物</div>
+            <div class="item-status status-completed">已完成</div>
+        </div>
+        <div class="item-description">
+            婴儿手扶围栏站立，不得倚靠。将玩具放在其脚边，鼓励婴儿下蹲取物
+        </div>
+        <div class="item-actions">
+            <button class="btn btn-secondary">查看详情</button>
+            <button class="btn btn-primary">重新测查</button>
+        </div>
+    </div>
+    
+    <div class="item">
+        <div class="item-header">
+            <div class="item-title">双足跳离地面</div>
+            <div class="item-status status-pending">待测查</div>
+        </div>
+        <div class="item-description">
+            主试者示范双足同时离地跳起，鼓励小儿照样做
+        </div>
+        <div class="item-actions">
+            <button class="btn btn-primary">开始测查</button>
+        </div>
+    </div>
+    
+    <div class="item">
+        <div class="item-header">
+            <div class="item-title">独自上楼</div>
+            <div class="item-status status-pending">待测查</div>
+        </div>
+        <div class="item-description">
+            鼓励小儿不扶扶手上楼梯，可示范
+        </div>
+        <div class="item-actions">
+            <button class="btn btn-primary">开始测查</button>
+        </div>
+    </div>
+</body>
+</html> 
