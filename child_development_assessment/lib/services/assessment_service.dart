@@ -28,7 +28,7 @@ class AssessmentService {
     return items;
   }
 
-  // 获取向前测查项目（低月龄）
+  // 获取向前测查项目（低月龄）- 按月龄分组
   List<AssessmentItem> getForwardItems(List<AssessmentData> allData, int mainTestAge, Map<int, bool> currentResults) {
     List<AssessmentItem> forwardItems = [];
     
@@ -50,55 +50,31 @@ class AssessmentService {
     // 检查每个能区是否需要向前测查
     for (String area in currentAgeResults.keys) {
       if (_shouldForwardTestForArea(allData, mainTestAge, area, currentResults)) {
-        var areaForwardItems = _getForwardItemsForArea(allData, mainTestAge, area, currentResults);
-        forwardItems.addAll(areaForwardItems);
-      }
-    }
-    
-    return forwardItems;
-  }
-
-  // 检查特定能区是否需要向前测查
-  bool _shouldForwardTestForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
-    // 获取当前月龄该能区的项目
-    var currentAreaItems = getCurrentAgeItems(allData, mainTestAge)
-        .where((item) => getAreaFromData(allData, item.id) == area)
-        .toList();
-    
-    // 检查当前月龄该能区的测试结果
-    bool hasAllResults = currentAreaItems.every((item) => currentResults.containsKey(item.id));
-    if (!hasAllResults) return false;
-    
-    // 如果当前月龄该能区全部通过，需要向前测查
-    bool allPassed = currentAreaItems.every((item) => currentResults[item.id] == true);
-    return allPassed;
-  }
-
-  // 获取特定能区的向前测查项目
-  List<AssessmentItem> _getForwardItemsForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
-    List<AssessmentItem> forwardItems = [];
-    
-    // 从主测月龄向前查找，直到找到连续两个月龄都通过的项目
-    for (int age = mainTestAge - 1; age >= 1; age--) {
-      var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
-      var areaItems = ageItems.where((item) => getAreaFromData(allData, item.id) == area).toList();
-      
-      if (areaItems.isEmpty) continue;
-      
-      // 检查该月龄该能区的项目是否已经测试过
-      bool hasTestedItems = areaItems.any((item) => currentResults.containsKey(item.id));
-      
-      if (!hasTestedItems) {
-        forwardItems.addAll(areaItems);
-      } else {
-        // 如果已经测试过，检查是否全部通过
-        bool allPassed = areaItems.every((item) => currentResults[item.id] == true);
-        if (allPassed) {
-          // 继续向前查找
-          continue;
-        } else {
-          // 遇到不通过的项目就停止
-          break;
+        // 按月龄分组向前测查
+        for (int age = mainTestAge - 1; age >= 1; age--) {
+          var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
+          var areaItems = ageItems.where((item) => getAreaFromData(allData, item.id) == area).toList();
+          
+          if (areaItems.isEmpty) continue;
+          
+          // 检查该月龄该能区的项目是否已经测试过
+          bool hasTestedItems = areaItems.any((item) => currentResults.containsKey(item.id));
+          
+          if (!hasTestedItems) {
+            forwardItems.addAll(areaItems);
+            // 只添加一个月龄的项目，然后检查是否需要继续
+            break;
+          } else {
+            // 如果已经测试过，检查是否全部通过
+            bool allPassed = areaItems.every((item) => currentResults[item.id] == true);
+            if (allPassed) {
+              // 继续向前查找
+              continue;
+            } else {
+              // 遇到不通过的项目就停止
+              break;
+            }
+          }
         }
       }
     }
@@ -106,7 +82,7 @@ class AssessmentService {
     return forwardItems;
   }
 
-  // 获取向后测查项目（高月龄）
+  // 获取向后测查项目（高月龄）- 按月龄分组
   List<AssessmentItem> getBackwardItems(List<AssessmentData> allData, int mainTestAge, Map<int, bool> currentResults) {
     List<AssessmentItem> backwardItems = [];
     
@@ -128,12 +104,52 @@ class AssessmentService {
     // 检查每个能区是否需要向后测查
     for (String area in currentAgeResults.keys) {
       if (_shouldBackwardTestForArea(allData, mainTestAge, area, currentResults)) {
-        var areaBackwardItems = _getBackwardItemsForArea(allData, mainTestAge, area, currentResults);
-        backwardItems.addAll(areaBackwardItems);
+        // 按月龄分组向后测查
+        for (int age = mainTestAge + 1; age <= 84; age++) {
+          var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
+          var areaItems = ageItems.where((item) => getAreaFromData(allData, item.id) == area).toList();
+          
+          if (areaItems.isEmpty) continue;
+          
+          // 检查该月龄该能区的项目是否已经测试过
+          bool hasTestedItems = areaItems.any((item) => currentResults.containsKey(item.id));
+          
+          if (!hasTestedItems) {
+            backwardItems.addAll(areaItems);
+            // 只添加一个月龄的项目，然后检查是否需要继续
+            break;
+          } else {
+            // 如果已经测试过，检查是否全部不通过
+            bool allFailed = areaItems.every((item) => currentResults[item.id] == false);
+            if (allFailed) {
+              // 继续向后查找
+              continue;
+            } else {
+              // 遇到通过的项目就停止
+              break;
+            }
+          }
+        }
       }
     }
     
     return backwardItems;
+  }
+
+  // 检查特定能区是否需要向前测查
+  bool _shouldForwardTestForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
+    // 获取当前月龄该能区的项目
+    var currentAreaItems = getCurrentAgeItems(allData, mainTestAge)
+        .where((item) => getAreaFromData(allData, item.id) == area)
+        .toList();
+    
+    // 检查当前月龄该能区的测试结果
+    bool hasAllResults = currentAreaItems.every((item) => currentResults.containsKey(item.id));
+    if (!hasAllResults) return false;
+    
+    // 如果当前月龄该能区全部通过，需要向前测查
+    bool allPassed = currentAreaItems.every((item) => currentResults[item.id] == true);
+    return allPassed;
   }
 
   // 检查特定能区是否需要向后测查
@@ -150,38 +166,6 @@ class AssessmentService {
     // 如果当前月龄该能区全部不通过，需要向后测查
     bool allFailed = currentAreaItems.every((item) => currentResults[item.id] == false);
     return allFailed;
-  }
-
-  // 获取特定能区的向后测查项目
-  List<AssessmentItem> _getBackwardItemsForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
-    List<AssessmentItem> backwardItems = [];
-    
-    // 从主测月龄向后查找，直到找到连续两个月龄都不通过的项目
-    for (int age = mainTestAge + 1; age <= 84; age++) {
-      var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
-      var areaItems = ageItems.where((item) => getAreaFromData(allData, item.id) == area).toList();
-      
-      if (areaItems.isEmpty) continue;
-      
-      // 检查该月龄该能区的项目是否已经测试过
-      bool hasTestedItems = areaItems.any((item) => currentResults.containsKey(item.id));
-      
-      if (!hasTestedItems) {
-        backwardItems.addAll(areaItems);
-      } else {
-        // 如果已经测试过，检查是否全部不通过
-        bool allFailed = areaItems.every((item) => currentResults[item.id] == false);
-        if (allFailed) {
-          // 继续向后查找
-          continue;
-        } else {
-          // 遇到通过的项目就停止
-          break;
-        }
-      }
-    }
-    
-    return backwardItems;
   }
 
   // 获取测试项目 - 动态测查程序
@@ -264,33 +248,6 @@ class AssessmentService {
     return items.where((item) => getAreaFromData(allData, item.id) == area).toList();
   }
 
-  // 根据itemId推断能区（临时方案）
-  String _getAreaFromId(int itemId) {
-    // 从实际数据中获取能区信息
-    // 这里应该从AssessmentData中获取area信息
-    // 暂时使用简化的逻辑，实际应该从数据中读取
-    int monthAge = (itemId / 100).floor();
-    int itemIndex = itemId % 100;
-    
-    // 根据实际数据结构调整
-    // 6个月龄应该按照1-12月龄的逻辑处理
-    if (monthAge <= 12) {
-      // 1-12月龄：每个能区2个项目
-      if (itemIndex <= 2) return 'motor';
-      if (itemIndex <= 4) return 'fineMotor';
-      if (itemIndex <= 6) return 'adaptive';
-      if (itemIndex <= 8) return 'language';
-      return 'social';
-    } else {
-      // 其他月龄：每个能区1个项目
-      if (itemIndex <= 1) return 'motor';
-      if (itemIndex <= 2) return 'fineMotor';
-      if (itemIndex <= 3) return 'adaptive';
-      if (itemIndex <= 4) return 'language';
-      return 'social';
-    }
-  }
-
   // 从数据中获取能区信息
   String getAreaFromData(List<AssessmentData> allData, int itemId) {
     for (var data in allData) {
@@ -302,6 +259,34 @@ class AssessmentService {
     }
     // 如果找不到，使用推断方法
     return _getAreaFromId(itemId);
+  }
+
+  // 根据itemId推断能区（临时方案）
+  String _getAreaFromId(int itemId) {
+    // 根据实际数据结构分析ID规律
+    // 从数据中可以看出，ID是按照月龄和能区顺序排列的
+    // 每个月龄有5个能区，每个能区有1-2个项目
+    
+    // 计算月龄和项目索引
+    int monthAge = (itemId / 10).floor(); // 每10个ID为一个周期
+    int itemIndex = itemId % 10;
+    
+    // 根据实际数据结构调整
+    // 1-12月龄：每个能区2个项目
+    if (monthAge <= 12) {
+      if (itemIndex <= 1) return 'motor';
+      if (itemIndex <= 3) return 'fineMotor';
+      if (itemIndex <= 5) return 'adaptive';
+      if (itemIndex <= 7) return 'language';
+      return 'social';
+    } else {
+      // 其他月龄：每个能区1个项目
+      if (itemIndex <= 0) return 'motor';
+      if (itemIndex <= 1) return 'fineMotor';
+      if (itemIndex <= 2) return 'adaptive';
+      if (itemIndex <= 3) return 'language';
+      return 'social';
+    }
   }
 
   // 从数据中获取月龄
@@ -476,6 +461,7 @@ class AssessmentService {
     };
     
     for (var item in items) {
+      // 使用简化的推断逻辑，因为这里没有allData参数
       String area = _getAreaFromId(item.id);
       counts[area] = (counts[area] ?? 0) + 1;
     }

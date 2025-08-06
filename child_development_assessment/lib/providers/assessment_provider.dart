@@ -144,6 +144,24 @@ class AssessmentProvider with ChangeNotifier {
     _areaItemCounts = _assessmentService.getAreaItemCounts(_currentStageItems);
   }
 
+  // 获取各能区项目数量（使用实际数据）
+  Map<String, int> getAreaItemCountsWithData() {
+    Map<String, int> counts = {
+      'motor': 0,
+      'fineMotor': 0,
+      'language': 0,
+      'adaptive': 0,
+      'social': 0,
+    };
+    
+    for (var item in _currentStageItems) {
+      String area = _assessmentService.getAreaFromData(_allData, item.id);
+      counts[area] = (counts[area] ?? 0) + 1;
+    }
+    
+    return counts;
+  }
+
   // 记录测试结果
   void recordResult(int itemId, bool passed) {
     _testResults[itemId] = passed;

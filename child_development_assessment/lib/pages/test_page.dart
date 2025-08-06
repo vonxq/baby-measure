@@ -173,7 +173,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                             currentIndex: provider.currentStageItemIndex + 1,
                             totalItems: provider.currentStageItems.length,
                             currentItem: provider.currentItem,
-                            areaProgress: provider.areaItemCounts,
+                            areaProgress: provider.getAreaItemCountsWithData(),
                             provider: provider,
                           ),
                           const SizedBox(height: 16),
