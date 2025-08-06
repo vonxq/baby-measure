@@ -43,6 +43,10 @@ class AssessmentProvider with ChangeNotifier {
   List<int> _backwardTestAges = [];
   int _currentForwardIndex = 0;
   int _currentBackwardIndex = 0;
+  
+  // 连续通过/不通过跟踪
+  Map<String, int> _consecutivePassCount = {}; // 能区 -> 连续通过次数
+  Map<String, int> _consecutiveFailCount = {}; // 能区 -> 连续不通过次数
 
   // Getters
   List<AssessmentData> get allData => _allData;
@@ -130,31 +134,90 @@ class AssessmentProvider with ChangeNotifier {
     
     // 初始化月龄跟踪
     _currentTestAge = _mainTestAge;
-    _forwardTestAges = _dynamicAssessmentService.getForwardTestAges(_mainTestAge, _dynamicTestResults);
-    _backwardTestAges = _dynamicAssessmentService.getBackwardTestAges(_mainTestAge, _dynamicTestResults);
-    _currentForwardIndex = 0;
-    _currentBackwardIndex = 0;
+    _initializeTestAges();
+    _resetConsecutiveCounts();
     
     _loadCurrentStageItems();
     notifyListeners();
   }
 
-  // 记录当前月龄的测试结果
-  void recordCurrentAgeResults(Map<String, List<bool>> areaResults) {
-    _dynamicTestResults[_mainTestAge] = areaResults;
-    _checkAndMoveToNextStage();
+  // 初始化测试月龄
+  void _initializeTestAges() {
+    // 获取向前测试月龄（主测月龄前2个月龄）
+    _forwardTestAges = _getForwardTestAges(_mainTestAge);
+    // 获取向后测试月龄（主测月龄后2个月龄）
+    _backwardTestAges = _getBackwardTestAges(_mainTestAge);
+    
+    _currentForwardIndex = 0;
+    _currentBackwardIndex = 0;
   }
 
-  // 记录向前测试结果
-  void recordForwardAgeResults(int age, Map<String, List<bool>> areaResults) {
-    _dynamicTestResults[age] = areaResults;
-    _checkAndMoveToNextStage();
+  // 重置连续计数
+  void _resetConsecutiveCounts() {
+    _consecutivePassCount.clear();
+    _consecutiveFailCount.clear();
+    for (String area in ['motor', 'fineMotor', 'language', 'adaptive', 'social']) {
+      _consecutivePassCount[area] = 0;
+      _consecutiveFailCount[area] = 0;
+    }
   }
 
-  // 记录向后测试结果
-  void recordBackwardAgeResults(int age, Map<String, List<bool>> areaResults) {
-    _dynamicTestResults[age] = areaResults;
-    _checkAndMoveToNextStage();
+  // 获取向前测试月龄
+  List<int> _getForwardTestAges(int mainAge) {
+    List<int> forwardAges = [];
+    int currentAge = mainAge;
+    
+    // 从主测月龄向前测查2个月龄
+    for (int i = 0; i < 2; i++) {
+      int prevAge = _getPreviousAge(currentAge);
+      if (prevAge >= 1) {
+        forwardAges.add(prevAge);
+        currentAge = prevAge;
+      } else {
+        break;
+      }
+    }
+    
+    return forwardAges;
+  }
+
+  // 获取向后测试月龄
+  List<int> _getBackwardTestAges(int mainAge) {
+    List<int> backwardAges = [];
+    int currentAge = mainAge;
+    
+    // 从主测月龄向后测查2个月龄
+    for (int i = 0; i < 2; i++) {
+      int nextAge = _getNextAge(currentAge);
+      if (nextAge <= 84) {
+        backwardAges.add(nextAge);
+        currentAge = nextAge;
+      } else {
+        break;
+      }
+    }
+    
+    return backwardAges;
+  }
+
+  // 获取上一个标准月龄
+  int _getPreviousAge(int currentAge) {
+    List<int> ageGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
+    int currentIndex = ageGroups.indexOf(currentAge);
+    if (currentIndex == -1 || currentIndex <= 0) {
+      return currentAge - 1;
+    }
+    return ageGroups[currentIndex - 1];
+  }
+
+  // 获取下一个标准月龄
+  int _getNextAge(int currentAge) {
+    List<int> ageGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
+    int currentIndex = ageGroups.indexOf(currentAge);
+    if (currentIndex == -1 || currentIndex >= ageGroups.length - 1) {
+      return currentAge + 1;
+    }
+    return ageGroups[currentIndex + 1];
   }
 
   // 开始测试
@@ -239,7 +302,42 @@ class AssessmentProvider with ChangeNotifier {
   // 记录测试结果
   void recordResult(int itemId, bool passed) {
     _testResults[itemId] = passed;
+    
+    // 更新动态测试结果
+    _updateDynamicTestResults(itemId, passed);
+    
     notifyListeners();
+  }
+
+  // 更新动态测试结果
+  void _updateDynamicTestResults(int itemId, bool passed) {
+    String area = getItemArea(itemId);
+    int monthAge = getItemMonthAge(itemId);
+    
+    if (!_dynamicTestResults.containsKey(monthAge)) {
+      _dynamicTestResults[monthAge] = {};
+    }
+    
+    if (!_dynamicTestResults[monthAge]!.containsKey(area)) {
+      _dynamicTestResults[monthAge]![area] = [];
+    }
+    
+    // 添加测试结果
+    _dynamicTestResults[monthAge]![area]!.add(passed);
+    
+    // 更新连续计数
+    _updateConsecutiveCounts(area, passed);
+  }
+
+  // 更新连续计数
+  void _updateConsecutiveCounts(String area, bool passed) {
+    if (passed) {
+      _consecutivePassCount[area] = (_consecutivePassCount[area] ?? 0) + 1;
+      _consecutiveFailCount[area] = 0;
+    } else {
+      _consecutiveFailCount[area] = (_consecutiveFailCount[area] ?? 0) + 1;
+      _consecutivePassCount[area] = 0;
+    }
   }
 
   // 下一题
@@ -261,7 +359,7 @@ class AssessmentProvider with ChangeNotifier {
     }
   }
 
-    // 检查并移动到下一阶段
+  // 检查并移动到下一阶段
   void _checkAndMoveToNextStage() {
     switch (_currentStage) {
       case TestStage.current:
@@ -316,20 +414,6 @@ class AssessmentProvider with ChangeNotifier {
     }
     
     notifyListeners();
-  }
-
-  // 检查是否需要进入向前测查阶段
-  bool _shouldMoveToForwardStage() {
-    // 检查是否有向前测查的项目
-    var forwardItems = _assessmentService.getForwardItems(_allData, _mainTestAge, _testResults);
-    return forwardItems.isNotEmpty;
-  }
-
-  // 检查是否需要进入向后测查阶段
-  bool _shouldMoveToBackwardStage() {
-    // 检查是否有向后测查的项目
-    var backwardItems = _assessmentService.getBackwardItems(_allData, _mainTestAge, _testResults);
-    return backwardItems.isNotEmpty;
   }
 
   // 获取总进度
@@ -389,7 +473,7 @@ class AssessmentProvider with ChangeNotifier {
     _setLoading(true);
     try {
       // 使用动态测评服务计算结果
-      var dynamicResult = _dynamicAssessmentService.executeDynamicAssessment(
+      _dynamicAssessmentService.executeDynamicAssessment(
         _allData,
         _mainTestAge,
         _dynamicTestResults,
@@ -451,6 +535,7 @@ class AssessmentProvider with ChangeNotifier {
     _currentStageItemIndex = 0;
     _areaItemCounts.clear();
     _dynamicTestResults.clear();
+    _resetConsecutiveCounts();
     notifyListeners();
   }
 
@@ -458,13 +543,6 @@ class AssessmentProvider with ChangeNotifier {
   void _generateFinalResult() async {
     _setLoading(true);
     try {
-      // 使用动态测评服务计算结果
-      var dynamicResult = _dynamicAssessmentService.executeDynamicAssessment(
-        _allData,
-        _mainTestAge,
-        _dynamicTestResults,
-      );
-      
       // 计算各能区结果
       final areas = ['motor', 'fineMotor', 'language', 'adaptive', 'social'];
       final areaResults = <AreaResult>[];
@@ -524,6 +602,7 @@ class AssessmentProvider with ChangeNotifier {
       _error = '';
     } catch (e) {
       _error = '生成结果失败: $e';
+      print('生成结果失败: $e'); // 添加调试信息
     } finally {
       _setLoading(false);
     }

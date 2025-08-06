@@ -49,6 +49,19 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
         child: SafeArea(
           child: Consumer<AssessmentProvider>(
             builder: (context, provider, child) {
+              if (provider.isLoading) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(color: Colors.blue[600]),
+                      const SizedBox(height: 16),
+                      const Text('正在生成结果...', style: TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                );
+              }
+
               if (provider.finalResult == null) {
                 return Center(
                   child: Column(
@@ -73,6 +86,30 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
               }
 
               final result = provider.finalResult!;
+              
+              // 检查结果数据的有效性
+              if (result.testResults.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.warning, size: 64, color: Colors.orange[400]),
+                      const SizedBox(height: 16),
+                      const Text('测试结果数据不完整', style: TextStyle(fontSize: 18)),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
+                        icon: const Icon(Icons.home),
+                        label: const Text('返回首页'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[600],
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
               
               return Column(
                 children: [
