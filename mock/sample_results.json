@@ -1,0 +1,98 @@
+{
+  "results": [
+    {
+      "id": "result_001",
+      "child_id": "child_001",
+      "assessment_date": "2024-01-15",
+      "child_age_months": 12,
+      "total_score": 30,
+      "developmental_age": 12,
+      "developmental_quotient": 100,
+      "results": [
+        {
+          "item_id": "motor_1_1",
+          "passed": true,
+          "score": 1,
+          "notes": "表现良好"
+        },
+        {
+          "item_id": "motor_1_2",
+          "passed": true,
+          "score": 1,
+          "notes": "表现良好"
+        },
+        {
+          "item_id": "fine_1_1",
+          "passed": true,
+          "score": 1,
+          "notes": "表现良好"
+        },
+        {
+          "item_id": "language_1_1",
+          "passed": true,
+          "score": 1,
+          "notes": "表现良好"
+        },
+        {
+          "item_id": "adaptive_1_1",
+          "passed": true,
+          "score": 1,
+          "notes": "表现良好"
+        },
+        {
+          "item_id": "social_1_1",
+          "passed": true,
+          "score": 1,
+          "notes": "表现良好"
+        }
+      ]
+    },
+    {
+      "id": "result_002",
+      "child_id": "child_002",
+      "assessment_date": "2024-01-20",
+      "child_age_months": 10,
+      "total_score": 28,
+      "developmental_age": 11,
+      "developmental_quotient": 110,
+      "results": [
+        {
+          "item_id": "motor_1_1",
+          "passed": true,
+          "score": 1,
+          "notes": "表现优秀"
+        },
+        {
+          "item_id": "motor_1_2",
+          "passed": true,
+          "score": 1,
+          "notes": "表现优秀"
+        },
+        {
+          "item_id": "fine_1_1",
+          "passed": true,
+          "score": 1,
+          "notes": "表现优秀"
+        },
+        {
+          "item_id": "language_1_1",
+          "passed": true,
+          "score": 1,
+          "notes": "表现优秀"
+        },
+        {
+          "item_id": "adaptive_1_1",
+          "passed": true,
+          "score": 1,
+          "notes": "表现优秀"
+        },
+        {
+          "item_id": "social_1_1",
+          "passed": true,
+          "score": 1,
+          "notes": "表现优秀"
+        }
+      ]
+    }
+  ]
+} 

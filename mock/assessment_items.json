@@ -1,0 +1,112 @@
+{
+  "items": [
+    {
+      "id": "motor_1_1",
+      "category": "大运动",
+      "age_group": "1个月",
+      "item_name": "抬头片刻",
+      "description": "俯卧位时能抬头片刻",
+      "pass_criteria": "能抬头离开床面2秒以上",
+      "score": 1
+    },
+    {
+      "id": "motor_1_2", 
+      "category": "大运动",
+      "age_group": "1个月",
+      "item_name": "竖抱时头能竖直",
+      "description": "竖抱时头能竖直片刻",
+      "pass_criteria": "头能竖直3秒以上",
+      "score": 1
+    },
+    {
+      "id": "fine_1_1",
+      "category": "精细动作",
+      "age_group": "1个月", 
+      "item_name": "握拳",
+      "description": "能握拳",
+      "pass_criteria": "能握拳",
+      "score": 1
+    },
+    {
+      "id": "language_1_1",
+      "category": "语言",
+      "age_group": "1个月",
+      "item_name": "会哭",
+      "description": "会哭",
+      "pass_criteria": "会哭",
+      "score": 1
+    },
+    {
+      "id": "adaptive_1_1",
+      "category": "适应能力",
+      "age_group": "1个月",
+      "item_name": "注视人脸",
+      "description": "能注视人脸",
+      "pass_criteria": "能注视人脸3秒以上",
+      "score": 1
+    },
+    {
+      "id": "social_1_1",
+      "category": "社交行为",
+      "age_group": "1个月",
+      "item_name": "会笑",
+      "description": "会笑",
+      "pass_criteria": "会笑",
+      "score": 1
+    },
+    {
+      "id": "motor_3_1",
+      "category": "大运动",
+      "age_group": "3个月",
+      "item_name": "俯卧位抬头90度",
+      "description": "俯卧位时能抬头90度",
+      "pass_criteria": "能抬头90度并保持3秒以上",
+      "score": 1
+    },
+    {
+      "id": "motor_3_2",
+      "category": "大运动",
+      "age_group": "3个月",
+      "item_name": "翻身",
+      "description": "能从仰卧位翻到俯卧位",
+      "pass_criteria": "能完成翻身动作",
+      "score": 1
+    },
+    {
+      "id": "fine_3_1",
+      "category": "精细动作",
+      "age_group": "3个月",
+      "item_name": "抓握玩具",
+      "description": "能抓握玩具",
+      "pass_criteria": "能抓握玩具3秒以上",
+      "score": 1
+    },
+    {
+      "id": "language_3_1",
+      "category": "语言",
+      "age_group": "3个月",
+      "item_name": "咿呀发音",
+      "description": "能发出咿呀声",
+      "pass_criteria": "能发出咿呀声",
+      "score": 1
+    },
+    {
+      "id": "adaptive_3_1",
+      "category": "适应能力",
+      "age_group": "3个月",
+      "item_name": "追视移动物体",
+      "description": "能追视移动的物体",
+      "pass_criteria": "能追视移动物体180度",
+      "score": 1
+    },
+    {
+      "id": "social_3_1",
+      "category": "社交行为",
+      "age_group": "3个月",
+      "item_name": "认人",
+      "description": "能认出熟悉的人",
+      "pass_criteria": "对熟悉的人有反应",
+      "score": 1
+    }
+  ]
+} 
