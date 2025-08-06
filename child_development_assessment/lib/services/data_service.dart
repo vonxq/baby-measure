@@ -1,25 +1,32 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/services.dart';
 import '../models/assessment_data.dart';
 
 class DataService {
-  static const String _mockDataPath = 'mock_data/assessment_data.json';
-  
   // 加载评估数据
   Future<List<AssessmentData>> loadAssessmentData() async {
     try {
-      // 从mock数据文件加载
-      final file = File(_mockDataPath);
-      if (await file.exists()) {
-        final jsonString = await file.readAsString();
-        final List<dynamic> jsonList = json.decode(jsonString);
-        
-        return jsonList.map((json) => AssessmentData.fromJson(json)).toList();
-      } else {
-        throw Exception('Mock数据文件不存在: $_mockDataPath');
-      }
+      // 首先尝试从assets加载
+      final jsonString = await rootBundle.loadString('mock_data/assessment_data.json');
+      final List<dynamic> jsonList = json.decode(jsonString);
+      
+      return jsonList.map((json) => AssessmentData.fromJson(json)).toList();
     } catch (e) {
-      throw Exception('加载评估数据失败: $e');
+      // 如果从assets加载失败，尝试从文件系统加载
+      try {
+        final file = File('mock_data/assessment_data.json');
+        if (await file.exists()) {
+          final jsonString = await file.readAsString();
+          final List<dynamic> jsonList = json.decode(jsonString);
+          
+          return jsonList.map((json) => AssessmentData.fromJson(json)).toList();
+        } else {
+          throw Exception('Mock数据文件不存在');
+        }
+      } catch (fileError) {
+        throw Exception('加载评估数据失败: $e, 文件错误: $fileError');
+      }
     }
   }
 
