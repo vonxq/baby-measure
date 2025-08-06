@@ -1,0 +1,395 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/assessment_provider.dart';
+import 'result_page.dart';
+
+class TestPage extends StatefulWidget {
+  @override
+  _TestPageState createState() => _TestPageState();
+}
+
+class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
+  late AnimationController _progressController;
+  late AnimationController _cardController;
+  late Animation<double> _progressAnimation;
+  late Animation<double> _cardAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _progressController = AnimationController(
+      duration: Duration(milliseconds: 500),
+      vsync: this,
+    );
+    _cardController = AnimationController(
+      duration: Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _progressController, curve: Curves.easeInOut),
+    );
+    _cardAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _cardController, curve: Curves.easeInOut),
+    );
+    _cardController.forward();
+  }
+
+  @override
+  void dispose() {
+    _progressController.dispose();
+    _cardController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.blue[50]!, Colors.white],
+          ),
+        ),
+        child: SafeArea(
+          child: Consumer<AssessmentProvider>(
+            builder: (context, provider, child) {
+              if (provider.isLoading) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(color: Colors.blue[600]),
+                      SizedBox(height: 16),
+                      Text('正在准备测试...', style: TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                );
+              }
+
+              if (provider.currentItem == null) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.check_circle, size: 64, color: Colors.green),
+                      SizedBox(height: 16),
+                      Text('测试完成！', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () => Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) => ResultPage(),
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: Offset(1.0, 0.0),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
+                              );
+                            },
+                          ),
+                        ),
+                        icon: Icon(Icons.assessment),
+                        label: Text('查看结果'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[600],
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return Padding(
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // 顶部进度区域
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '测试进度',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[700],
+                                ),
+                              ),
+                              Text(
+                                '${provider.currentItemIndex + 1} / ${provider.currentTestItems.length}',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 16),
+                          AnimatedBuilder(
+                            animation: _progressAnimation,
+                            builder: (context, child) {
+                              return LinearProgressIndicator(
+                                value: provider.progress,
+                                backgroundColor: Colors.grey[300],
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
+                                minHeight: 8,
+                              );
+                            },
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            '${(provider.progress * 100).toStringAsFixed(0)}%',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 24),
+
+                    // 题目卡片
+                    Expanded(
+                      child: AnimatedBuilder(
+                        animation: _cardAnimation,
+                        builder: (context, child) {
+                          return Transform.scale(
+                            scale: _cardAnimation.value,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 10,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.all(24),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // 题目编号
+                                    Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue[100],
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        '第 ${provider.currentItemIndex + 1} 题',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue[700],
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 20),
+
+                                    // 题目名称
+                                    Text(
+                                      provider.currentItem!.name,
+                                      style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blue[800],
+                                      ),
+                                    ),
+                                    SizedBox(height: 20),
+
+                                    // 题目描述
+                                    _buildInfoSection('描述', provider.currentItem!.desc),
+                                    SizedBox(height: 16),
+
+                                    // 操作方法
+                                    _buildInfoSection('操作方法', provider.currentItem!.operation),
+                                    SizedBox(height: 16),
+
+                                    // 通过要求
+                                    Container(
+                                      padding: EdgeInsets.all(16),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue[50],
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(color: Colors.blue[200]!),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Icon(Icons.check_circle, color: Colors.blue[600], size: 20),
+                                              SizedBox(width: 8),
+                                              Text(
+                                                '通过要求',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.blue[700],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 8),
+                                          Text(
+                                            provider.currentItem!.passCondition,
+                                            style: TextStyle(color: Colors.blue[700]),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 24),
+
+                    // 操作按钮
+                    Row(
+                      children: [
+                        // 上一题按钮
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: provider.currentItemIndex > 0 ? () {
+                              _cardController.reset();
+                              provider.previousItem();
+                              _cardController.forward();
+                            } : null,
+                            icon: Icon(Icons.arrow_back),
+                            label: Text('上一题'),
+                            style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 16),
+                        // 通过按钮
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () => _handleAnswer(true, provider),
+                            icon: Icon(Icons.check),
+                            label: Text('通过'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green[600],
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 4,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 16),
+                        // 不通过按钮
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () => _handleAnswer(false, provider),
+                            icon: Icon(Icons.close),
+                            label: Text('不通过'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red[600],
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 4,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(String title, String content) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.grey[700],
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(
+          content,
+          style: TextStyle(fontSize: 15, height: 1.4),
+        ),
+      ],
+    );
+  }
+
+  void _handleAnswer(bool passed, AssessmentProvider provider) {
+    provider.recordResult(provider.currentItem!.id, passed);
+    
+    if (provider.currentItemIndex < provider.currentTestItems.length - 1) {
+      _cardController.reset();
+      provider.nextItem();
+      _cardController.forward();
+    } else {
+      // 测试完成，跳转到结果页面
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => ResultPage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: Offset(1.0, 0.0),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            );
+          },
+        ),
+      );
+    }
+  }
+} 

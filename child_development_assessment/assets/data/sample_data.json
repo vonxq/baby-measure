@@ -1,0 +1,79 @@
+[
+  {
+    "ageMonth": 12,
+    "area": "motor",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 1,
+        "name": "独走几步",
+        "desc": "宝宝能独立行走几步",
+        "operation": "让宝宝站在平坦地面上，观察是否能独立行走",
+        "passCondition": "能独立行走3步以上"
+      },
+      {
+        "id": 2,
+        "name": "扶物蹲下",
+        "desc": "宝宝能扶着物体蹲下",
+        "operation": "让宝宝扶着桌子或椅子，观察是否能蹲下",
+        "passCondition": "能扶着物体蹲下并保持平衡"
+      }
+    ]
+  },
+  {
+    "ageMonth": 12,
+    "area": "fineMotor",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 3,
+        "name": "用拇指和食指捏小丸",
+        "desc": "宝宝能用拇指和食指捏起小丸",
+        "operation": "给宝宝小丸，观察捏取方式",
+        "passCondition": "能用拇指和食指捏起小丸"
+      }
+    ]
+  },
+  {
+    "ageMonth": 12,
+    "area": "language",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 4,
+        "name": "说2-3个字",
+        "desc": "宝宝能说出2-3个字的词",
+        "operation": "观察宝宝的语言表达",
+        "passCondition": "能说出2-3个字的词"
+      }
+    ]
+  },
+  {
+    "ageMonth": 12,
+    "area": "adaptive",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 5,
+        "name": "模仿动作",
+        "desc": "宝宝能模仿简单动作",
+        "operation": "做简单动作让宝宝模仿",
+        "passCondition": "能模仿简单动作"
+      }
+    ]
+  },
+  {
+    "ageMonth": 12,
+    "area": "social",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 6,
+        "name": "对镜中影像感兴趣",
+        "desc": "宝宝对镜中的自己感兴趣",
+        "operation": "让宝宝照镜子，观察反应",
+        "passCondition": "对镜中影像表现出兴趣"
+      }
+    ]
+  }
+] 

@@ -1,0 +1,289 @@
+[
+  {
+    "ageMonth": 1,
+    "area": "motor",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 101,
+        "name": "俯卧抬头",
+        "desc": "宝宝俯卧时能抬头",
+        "operation": "让宝宝俯卧，用玩具逗引抬头",
+        "passCondition": "能抬头离开床面"
+      }
+    ]
+  },
+  {
+    "ageMonth": 1,
+    "area": "fineMotor",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 102,
+        "name": "握拳",
+        "desc": "宝宝能握拳",
+        "operation": "观察宝宝的手部动作",
+        "passCondition": "能握拳"
+      }
+    ]
+  },
+  {
+    "ageMonth": 1,
+    "area": "language",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 103,
+        "name": "发出声音",
+        "desc": "宝宝能发出声音",
+        "operation": "观察宝宝的声音",
+        "passCondition": "能发出声音"
+      }
+    ]
+  },
+  {
+    "ageMonth": 1,
+    "area": "adaptive",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 104,
+        "name": "注视人脸",
+        "desc": "宝宝能注视人脸",
+        "operation": "让宝宝注视人脸",
+        "passCondition": "能注视人脸"
+      }
+    ]
+  },
+  {
+    "ageMonth": 1,
+    "area": "social",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 105,
+        "name": "微笑",
+        "desc": "宝宝能微笑",
+        "operation": "逗引宝宝微笑",
+        "passCondition": "能微笑"
+      }
+    ]
+  },
+  {
+    "ageMonth": 3,
+    "area": "motor",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 301,
+        "name": "抬头90度",
+        "desc": "宝宝俯卧时能抬头90度",
+        "operation": "让宝宝俯卧，观察抬头角度",
+        "passCondition": "能抬头90度"
+      }
+    ]
+  },
+  {
+    "ageMonth": 3,
+    "area": "fineMotor",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 302,
+        "name": "抓握玩具",
+        "desc": "宝宝能抓握玩具",
+        "operation": "给宝宝玩具，观察抓握",
+        "passCondition": "能抓握玩具"
+      }
+    ]
+  },
+  {
+    "ageMonth": 3,
+    "area": "language",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 303,
+        "name": "发出笑声",
+        "desc": "宝宝能发出笑声",
+        "operation": "逗引宝宝发笑",
+        "passCondition": "能发出笑声"
+      }
+    ]
+  },
+  {
+    "ageMonth": 3,
+    "area": "adaptive",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 304,
+        "name": "寻找声源",
+        "desc": "宝宝能寻找声源",
+        "operation": "在宝宝侧面发出声音",
+        "passCondition": "能转头寻找声源"
+      }
+    ]
+  },
+  {
+    "ageMonth": 3,
+    "area": "social",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 305,
+        "name": "认人",
+        "desc": "宝宝能认出熟悉的人",
+        "operation": "观察宝宝对熟悉人的反应",
+        "passCondition": "能认出熟悉的人"
+      }
+    ]
+  },
+  {
+    "ageMonth": 6,
+    "area": "motor",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 601,
+        "name": "翻身",
+        "desc": "宝宝能从仰卧翻身到俯卧",
+        "operation": "让宝宝仰卧，观察翻身",
+        "passCondition": "能从仰卧翻身到俯卧"
+      }
+    ]
+  },
+  {
+    "ageMonth": 6,
+    "area": "fineMotor",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 602,
+        "name": "传递玩具",
+        "desc": "宝宝能将玩具从一只手传递到另一只手",
+        "operation": "给宝宝玩具，观察传递",
+        "passCondition": "能将玩具从一只手传递到另一只手"
+      }
+    ]
+  },
+  {
+    "ageMonth": 6,
+    "area": "language",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 603,
+        "name": "发出单音",
+        "desc": "宝宝能发出单音",
+        "operation": "观察宝宝的声音",
+        "passCondition": "能发出单音"
+      }
+    ]
+  },
+  {
+    "ageMonth": 6,
+    "area": "adaptive",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 604,
+        "name": "伸手够物",
+        "desc": "宝宝能伸手够取物品",
+        "operation": "在宝宝面前放置玩具",
+        "passCondition": "能伸手够取物品"
+      }
+    ]
+  },
+  {
+    "ageMonth": 6,
+    "area": "social",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 605,
+        "name": "对镜中影像反应",
+        "desc": "宝宝对镜中的自己感兴趣",
+        "operation": "让宝宝照镜子",
+        "passCondition": "对镜中影像表现出兴趣"
+      }
+    ]
+  },
+  {
+    "ageMonth": 12,
+    "area": "motor",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 1201,
+        "name": "独走几步",
+        "desc": "宝宝能独立行走几步",
+        "operation": "让宝宝站在平坦地面上，观察是否能独立行走",
+        "passCondition": "能独立行走3步以上"
+      },
+      {
+        "id": 1202,
+        "name": "扶物蹲下",
+        "desc": "宝宝能扶着物体蹲下",
+        "operation": "让宝宝扶着桌子或椅子，观察是否能蹲下",
+        "passCondition": "能扶着物体蹲下并保持平衡"
+      }
+    ]
+  },
+  {
+    "ageMonth": 12,
+    "area": "fineMotor",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 1203,
+        "name": "用拇指和食指捏小丸",
+        "desc": "宝宝能用拇指和食指捏起小丸",
+        "operation": "给宝宝小丸，观察捏取方式",
+        "passCondition": "能用拇指和食指捏起小丸"
+      }
+    ]
+  },
+  {
+    "ageMonth": 12,
+    "area": "language",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 1204,
+        "name": "说2-3个字",
+        "desc": "宝宝能说出2-3个字的词",
+        "operation": "观察宝宝的语言表达",
+        "passCondition": "能说出2-3个字的词"
+      }
+    ]
+  },
+  {
+    "ageMonth": 12,
+    "area": "adaptive",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 1205,
+        "name": "模仿动作",
+        "desc": "宝宝能模仿简单动作",
+        "operation": "做简单动作让宝宝模仿",
+        "passCondition": "能模仿简单动作"
+      }
+    ]
+  },
+  {
+    "ageMonth": 12,
+    "area": "social",
+    "score": 1.0,
+    "testItems": [
+      {
+        "id": 1206,
+        "name": "对镜中影像感兴趣",
+        "desc": "宝宝对镜中的自己感兴趣",
+        "operation": "让宝宝照镜子，观察反应",
+        "passCondition": "对镜中影像表现出兴趣"
+      }
+    ]
+  }
+] 
