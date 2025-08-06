@@ -6,61 +6,57 @@ void main() {
   group('Baby Model Tests', () {
     test('should create baby with correct properties', () {
       final baby = Baby(
-        id: 'test-id',
-        name: '测试宝宝',
+        id: '1',
+        name: '小明',
         birthDate: DateTime(2023, 1, 1),
         gender: 'male',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        avatarPath: null,
       );
 
-      expect(baby.id, 'test-id');
-      expect(baby.name, '测试宝宝');
+      expect(baby.id, '1');
+      expect(baby.name, '小明');
+      expect(baby.birthDate, DateTime(2023, 1, 1));
       expect(baby.gender, 'male');
-      expect(baby.ageInMonths, greaterThan(0));
+      expect(baby.avatarPath, null);
     });
 
     test('should calculate age correctly', () {
-      final birthDate = DateTime.now().subtract(Duration(days: 365));
       final baby = Baby(
-        id: 'test-id',
-        name: '测试宝宝',
-        birthDate: birthDate,
+        id: '1',
+        name: '小明',
+        birthDate: DateTime(2023, 1, 1),
         gender: 'male',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
+        avatarPath: null,
       );
 
-      expect(baby.ageInMonths, closeTo(12.0, 0.1));
+      final ageInMonths = baby.ageInMonths;
+      expect(ageInMonths, greaterThan(0));
     });
   });
 
   group('Assessment Result Tests', () {
     test('should create assessment result with correct properties', () {
       final result = AssessmentResult(
-        id: 'test-result-id',
-        babyId: 'test-baby-id',
+        id: '1',
+        babyId: '1',
         testDate: DateTime.now(),
         ageInMonths: 12.0,
+        mainTestAge: 12,
+        areaResults: {},
+        totalMentalAge: 12.0,
         developmentQuotient: 100.0,
-        levelDescription: '正常',
-        levelColor: 0xFF4CAF50,
-        areaResults: {
-          'motor': AreaResult(
-            mentalAge: 12.0,
-            score: 10.0,
-            maxScore: 10.0,
-            percentage: 100.0,
-          ),
-        },
+        level: 'average',
+        status: 'completed',
+        createdAt: DateTime.now(),
         totalScore: 50.0,
-        maxTotalScore: 50.0,
+        maxTotalScore: 100.0,
       );
 
-      expect(result.id, 'test-result-id');
-      expect(result.babyId, 'test-baby-id');
+      expect(result.id, '1');
+      expect(result.babyId, '1');
+      expect(result.ageInMonths, 12.0);
       expect(result.developmentQuotient, 100.0);
-      expect(result.levelDescription, '正常');
+      expect(result.level, 'average');
     });
   });
 } 

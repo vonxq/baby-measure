@@ -298,8 +298,6 @@ ${baby.name}的发育评估结果
                     );
                   },
                   borderData: FlBorderData(show: true),
-                  gridBorderData: FlBorderData(show: true),
-                  radarBorderData: FlBorderData(show: true),
                 ),
               ),
             ),
