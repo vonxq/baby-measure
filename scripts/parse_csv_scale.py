@@ -83,24 +83,18 @@ class CSVScaleParser:
         """提取测试项目"""
         print("提取测试项目...")
         
-        current_area = None
-        item_id_counter = 1
-        
         for index, row in df.iterrows():
             project_col = str(row.iloc[0]) if pd.notna(row.iloc[0]) else ""
             
             # 检查是否是区域标题
             if self._is_area_title(project_col):
-                current_area = self._get_area_key(project_col)
-                print(f"发现区域: {project_col} -> {current_area}")
-                continue
-            
-            # 检查是否是项目行
-            if current_area and self._is_item_row(project_col):
-                # 提取该行的所有测试项目
-                items_in_row = self._extract_items_from_row(row, current_area, item_id_counter)
-                self.parsed_data['test_items'].extend(items_in_row)
-                item_id_counter += len(items_in_row)
+                area = self._get_area_key(project_col)
+                print(f"发现区域: {project_col} -> {area}")
+                
+                # 提取该区域的所有测试项目
+                items = self._extract_items_from_area_row(row, area)
+                self.parsed_data['test_items'].extend(items)
+                print(f"  提取了 {len(items)} 个测试项目")
     
     def _is_area_title(self, text: str) -> bool:
         """判断是否是区域标题"""
@@ -118,23 +112,18 @@ class CSVScaleParser:
         }
         return area_mapping.get(area_title.strip(), 'unknown')
     
-    def _is_item_row(self, text: str) -> bool:
-        """判断是否是项目行"""
-        # 检查是否包含测试项目编号（如 □1, □11 等）
-        return bool(re.search(r'□\d+', text))
-    
-    def _extract_items_from_row(self, row: pd.Series, area: str, start_id: int) -> List[Dict]:
-        """从行中提取测试项目"""
+    def _extract_items_from_area_row(self, row: pd.Series, area: str) -> List[Dict]:
+        """从区域行中提取测试项目"""
         items = []
         
-        # 获取项目描述（第一列）
-        project_desc = str(row.iloc[0]) if pd.notna(row.iloc[0]) else ""
-        
-        # 遍历其他列（年龄组）
+        # 遍历所有列（除了第一列项目）
         for col_idx in range(1, len(row)):
             cell_value = str(row.iloc[col_idx]) if pd.notna(row.iloc[col_idx]) else ""
             
-            # 查找测试项目编号
+            if not cell_value.strip():
+                continue
+                
+            # 查找测试项目编号和描述
             item_matches = re.findall(r'□(\d+)\s*([^□]*)', cell_value)
             
             for match in item_matches:
@@ -159,8 +148,14 @@ class CSVScaleParser:
     
     def _get_age_group_for_column(self, col_idx: int) -> Optional[Dict]:
         """根据列索引获取年龄组信息"""
-        if col_idx < len(self.parsed_data['age_groups']):
-            return self.parsed_data['age_groups'][col_idx - 1]  # -1 因为第一列是项目描述
+        # 获取列名
+        columns = ['项目', '1 月龄', '2 月龄', '3 月龄', 'Unnamed: 4', '4 月龄', '5 月龄']
+        
+        if col_idx < len(columns):
+            col_name = columns[col_idx]
+            if col_name != '项目' and col_name != 'Unnamed: 4':
+                return self._parse_age_group(col_name)
+        
         return None
     
     def save_to_json(self, output_path: str):
