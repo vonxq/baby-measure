@@ -368,7 +368,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
     );
   }
 
-  void _handleAnswer(bool passed, AssessmentProvider provider) {
+  void _handleAnswer(bool passed, AssessmentProvider provider) async {
     provider.recordResult(provider.currentItem!.id, passed);
     
     if (provider.currentItemIndex < provider.currentTestItems.length - 1) {
@@ -376,22 +376,34 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
       provider.nextItem();
       _cardController.forward();
     } else {
-      // 测试完成，跳转到结果页面
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const ResultPage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            );
-          },
-        ),
-      );
+      // 测试完成，计算结果
+      try {
+        await provider.completeTest();
+        // 跳转到结果页面
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => const ResultPage(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(1.0, 0.0),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              );
+            },
+          ),
+        );
+      } catch (e) {
+        // 显示错误信息
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('计算结果失败: $e'),
+            backgroundColor: Colors.red[600],
+          ),
+        );
+      }
     }
   }
 } 

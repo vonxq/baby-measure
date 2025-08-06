@@ -335,7 +335,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     final navigator = Navigator.of(context);
-    context.read<AssessmentProvider>().startTest(_selectedAge).then((_) {
+    context.read<AssessmentProvider>().startTest(_nameController.text.trim(), _selectedAge).then((_) {
       navigator.push(
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => const TestPage(),

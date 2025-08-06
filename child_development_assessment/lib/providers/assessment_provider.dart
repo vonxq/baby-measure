@@ -16,6 +16,8 @@ class AssessmentProvider with ChangeNotifier {
   bool _isLoading = false;
   String _error = '';
   TestResult? _finalResult;
+  String _userName = '';
+  double _actualAge = 0.0;
 
   // Getters
   List<AssessmentData> get allData => _allData;
@@ -44,9 +46,11 @@ class AssessmentProvider with ChangeNotifier {
   }
 
   // 开始测试
-  Future<void> startTest(double actualAge) async {
+  Future<void> startTest(String userName, double actualAge) async {
     _setLoading(true);
     try {
+      _userName = userName;
+      _actualAge = actualAge;
       _currentTestItems = _assessmentService.getTestItems(_allData, actualAge);
       _testResults.clear();
       _currentItemIndex = 0;
@@ -82,7 +86,7 @@ class AssessmentProvider with ChangeNotifier {
   }
 
   // 完成测试
-  Future<void> completeTest(String userName, double actualAge) async {
+  Future<void> completeTest() async {
     _setLoading(true);
     try {
       // 计算各能区结果
@@ -91,7 +95,7 @@ class AssessmentProvider with ChangeNotifier {
       
       for (String area in areas) {
         final mentalAge = _assessmentService.calculateMentalAge(area, _currentTestItems, _testResults);
-        final developmentQuotient = _assessmentService.calculateDevelopmentQuotient(mentalAge, actualAge);
+        final developmentQuotient = _assessmentService.calculateDevelopmentQuotient(mentalAge, _actualAge);
         
         areaResults.add(AreaResult(
           area: _assessmentService.getAreaName(area),
@@ -104,13 +108,13 @@ class AssessmentProvider with ChangeNotifier {
       final totalMentalAge = _assessmentService.calculateTotalMentalAge(
         Map.fromEntries(areaResults.map((r) => MapEntry(r.area, r.mentalAge)))
       );
-      final totalDevelopmentQuotient = _assessmentService.calculateDevelopmentQuotient(totalMentalAge, actualAge);
+      final totalDevelopmentQuotient = _assessmentService.calculateDevelopmentQuotient(totalMentalAge, _actualAge);
 
       _finalResult = TestResult(
-        userName: userName,
+        userName: _userName,
         date: DateTime.now().toIso8601String(),
-        birthDate: DateTime.now().subtract(Duration(days: (actualAge * 30).round())).toIso8601String(),
-        month: actualAge,
+        birthDate: DateTime.now().subtract(Duration(days: (_actualAge * 30).round())).toIso8601String(),
+        month: _actualAge,
         testResults: areaResults,
         allResult: AreaResult(
           area: '总体',
