@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import '../models/assessment_item.dart';
+import '../providers/assessment_provider.dart';
 
 class TestProgressIndicator extends StatelessWidget {
   final int currentIndex;
   final int totalItems;
   final AssessmentItem? currentItem;
   final Map<String, int> areaProgress;
+  final TestStage? currentStage;
 
   const TestProgressIndicator({
     super.key,
@@ -13,6 +15,7 @@ class TestProgressIndicator extends StatelessWidget {
     required this.totalItems,
     this.currentItem,
     required this.areaProgress,
+    this.currentStage,
   });
 
   @override
@@ -97,9 +100,9 @@ class TestProgressIndicator extends StatelessWidget {
             const SizedBox(height: 12),
           ],
           
-          // 各能区进度
+          // 各能区项目数量
           Text(
-            '各能区进度',
+            '本阶段各能区项目',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -108,24 +111,32 @@ class TestProgressIndicator extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           
-          // 能区进度条
-          ...areaProgress.entries.map((entry) => _buildAreaProgress(entry.key, entry.value)),
+          // 能区项目数量
+          ...areaProgress.entries.map((entry) => _buildAreaItemCount(entry.key, entry.value)),
         ],
       ),
     );
   }
 
-  Widget _buildAreaProgress(String area, int count) {
+  Widget _buildAreaItemCount(String area, int count) {
+    if (count == 0) return const SizedBox.shrink();
+    
     Color areaColor = _getAreaColor(area);
     String areaName = _getAreaName(area);
     
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: areaColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: areaColor.withValues(alpha: 0.3)),
+      ),
       child: Row(
         children: [
           Container(
-            width: 12,
-            height: 12,
+            width: 8,
+            height: 8,
             decoration: BoxDecoration(
               color: areaColor,
               shape: BoxShape.circle,
@@ -136,17 +147,25 @@ class TestProgressIndicator extends StatelessWidget {
             child: Text(
               areaName,
               style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[700],
               ),
             ),
           ),
-          Text(
-            '$count 项',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
               color: areaColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              '$count题',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
@@ -206,4 +225,5 @@ class TestProgressIndicator extends StatelessWidget {
       return 'social';
     }
   }
+} 
 } 

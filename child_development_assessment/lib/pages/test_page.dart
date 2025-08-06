@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/assessment_provider.dart';
+import '../widgets/test_progress_indicator.dart';
 import 'result_page.dart';
+import 'stage_transition_page.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({super.key});
@@ -60,7 +62,8 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                 );
               }
 
-              if (provider.currentItem == null) {
+              // 检查是否需要显示过渡页
+              if (provider.currentStage == TestStage.completed) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -96,6 +99,11 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                     ],
                   ),
                 );
+              }
+
+              if (provider.currentItem == null) {
+                // 当前阶段完成，显示过渡页
+                return const StageTransitionPage();
               }
 
               return Column(
@@ -147,7 +155,16 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // 简化的进度指示器
+                          // 动态测评进度指示器
+                          TestProgressIndicator(
+                            currentIndex: provider.currentStageItemIndex + 1,
+                            totalItems: provider.currentStageItems.length,
+                            currentItem: provider.currentItem,
+                            areaProgress: provider.areaItemCounts,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // 当前阶段信息
                           Container(
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
@@ -161,40 +178,30 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                                 ),
                               ],
                             ),
-                            child: Row(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.assessment, color: Colors.blue[600], size: 20),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '测试进度',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.blue[700],
-                                        ),
+                                Row(
+                                  children: [
+                                    Icon(_getStageIcon(provider.currentStage), 
+                                         color: _getStageColor(provider.currentStage), 
+                                         size: 20),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      provider.getCurrentStageName(),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: _getStageColor(provider.currentStage),
                                       ),
-                                      const SizedBox(height: 4),
-                                      LinearProgressIndicator(
-                                        value: provider.currentTestItems.isNotEmpty 
-                                          ? (provider.currentItemIndex + 1) / provider.currentTestItems.length 
-                                          : 0,
-                                        backgroundColor: Colors.grey[200],
-                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
-                                        minHeight: 4,
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 12),
+                                const SizedBox(height: 8),
                                 Text(
-                                  '${provider.currentItemIndex + 1}/${provider.currentTestItems.length}',
+                                  provider.getCurrentStageDescription(),
                                   style: TextStyle(
                                     fontSize: 14,
-                                    fontWeight: FontWeight.bold,
                                     color: Colors.grey[600],
                                   ),
                                 ),
@@ -295,7 +302,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                               // 上一题按钮
                               Expanded(
                                 child: OutlinedButton.icon(
-                                  onPressed: provider.currentItemIndex > 0 ? () {
+                                  onPressed: provider.currentStageItemIndex > 0 ? () {
                                     _cardController.reset();
                                     provider.previousItem();
                                     _cardController.forward();
@@ -385,42 +392,51 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
   void _handleAnswer(bool passed, AssessmentProvider provider) async {
     provider.recordResult(provider.currentItem!.id, passed);
     
-    if (provider.currentItemIndex < provider.currentTestItems.length - 1) {
+    if (provider.currentStageItemIndex < provider.currentStageItems.length - 1) {
       _cardController.reset();
       provider.nextItem();
       _cardController.forward();
     } else {
-      // 测试完成，计算结果
-      try {
-        await provider.completeTest();
-        // 跳转到结果页面
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => const ResultPage(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(1.0, 0.0),
-                    end: Offset.zero,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
-            ),
-          );
+      // 当前阶段完成，检查是否需要进入下一阶段
+      _cardController.reset();
+      provider.nextItem(); // 这会触发阶段切换
+      
+      // 如果阶段已经切换到完成状态，直接跳转到结果页面
+      if (provider.currentStage == TestStage.completed) {
+        try {
+          await provider.completeTest();
+          // 跳转到结果页面
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => const ResultPage(),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(1.0, 0.0),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
+                  );
+                },
+              ),
+            );
+          }
+        } catch (e) {
+          // 显示错误信息
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('计算结果失败: $e'),
+                backgroundColor: Colors.red[600],
+              ),
+            );
+          }
         }
-      } catch (e) {
-        // 显示错误信息
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('计算结果失败: $e'),
-              backgroundColor: Colors.red[600],
-            ),
-          );
-        }
+      } else {
+        // 如果切换到新阶段，显示过渡页
+        _cardController.forward();
       }
     }
   }
@@ -450,5 +466,31 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
         );
       },
     );
+  }
+
+  IconData _getStageIcon(TestStage stage) {
+    switch (stage) {
+      case TestStage.current:
+        return Icons.assessment;
+      case TestStage.forward:
+        return Icons.arrow_back;
+      case TestStage.backward:
+        return Icons.arrow_forward;
+      case TestStage.completed:
+        return Icons.check_circle;
+    }
+  }
+
+  Color _getStageColor(TestStage stage) {
+    switch (stage) {
+      case TestStage.current:
+        return Colors.blue[600]!;
+      case TestStage.forward:
+        return Colors.orange[600]!;
+      case TestStage.backward:
+        return Colors.purple[600]!;
+      case TestStage.completed:
+        return Colors.green[600]!;
+    }
   }
 } 

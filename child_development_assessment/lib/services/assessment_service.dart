@@ -22,94 +22,246 @@ class AssessmentService {
     return mainTestAge;
   }
 
-  // 获取测试项目 - 按照标准测查程序
-  List<AssessmentItem> getTestItems(List<AssessmentData> allData, double actualAge) {
+  // 获取当前月龄的测试项目
+  List<AssessmentItem> getCurrentAgeItems(List<AssessmentData> allData, int mainTestAge) {
+    var items = allData.where((data) => data.ageMonth == mainTestAge).expand((data) => data.testItems).toList();
+    return items;
+  }
+
+  // 获取向前测查项目（低月龄）
+  List<AssessmentItem> getForwardItems(List<AssessmentData> allData, int mainTestAge, Map<int, bool> currentResults) {
+    List<AssessmentItem> forwardItems = [];
+    
+    // 检查当前月龄的测试结果
+    var currentAgeItems = getCurrentAgeItems(allData, mainTestAge);
+    var currentAgeResults = <String, List<bool>>{};
+    
+    // 按能区分组当前月龄的结果
+    for (var item in currentAgeItems) {
+      String area = _getAreaFromId(item.id);
+      if (!currentAgeResults.containsKey(area)) {
+        currentAgeResults[area] = [];
+      }
+      if (currentResults.containsKey(item.id)) {
+        currentAgeResults[area]!.add(currentResults[item.id]!);
+      }
+    }
+    
+    // 检查每个能区是否需要向前测查
+    for (String area in currentAgeResults.keys) {
+      if (_shouldForwardTestForArea(allData, mainTestAge, area, currentResults)) {
+        var areaForwardItems = _getForwardItemsForArea(allData, mainTestAge, area, currentResults);
+        forwardItems.addAll(areaForwardItems);
+      }
+    }
+    
+    return forwardItems;
+  }
+
+  // 检查特定能区是否需要向前测查
+  bool _shouldForwardTestForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
+    // 获取当前月龄该能区的项目
+    var currentAreaItems = getCurrentAgeItems(allData, mainTestAge)
+        .where((item) => _getAreaFromId(item.id) == area)
+        .toList();
+    
+    // 检查当前月龄该能区的测试结果
+    bool hasAllResults = currentAreaItems.every((item) => currentResults.containsKey(item.id));
+    if (!hasAllResults) return false;
+    
+    // 如果当前月龄该能区全部通过，需要向前测查
+    bool allPassed = currentAreaItems.every((item) => currentResults[item.id] == true);
+    return allPassed;
+  }
+
+  // 获取特定能区的向前测查项目
+  List<AssessmentItem> _getForwardItemsForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
+    List<AssessmentItem> forwardItems = [];
+    
+    // 从主测月龄向前查找，直到找到连续两个月龄都通过的项目
+    for (int age = mainTestAge - 1; age >= 1; age--) {
+      var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
+      var areaItems = ageItems.where((item) => _getAreaFromId(item.id) == area).toList();
+      
+      if (areaItems.isEmpty) continue;
+      
+      // 检查该月龄该能区的项目是否已经测试过
+      bool hasTestedItems = areaItems.any((item) => currentResults.containsKey(item.id));
+      
+      if (!hasTestedItems) {
+        forwardItems.addAll(areaItems);
+      } else {
+        // 如果已经测试过，检查是否全部通过
+        bool allPassed = areaItems.every((item) => currentResults[item.id] == true);
+        if (allPassed) {
+          // 继续向前查找
+          continue;
+        } else {
+          // 遇到不通过的项目就停止
+          break;
+        }
+      }
+    }
+    
+    return forwardItems;
+  }
+
+  // 获取向后测查项目（高月龄）
+  List<AssessmentItem> getBackwardItems(List<AssessmentData> allData, int mainTestAge, Map<int, bool> currentResults) {
+    List<AssessmentItem> backwardItems = [];
+    
+    // 检查当前月龄的测试结果
+    var currentAgeItems = getCurrentAgeItems(allData, mainTestAge);
+    var currentAgeResults = <String, List<bool>>{};
+    
+    // 按能区分组当前月龄的结果
+    for (var item in currentAgeItems) {
+      String area = _getAreaFromId(item.id);
+      if (!currentAgeResults.containsKey(area)) {
+        currentAgeResults[area] = [];
+      }
+      if (currentResults.containsKey(item.id)) {
+        currentAgeResults[area]!.add(currentResults[item.id]!);
+      }
+    }
+    
+    // 检查每个能区是否需要向后测查
+    for (String area in currentAgeResults.keys) {
+      if (_shouldBackwardTestForArea(allData, mainTestAge, area, currentResults)) {
+        var areaBackwardItems = _getBackwardItemsForArea(allData, mainTestAge, area, currentResults);
+        backwardItems.addAll(areaBackwardItems);
+      }
+    }
+    
+    return backwardItems;
+  }
+
+  // 检查特定能区是否需要向后测查
+  bool _shouldBackwardTestForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
+    // 获取当前月龄该能区的项目
+    var currentAreaItems = getCurrentAgeItems(allData, mainTestAge)
+        .where((item) => _getAreaFromId(item.id) == area)
+        .toList();
+    
+    // 检查当前月龄该能区的测试结果
+    bool hasAllResults = currentAreaItems.every((item) => currentResults.containsKey(item.id));
+    if (!hasAllResults) return false;
+    
+    // 如果当前月龄该能区全部不通过，需要向后测查
+    bool allFailed = currentAreaItems.every((item) => currentResults[item.id] == false);
+    return allFailed;
+  }
+
+  // 获取特定能区的向后测查项目
+  List<AssessmentItem> _getBackwardItemsForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
+    List<AssessmentItem> backwardItems = [];
+    
+    // 从主测月龄向后查找，直到找到连续两个月龄都不通过的项目
+    for (int age = mainTestAge + 1; age <= 84; age++) {
+      var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
+      var areaItems = ageItems.where((item) => _getAreaFromId(item.id) == area).toList();
+      
+      if (areaItems.isEmpty) continue;
+      
+      // 检查该月龄该能区的项目是否已经测试过
+      bool hasTestedItems = areaItems.any((item) => currentResults.containsKey(item.id));
+      
+      if (!hasTestedItems) {
+        backwardItems.addAll(areaItems);
+      } else {
+        // 如果已经测试过，检查是否全部不通过
+        bool allFailed = areaItems.every((item) => currentResults[item.id] == false);
+        if (allFailed) {
+          // 继续向后查找
+          continue;
+        } else {
+          // 遇到通过的项目就停止
+          break;
+        }
+      }
+    }
+    
+    return backwardItems;
+  }
+
+  // 获取测试项目 - 动态测查程序
+  List<AssessmentItem> getTestItems(List<AssessmentData> allData, double actualAge, Map<int, bool> currentResults) {
     int mainTestAge = determineMainTestAge(actualAge);
     List<AssessmentItem> allItems = [];
     
-    // 按照标准测查程序：主测月龄±2个月龄的基础范围
-    // 注意：实际测试中应该根据通过情况动态调整，但为了简化实现，我们先提供足够的测试项目
-    for (int age in [mainTestAge - 2, mainTestAge - 1, mainTestAge, mainTestAge + 1, mainTestAge + 2]) {
-      if (age > 0) {
-        var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
-        allItems.addAll(items);
-      }
-    }
+    // 1. 先测试当前月龄的项目
+    var currentItems = getCurrentAgeItems(allData, mainTestAge);
+    allItems.addAll(currentItems);
     
-    // 为每个能区添加更多月龄的项目，确保有足够的测试范围
-    // 这样可以支持动态测查逻辑（虽然当前UI是静态的）
-    Map<String, List<AssessmentItem>> areaItems = {};
-    for (var item in allItems) {
-      String area = _getAreaFromId(item.id);
-      if (!areaItems.containsKey(area)) {
-        areaItems[area] = [];
-      }
-      areaItems[area]!.add(item);
-    }
+    // 2. 根据当前结果决定是否需要向前测查
+    var forwardItems = getForwardItems(allData, mainTestAge, currentResults);
+    allItems.addAll(forwardItems);
     
-    // 为每个能区添加更多月龄的项目，支持向前和向后测查
-    for (String area in areaItems.keys) {
-      var existingItems = areaItems[area]!;
-      var existingAges = existingItems.map((item) => (item.id / 100).floor()).toSet();
-      
-      // 向前扩展更多月龄（支持向前测查）
-      for (int age in [mainTestAge - 3, mainTestAge - 4, mainTestAge - 5, mainTestAge - 6]) {
-        if (age > 0 && !existingAges.contains(age)) {
-          var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
-          var areaSpecificItems = items.where((item) => _getAreaFromId(item.id) == area).toList();
-          allItems.addAll(areaSpecificItems);
-        }
-      }
-      
-      // 向后扩展更多月龄（支持向后测查）
-      for (int age in [mainTestAge + 3, mainTestAge + 4, mainTestAge + 5, mainTestAge + 6]) {
-        if (age <= 84 && !existingAges.contains(age)) {
-          var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
-          var areaSpecificItems = items.where((item) => _getAreaFromId(item.id) == area).toList();
-          allItems.addAll(areaSpecificItems);
-        }
-      }
-    }
+    // 3. 根据当前结果决定是否需要向后测查
+    var backwardItems = getBackwardItems(allData, mainTestAge, currentResults);
+    allItems.addAll(backwardItems);
     
     return allItems;
   }
 
-  // 动态测查逻辑（供未来实现使用）
-  List<AssessmentItem> getDynamicTestItems(List<AssessmentData> allData, double actualAge, Map<int, bool> currentResults) {
-    int mainTestAge = determineMainTestAge(actualAge);
-    List<AssessmentItem> dynamicItems = [];
+  // 检查是否需要继续向前测查
+  bool shouldContinueForward(String area, int mainTestAge, Map<int, bool> currentResults, List<AssessmentData> allData) {
+    int consecutivePasses = 0;
     
-    // 按能区分别处理
-    List<String> areas = ['motor', 'fineMotor', 'language', 'adaptive', 'social'];
-    
-    for (String area in areas) {
-      var areaItems = _getAreaItemsForAge(allData, mainTestAge, area);
+    // 检查主测月龄及之前的连续通过情况
+    for (int age = mainTestAge; age >= 1; age--) {
+      var areaItems = allData
+          .where((data) => data.ageMonth == age)
+          .expand((data) => data.testItems)
+          .where((item) => _getAreaFromId(item.id) == area)
+          .toList();
       
-      // 根据当前结果动态决定是否需要更多测试项目
-      var additionalItems = _getAdditionalItemsForArea(allData, mainTestAge, area, currentResults);
-      areaItems.addAll(additionalItems);
+      if (areaItems.isEmpty) continue;
       
-      dynamicItems.addAll(areaItems);
+      bool allPassed = areaItems.every((item) => currentResults[item.id] == true);
+      
+      if (allPassed) {
+        consecutivePasses++;
+      } else {
+        break;
+      }
     }
     
-    return dynamicItems;
+    // 如果连续两个月龄都通过，则不需要继续向前测查
+    return consecutivePasses < 2;
+  }
+
+  // 检查是否需要继续向后测查
+  bool shouldContinueBackward(String area, int mainTestAge, Map<int, bool> currentResults, List<AssessmentData> allData) {
+    int consecutiveFails = 0;
+    
+    // 检查主测月龄及之后的连续不通过情况
+    for (int age = mainTestAge; age <= 84; age++) {
+      var areaItems = allData
+          .where((data) => data.ageMonth == age)
+          .expand((data) => data.testItems)
+          .where((item) => _getAreaFromId(item.id) == area)
+          .toList();
+      
+      if (areaItems.isEmpty) continue;
+      
+      bool allFailed = areaItems.every((item) => currentResults[item.id] == false);
+      
+      if (allFailed) {
+        consecutiveFails++;
+      } else {
+        break;
+      }
+    }
+    
+    // 如果连续两个月龄都不通过，则不需要继续向后测查
+    return consecutiveFails < 2;
   }
 
   // 获取指定能区在指定月龄的项目
   List<AssessmentItem> _getAreaItemsForAge(List<AssessmentData> allData, int age, String area) {
     var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
     return items.where((item) => _getAreaFromId(item.id) == area).toList();
-  }
-
-  // 根据当前结果获取额外需要的项目
-  List<AssessmentItem> _getAdditionalItemsForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
-    List<AssessmentItem> additionalItems = [];
-    
-    // 分析当前结果，决定是否需要向前或向后测查
-    // 这里可以实现真正的动态逻辑
-    // 暂时返回空列表，保持当前静态实现
-    
-    return additionalItems;
   }
 
   // 根据itemId推断能区（临时方案）
@@ -283,4 +435,53 @@ class AssessmentService {
         return '未知';
     }
   }
+
+  // 获取测试阶段信息
+  TestStageInfo getTestStageInfo(List<AssessmentData> allData, int mainTestAge, Map<int, bool> currentResults) {
+    var currentItems = getCurrentAgeItems(allData, mainTestAge);
+    var forwardItems = getForwardItems(allData, mainTestAge, currentResults);
+    var backwardItems = getBackwardItems(allData, mainTestAge, currentResults);
+    
+    return TestStageInfo(
+      currentAge: mainTestAge,
+      currentItems: currentItems,
+      forwardItems: forwardItems,
+      backwardItems: backwardItems,
+    );
+  }
+
+  // 获取各能区在当前月龄的项目数量
+  Map<String, int> getAreaItemCounts(List<AssessmentItem> items) {
+    Map<String, int> counts = {
+      'motor': 0,
+      'fineMotor': 0,
+      'language': 0,
+      'adaptive': 0,
+      'social': 0,
+    };
+    
+    for (var item in items) {
+      String area = _getAreaFromId(item.id);
+      counts[area] = (counts[area] ?? 0) + 1;
+    }
+    
+    return counts;
+  }
+}
+
+// 测试阶段信息
+class TestStageInfo {
+  final int currentAge;
+  final List<AssessmentItem> currentItems;
+  final List<AssessmentItem> forwardItems;
+  final List<AssessmentItem> backwardItems;
+
+  TestStageInfo({
+    required this.currentAge,
+    required this.currentItems,
+    required this.forwardItems,
+    required this.backwardItems,
+  });
+
+  int get totalItems => currentItems.length + forwardItems.length + backwardItems.length;
 } 

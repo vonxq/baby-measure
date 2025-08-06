@@ -5,6 +5,13 @@ import '../models/test_result.dart';
 import '../services/assessment_service.dart';
 import '../services/data_service.dart';
 
+enum TestStage {
+  current,    // 当前月龄
+  forward,    // 向前测查
+  backward,   // 向后测查
+  completed   // 测试完成
+}
+
 class AssessmentProvider with ChangeNotifier {
   final AssessmentService _assessmentService = AssessmentService();
   final DataService _dataService = DataService();
@@ -19,6 +26,13 @@ class AssessmentProvider with ChangeNotifier {
   TestResult? _finalResult;
   String _userName = '';
   double _actualAge = 0.0;
+  int _mainTestAge = 0;
+  
+  // 动态测评相关
+  TestStage _currentStage = TestStage.current;
+  List<AssessmentItem> _currentStageItems = [];
+  int _currentStageItemIndex = 0;
+  Map<String, int> _areaItemCounts = {};
 
   // Getters
   List<AssessmentData> get allData => _allData;
@@ -28,10 +42,17 @@ class AssessmentProvider with ChangeNotifier {
   bool get isLoading => _isLoading;
   String get error => _error;
   TestResult? get finalResult => _finalResult;
-  AssessmentItem? get currentItem => _currentTestItems.isNotEmpty && _currentItemIndex < _currentTestItems.length 
-      ? _currentTestItems[_currentItemIndex] 
+  AssessmentItem? get currentItem => _currentStageItems.isNotEmpty && _currentStageItemIndex < _currentStageItems.length 
+      ? _currentStageItems[_currentStageItemIndex] 
       : null;
-  double get progress => _currentTestItems.isNotEmpty ? (_currentItemIndex + 1) / _currentTestItems.length : 0.0;
+  double get progress => _getTotalProgress();
+  
+  // 动态测评相关getters
+  TestStage get currentStage => _currentStage;
+  List<AssessmentItem> get currentStageItems => _currentStageItems;
+  int get currentStageItemIndex => _currentStageItemIndex;
+  Map<String, int> get areaItemCounts => _areaItemCounts;
+  int get mainTestAge => _mainTestAge;
   
   // 获取item的area
   String getItemArea(int itemId) {
@@ -80,16 +101,47 @@ class AssessmentProvider with ChangeNotifier {
     try {
       _userName = userName;
       _actualAge = actualAge;
-      _currentTestItems = _assessmentService.getTestItems(_allData, actualAge);
+      _mainTestAge = _assessmentService.determineMainTestAge(actualAge);
       _testResults.clear();
       _currentItemIndex = 0;
       _finalResult = null;
       _error = '';
+      
+      // 初始化动态测评
+      _currentStage = TestStage.current;
+      _loadCurrentStageItems();
+      
     } catch (e) {
       _error = '开始测试失败: $e';
     } finally {
       _setLoading(false);
     }
+  }
+
+  // 加载当前阶段的测试项目
+  void _loadCurrentStageItems() {
+    switch (_currentStage) {
+      case TestStage.current:
+        _currentStageItems = _assessmentService.getCurrentAgeItems(_allData, _mainTestAge);
+        break;
+      case TestStage.forward:
+        _currentStageItems = _assessmentService.getForwardItems(_allData, _mainTestAge, _testResults);
+        break;
+      case TestStage.backward:
+        _currentStageItems = _assessmentService.getBackwardItems(_allData, _mainTestAge, _testResults);
+        break;
+      case TestStage.completed:
+        _currentStageItems = [];
+        break;
+    }
+    
+    _currentStageItemIndex = 0;
+    _updateAreaItemCounts();
+  }
+
+  // 更新各能区项目数量
+  void _updateAreaItemCounts() {
+    _areaItemCounts = _assessmentService.getAreaItemCounts(_currentStageItems);
   }
 
   // 记录测试结果
@@ -100,17 +152,124 @@ class AssessmentProvider with ChangeNotifier {
 
   // 下一题
   void nextItem() {
-    if (_currentItemIndex < _currentTestItems.length - 1) {
-      _currentItemIndex++;
+    if (_currentStageItemIndex < _currentStageItems.length - 1) {
+      _currentStageItemIndex++;
       notifyListeners();
+    } else {
+      // 当前阶段完成，检查是否需要进入下一阶段
+      _checkAndMoveToNextStage();
     }
   }
 
   // 上一题
   void previousItem() {
-    if (_currentItemIndex > 0) {
-      _currentItemIndex--;
+    if (_currentStageItemIndex > 0) {
+      _currentStageItemIndex--;
       notifyListeners();
+    }
+  }
+
+  // 检查并移动到下一阶段
+  void _checkAndMoveToNextStage() {
+    switch (_currentStage) {
+      case TestStage.current:
+        // 当前月龄测试完成，检查是否需要向前测查
+        if (_shouldMoveToForwardStage()) {
+          _currentStage = TestStage.forward;
+          _loadCurrentStageItems();
+        } else if (_shouldMoveToBackwardStage()) {
+          _currentStage = TestStage.backward;
+          _loadCurrentStageItems();
+        } else {
+          _currentStage = TestStage.completed;
+          _loadCurrentStageItems();
+        }
+        break;
+      case TestStage.forward:
+        // 向前测查完成，检查是否需要向后测查
+        if (_shouldMoveToBackwardStage()) {
+          _currentStage = TestStage.backward;
+          _loadCurrentStageItems();
+        } else {
+          _currentStage = TestStage.completed;
+          _loadCurrentStageItems();
+        }
+        break;
+      case TestStage.backward:
+        // 向后测查完成，测试结束
+        _currentStage = TestStage.completed;
+        _loadCurrentStageItems();
+        break;
+      case TestStage.completed:
+        // 测试已完成
+        break;
+    }
+    notifyListeners();
+  }
+
+  // 检查是否需要进入向前测查阶段
+  bool _shouldMoveToForwardStage() {
+    // 检查是否有向前测查的项目
+    var forwardItems = _assessmentService.getForwardItems(_allData, _mainTestAge, _testResults);
+    return forwardItems.isNotEmpty;
+  }
+
+  // 检查是否需要进入向后测查阶段
+  bool _shouldMoveToBackwardStage() {
+    // 检查是否有向后测查的项目
+    var backwardItems = _assessmentService.getBackwardItems(_allData, _mainTestAge, _testResults);
+    return backwardItems.isNotEmpty;
+  }
+
+  // 获取总进度
+  double _getTotalProgress() {
+    if (_currentStage == TestStage.completed) return 1.0;
+    
+    int totalCompleted = 0;
+    int totalItems = 0;
+    
+    // 计算已完成的题目数
+    totalCompleted = _testResults.length;
+    
+    // 计算总题目数
+    var stageInfo = _assessmentService.getTestStageInfo(_allData, _mainTestAge, _testResults);
+    totalItems = stageInfo.totalItems;
+    
+    if (totalItems == 0) return 0.0;
+    return totalCompleted / totalItems;
+  }
+
+  // 获取当前阶段进度
+  double getCurrentStageProgress() {
+    if (_currentStageItems.isEmpty) return 0.0;
+    return (_currentStageItemIndex + 1) / _currentStageItems.length;
+  }
+
+  // 获取当前阶段名称
+  String getCurrentStageName() {
+    switch (_currentStage) {
+      case TestStage.current:
+        return '当前月龄测试';
+      case TestStage.forward:
+        return '向前测查';
+      case TestStage.backward:
+        return '向后测查';
+      case TestStage.completed:
+        return '测试完成';
+    }
+  }
+
+  // 获取当前阶段描述
+  String getCurrentStageDescription() {
+    switch (_currentStage) {
+      case TestStage.current:
+        return '正在测试${_mainTestAge}月龄的项目';
+      case TestStage.forward:
+        return '正在测试${_mainTestAge}月龄之前的项目';
+      case TestStage.backward:
+        return '正在测试${_mainTestAge}月龄之后的项目';
+      case TestStage.completed:
+        return '所有测试项目已完成';
     }
   }
 
@@ -118,6 +277,9 @@ class AssessmentProvider with ChangeNotifier {
   Future<void> completeTest() async {
     _setLoading(true);
     try {
+      // 获取所有测试项目
+      _currentTestItems = _assessmentService.getTestItems(_allData, _actualAge, _testResults);
+      
       // 计算各能区结果
       final areas = ['motor', 'fineMotor', 'language', 'adaptive', 'social'];
       final areaResults = <AreaResult>[];
@@ -169,6 +331,10 @@ class AssessmentProvider with ChangeNotifier {
     _currentItemIndex = 0;
     _finalResult = null;
     _error = '';
+    _currentStage = TestStage.current;
+    _currentStageItems.clear();
+    _currentStageItemIndex = 0;
+    _areaItemCounts.clear();
     notifyListeners();
   }
 
