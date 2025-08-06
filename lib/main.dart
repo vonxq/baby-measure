@@ -12,7 +12,6 @@ void main() async {
   // 初始化路由
   Get.config(
     defaultTransition: Transition.fade,
-    defaultDuration: Duration(milliseconds: 300),
   );
   
   runApp(MyApp());

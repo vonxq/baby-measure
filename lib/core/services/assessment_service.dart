@@ -105,9 +105,13 @@ class AssessmentService {
     
     for (String area in areas) {
       double mentalAge = calculateMentalAge(items, results, area);
+      double maxScore = 10.0; // 假设最大分数为10
+      double percentage = (mentalAge / maxScore) * 100;
       areaResults[area] = AreaResult(
         score: mentalAge,
         mentalAge: mentalAge,
+        maxScore: maxScore,
+        percentage: percentage,
       );
     }
     
@@ -122,6 +126,14 @@ class AssessmentService {
     // 确定发育水平
     String level = determineLevel(developmentQuotient);
     
+    // 计算总分和满分
+    double totalScore = areaResults.values
+        .map((result) => result.score)
+        .reduce((a, b) => a + b);
+    double maxTotalScore = areaResults.values
+        .map((result) => result.maxScore)
+        .reduce((a, b) => a + b);
+    
     return AssessmentResult(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       babyId: babyId,
@@ -134,6 +146,8 @@ class AssessmentService {
       level: level,
       status: 'completed',
       createdAt: DateTime.now(),
+      totalScore: totalScore,
+      maxTotalScore: maxTotalScore,
     );
   }
 

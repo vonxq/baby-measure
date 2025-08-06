@@ -10,6 +10,8 @@ class AssessmentResult {
   final String level;
   final String status;
   final DateTime createdAt;
+  final double totalScore;
+  final double maxTotalScore;
 
   AssessmentResult({
     required this.id,
@@ -23,6 +25,8 @@ class AssessmentResult {
     required this.level,
     required this.status,
     required this.createdAt,
+    required this.totalScore,
+    required this.maxTotalScore,
   });
 
   // 从JSON创建对象
@@ -46,6 +50,8 @@ class AssessmentResult {
       level: json['level'],
       status: json['status'],
       createdAt: DateTime.parse(json['createdAt']),
+      totalScore: (json['totalScore'] as num?)?.toDouble() ?? 0.0,
+      maxTotalScore: (json['maxTotalScore'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -68,6 +74,8 @@ class AssessmentResult {
       'level': level,
       'status': status,
       'createdAt': createdAt.toIso8601String(),
+      'totalScore': totalScore,
+      'maxTotalScore': maxTotalScore,
     };
   }
 
@@ -125,16 +133,22 @@ class AssessmentResult {
 class AreaResult {
   final double score;
   final double mentalAge;
+  final double maxScore;
+  final double percentage;
 
   AreaResult({
     required this.score,
     required this.mentalAge,
+    required this.maxScore,
+    required this.percentage,
   });
 
   factory AreaResult.fromJson(Map<String, dynamic> json) {
     return AreaResult(
       score: (json['score'] as num).toDouble(),
       mentalAge: (json['mentalAge'] as num).toDouble(),
+      maxScore: (json['maxScore'] as num?)?.toDouble() ?? 0.0,
+      percentage: (json['percentage'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -142,6 +156,8 @@ class AreaResult {
     return {
       'score': score,
       'mentalAge': mentalAge,
+      'maxScore': maxScore,
+      'percentage': percentage,
     };
   }
 } 

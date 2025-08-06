@@ -5,8 +5,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:share_plus/share_plus.dart';
 import '../providers/assessment_provider.dart';
 import '../providers/baby_provider.dart';
-import '../../app/routes.dart';
 import '../../data/models/assessment_result.dart';
+import '../../data/models/baby.dart';
+import '../../app/routes.dart';
 
 class ResultPage extends StatelessWidget {
   @override
@@ -218,39 +219,7 @@ ${baby.name}的发育评估结果
             SizedBox(height: 16),
             
             // 雷达图
-            Container(
-              height: 200,
-              child: RadarChart(
-                RadarChartData(
-                  dataSets: [
-                    RadarDataSet(
-                      dataEntries: [
-                        RadarEntry(value: result.areaResults['motor']?.mentalAge ?? 0),
-                        RadarEntry(value: result.areaResults['fineMotor']?.mentalAge ?? 0),
-                        RadarEntry(value: result.areaResults['language']?.mentalAge ?? 0),
-                        RadarEntry(value: result.areaResults['adaptive']?.mentalAge ?? 0),
-                        RadarEntry(value: result.areaResults['social']?.mentalAge ?? 0),
-                      ],
-                      fillColor: Colors.blue.withOpacity(0.3),
-                      borderColor: Colors.blue,
-                      entryRadius: 3,
-                    ),
-                  ],
-                  titleTextStyle: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  getTitle: (index, angle, radius) {
-                    final titles = ['大运动', '精细动作', '语言', '适应能力', '社会行为'];
-                    return RadarChartTitle(
-                      text: titles[index],
-                      angle: angle,
-                      radius: radius,
-                    );
-                  },
-                  borderData: FlBorderData(show: true),
-                  gridBorderData: FlBorderData(show: true),
-                  radarBorderData: FlBorderData(show: true),
-                ),
-              ),
-            ),
+            _buildRadarChart(result),
             
             SizedBox(height: 16),
             
@@ -282,6 +251,58 @@ ${baby.name}的发育评估结果
                 ],
               ),
             )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRadarChart(AssessmentResult result) {
+    final dataEntries = [
+      RadarEntry(value: result.areaResults['motor']?.mentalAge ?? 0),
+      RadarEntry(value: result.areaResults['fineMotor']?.mentalAge ?? 0),
+      RadarEntry(value: result.areaResults['language']?.mentalAge ?? 0),
+      RadarEntry(value: result.areaResults['adaptive']?.mentalAge ?? 0),
+      RadarEntry(value: result.areaResults['social']?.mentalAge ?? 0),
+    ];
+
+    return Card(
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '各能区发育水平',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            Container(
+              height: 200,
+              child: RadarChart(
+                RadarChartData(
+                  dataSets: [
+                    RadarDataSet(
+                      dataEntries: dataEntries,
+                      fillColor: Colors.blue.withOpacity(0.3),
+                      borderColor: Colors.blue,
+                      borderWidth: 2,
+                    ),
+                  ],
+                  titleTextStyle: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  getTitle: (index, angle) {
+                    final titles = ['大运动', '精细动作', '语言', '适应能力', '社会行为'];
+                    return RadarChartTitle(
+                      text: titles[index],
+                      angle: angle,
+                    );
+                  },
+                  borderData: FlBorderData(show: true),
+                  gridBorderData: FlBorderData(show: true),
+                  radarBorderData: FlBorderData(show: true),
+                ),
+              ),
+            ),
           ],
         ),
       ),

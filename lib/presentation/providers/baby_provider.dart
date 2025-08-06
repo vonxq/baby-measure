@@ -123,4 +123,22 @@ class BabyProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
   }
+
+  // 清除所有宝宝数据
+  Future<bool> clearAllBabies() async {
+    _setLoading(true);
+    try {
+      await _repository.clearAllBabies();
+      _babies.clear();
+      _currentBaby = null;
+      _error = null;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = '清除所有宝宝数据失败: $e';
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
 } 
