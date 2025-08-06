@@ -39,18 +39,10 @@ class AssessmentService {
   }
 
   // 计算各能区智龄
-  double calculateMentalAge(String area, List<AssessmentItem> items, Map<int, bool> results) {
+  double calculateMentalAge(String area, List<AssessmentItem> items, Map<int, bool> results, Map<int, String> itemAreaMap) {
     // 过滤出该能区的项目
     var areaItems = items.where((item) {
-      final areaCode = item.id % 100;
-      switch (area) {
-        case 'motor': return areaCode == 1;
-        case 'fineMotor': return areaCode == 2;
-        case 'language': return areaCode == 3;
-        case 'adaptive': return areaCode == 4;
-        case 'social': return areaCode == 5;
-        default: return false;
-      }
+      return itemAreaMap[item.id] == area;
     }).toList();
     
     areaItems.sort((a, b) => b.id.compareTo(a.id)); // 按月龄从高到低排序

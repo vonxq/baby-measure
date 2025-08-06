@@ -12,6 +12,7 @@ class AssessmentProvider with ChangeNotifier {
   List<AssessmentData> _allData = [];
   List<AssessmentItem> _currentTestItems = [];
   final Map<int, bool> _testResults = {};
+  final Map<int, String> _itemAreaMap = {}; // id到area的映射
   int _currentItemIndex = 0;
   bool _isLoading = false;
   String _error = '';
@@ -31,17 +32,33 @@ class AssessmentProvider with ChangeNotifier {
       ? _currentTestItems[_currentItemIndex] 
       : null;
   double get progress => _currentTestItems.isNotEmpty ? (_currentItemIndex + 1) / _currentTestItems.length : 0.0;
+  
+  // 获取item的area
+  String getItemArea(int itemId) {
+    return _itemAreaMap[itemId] ?? 'unknown';
+  }
 
   // 初始化数据
   Future<void> initializeData() async {
     _setLoading(true);
     try {
       _allData = await _dataService.loadAssessmentData();
+      _buildItemAreaMap(); // 建立id到area的映射
       _error = '';
     } catch (e) {
       _error = '加载数据失败: $e';
     } finally {
       _setLoading(false);
+    }
+  }
+
+  // 建立id到area的映射关系
+  void _buildItemAreaMap() {
+    _itemAreaMap.clear();
+    for (var data in _allData) {
+      for (var item in data.testItems) {
+        _itemAreaMap[item.id] = data.area;
+      }
     }
   }
 
@@ -94,7 +111,7 @@ class AssessmentProvider with ChangeNotifier {
       final areaResults = <AreaResult>[];
       
       for (String area in areas) {
-        final mentalAge = _assessmentService.calculateMentalAge(area, _currentTestItems, _testResults);
+        final mentalAge = _assessmentService.calculateMentalAge(area, _currentTestItems, _testResults, _itemAreaMap);
         final developmentQuotient = _assessmentService.calculateDevelopmentQuotient(mentalAge, _actualAge);
         
         areaResults.add(AreaResult(

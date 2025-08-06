@@ -221,11 +221,11 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                           decoration: BoxDecoration(
-                                            color: _getAreaColor(provider.currentItem!.id),
+                                            color: _getAreaColor(provider.currentItem!.id, provider),
                                             borderRadius: BorderRadius.circular(12),
                                           ),
                                           child: Text(
-                                            _getAreaName(provider.currentItem!.id),
+                                            _getAreaName(provider.currentItem!.id, provider),
                                             style: const TextStyle(
                                               fontSize: 12,
                                               fontWeight: FontWeight.bold,
@@ -395,32 +395,32 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
     final totalCount = provider.currentTestItems.length;
     final itemId = provider.currentItem!.id;
     final monthAge = (itemId / 100).floor();
-    final areaName = _getAreaName(itemId);
+    final areaName = _getAreaName(itemId, provider);
     return '${monthAge}月-$areaName $currentIndex/$totalCount';
   }
 
   // 获取分区名称
-  String _getAreaName(int itemId) {
-    final areaCode = itemId % 100;
-    switch (areaCode) {
-      case 1: return '大运动';
-      case 2: return '精细动作';
-      case 3: return '语言';
-      case 4: return '适应能力';
-      case 5: return '社会行为';
+  String _getAreaName(int itemId, AssessmentProvider provider) {
+    final area = provider.getItemArea(itemId);
+    switch (area) {
+      case 'motor': return '大运动';
+      case 'fineMotor': return '精细动作';
+      case 'language': return '语言';
+      case 'adaptive': return '适应能力';
+      case 'social': return '社会行为';
       default: return '未知';
     }
   }
 
   // 获取分区颜色
-  Color _getAreaColor(int itemId) {
-    final areaCode = itemId % 100;
-    switch (areaCode) {
-      case 1: return Colors.green[600]!;
-      case 2: return Colors.blue[600]!;
-      case 3: return Colors.orange[600]!;
-      case 4: return Colors.purple[600]!;
-      case 5: return Colors.red[600]!;
+  Color _getAreaColor(int itemId, AssessmentProvider provider) {
+    final area = provider.getItemArea(itemId);
+    switch (area) {
+      case 'motor': return Colors.green[600]!;
+      case 'fineMotor': return Colors.blue[600]!;
+      case 'language': return Colors.orange[600]!;
+      case 'adaptive': return Colors.purple[600]!;
+      case 'social': return Colors.red[600]!;
       default: return Colors.grey[600]!;
     }
   }
