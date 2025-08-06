@@ -1,39 +1,28 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import '../models/assessment_data.dart';
 
 class DataService {
   // 加载评估数据
   Future<List<AssessmentData>> loadAssessmentData() async {
     try {
-      // 首先尝试从assets加载
-      final jsonString = await rootBundle.loadString('mock_data/assessment_data.json');
+      // 从assets加载标准数据
+      final jsonString = await rootBundle.loadString('assets/data/assessment_data.json');
       final List<dynamic> jsonList = json.decode(jsonString);
       
       return jsonList.map((json) => AssessmentData.fromJson(json)).toList();
     } catch (e) {
-      // 如果从assets加载失败，尝试从文件系统加载
-      try {
-        final file = File('mock_data/assessment_data.json');
-        if (await file.exists()) {
-          final jsonString = await file.readAsString();
-          final List<dynamic> jsonList = json.decode(jsonString);
-          
-          return jsonList.map((json) => AssessmentData.fromJson(json)).toList();
-        } else {
-          throw Exception('Mock数据文件不存在');
-        }
-      } catch (fileError) {
-        throw Exception('加载评估数据失败: $e, 文件错误: $fileError');
-      }
+      throw Exception('加载评估数据失败: $e');
     }
   }
 
   // 保存测试结果到本地
   Future<void> saveTestResult(Map<String, dynamic> result) async {
     try {
-      final file = File('mock_data/test_results.json');
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/test_results.json');
       final results = await loadTestResults();
       results.add(result);
       
@@ -46,7 +35,8 @@ class DataService {
   // 加载测试结果
   Future<List<Map<String, dynamic>>> loadTestResults() async {
     try {
-      final file = File('mock_data/test_results.json');
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/test_results.json');
       if (await file.exists()) {
         final jsonString = await file.readAsString();
         final List<dynamic> jsonList = json.decode(jsonString);
