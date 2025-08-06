@@ -5,6 +5,7 @@ import '../presentation/pages/baby_management_page.dart';
 import '../presentation/pages/assessment_page.dart';
 import '../presentation/pages/result_page.dart';
 import '../presentation/pages/history_page.dart';
+import '../presentation/pages/settings_page.dart';
 
 class AppRoutes {
   static const String splash = '/splash';
@@ -13,6 +14,7 @@ class AppRoutes {
   static const String assessment = '/assessment';
   static const String result = '/result';
   static const String history = '/history';
+  static const String settings = '/settings';
 
   static final List<GetPage> pages = [
     GetPage(
@@ -43,6 +45,11 @@ class AppRoutes {
     GetPage(
       name: history,
       page: () => HistoryPage(),
+      transition: Transition.rightToLeft,
+    ),
+    GetPage(
+      name: settings,
+      page: () => SettingsPage(),
       transition: Transition.rightToLeft,
     ),
   ];

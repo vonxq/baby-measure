@@ -1,0 +1,52 @@
+{
+  "age_groups": [
+    {
+      "age_months": 1,
+      "display_name": "1 月龄",
+      "key": "1_months"
+    },
+    {
+      "age_months": 2,
+      "display_name": "2 月龄",
+      "key": "2_months"
+    },
+    {
+      "age_months": 3,
+      "display_name": "3 月龄",
+      "key": "3_months"
+    },
+    {
+      "age_months": 4,
+      "display_name": "4 月龄",
+      "key": "4_months"
+    },
+    {
+      "age_months": 5,
+      "display_name": "5 月龄",
+      "key": "5_months"
+    }
+  ],
+  "test_items": [],
+  "areas": {
+    "motor": {
+      "name": "大运动",
+      "items": []
+    },
+    "fineMotor": {
+      "name": "精细动作",
+      "items": []
+    },
+    "adaptive": {
+      "name": "适应能力",
+      "items": []
+    },
+    "language": {
+      "name": "语言",
+      "items": []
+    },
+    "social": {
+      "name": "社会行为",
+      "items": []
+    }
+  }
+}

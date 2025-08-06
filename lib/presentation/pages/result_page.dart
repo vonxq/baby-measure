@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:share_plus/share_plus.dart';
 import '../providers/assessment_provider.dart';
 import '../providers/baby_provider.dart';
 import '../../app/routes.dart';
@@ -19,9 +20,7 @@ class ResultPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.share),
-            onPressed: () {
-              // TODO: 分享功能
-            },
+            onPressed: () => _shareResult(context),
           ),
         ],
       ),
@@ -77,6 +76,54 @@ class ResultPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void _shareResult(BuildContext context) {
+    final assessmentProvider = Provider.of<AssessmentProvider>(context, listen: false);
+    final babyProvider = Provider.of<BabyProvider>(context, listen: false);
+    
+    final result = assessmentProvider.currentResult;
+    final baby = babyProvider.currentBaby;
+    
+    if (result == null || baby == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('没有可分享的评估结果')),
+      );
+      return;
+    }
+
+    // 生成分享内容
+    final shareContent = _generateShareContent(result, baby);
+    
+    // 分享
+    Share.share(shareContent, subject: '${baby.name}的发育评估结果');
+  }
+
+  String _generateShareContent(AssessmentResult result, Baby baby) {
+    final date = '${result.testDate.year}-${result.testDate.month.toString().padLeft(2, '0')}-${result.testDate.day.toString().padLeft(2, '0')}';
+    
+    return '''
+${baby.name}的发育评估结果
+
+评估日期: $date
+宝宝月龄: ${result.ageInMonths.toStringAsFixed(1)}个月
+发育商(DQ): ${result.developmentQuotient.toStringAsFixed(1)}
+发育水平: ${result.levelDescription}
+
+各能区得分:
+• 大运动能区: ${result.areaResults['motor']?.mentalAge.toStringAsFixed(1) ?? '0.0'}
+• 精细动作能区: ${result.areaResults['fineMotor']?.mentalAge.toStringAsFixed(1) ?? '0.0'}
+• 语言能区: ${result.areaResults['language']?.mentalAge.toStringAsFixed(1) ?? '0.0'}
+• 适应能力能区: ${result.areaResults['adaptive']?.mentalAge.toStringAsFixed(1) ?? '0.0'}
+• 社会行为能区: ${result.areaResults['social']?.mentalAge.toStringAsFixed(1) ?? '0.0'}
+
+注意事项:
+• 本评估结果仅供参考，不能替代专业医疗诊断
+• 如有疑问，请咨询专业医生
+• 建议定期进行发育评估，跟踪宝宝的发展
+
+来自儿童发育评估应用
+    ''';
   }
 
   Widget _buildOverallResultCard(AssessmentResult result, Baby baby) {
@@ -350,9 +397,7 @@ class ResultPage extends StatelessWidget {
             SizedBox(width: 12),
             Expanded(
               child: OutlinedButton(
-                onPressed: () {
-                  // TODO: 重新评估
-                },
+                onPressed: () => _restartAssessment(),
                 child: Text('重新评估'),
               ),
             ),
@@ -360,6 +405,12 @@ class ResultPage extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void _restartAssessment() {
+    final assessmentProvider = Provider.of<AssessmentProvider>(Get.context!, listen: false);
+    assessmentProvider.resetAssessment();
+    Get.offAllNamed(AppRoutes.assessment);
   }
 
   String _getAreaName(String areaType) {

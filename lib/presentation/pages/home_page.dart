@@ -37,9 +37,7 @@ class _HomePageState extends State<HomePage> {
           ),
           IconButton(
             icon: Icon(Icons.settings),
-            onPressed: () {
-              // TODO: 设置页面
-            },
+            onPressed: () => Get.toNamed(AppRoutes.settings),
           ),
         ],
       ),

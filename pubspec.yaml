@@ -40,6 +40,9 @@ dependencies:
   # 工具库
   uuid: ^4.2.1
   crypto: ^3.0.3
+  
+  # 分享功能
+  share_plus: ^7.2.1
 
 dev_dependencies:
   flutter_test:
