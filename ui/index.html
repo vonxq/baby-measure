@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿童发育评估 - 原型</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .page { border: 1px solid #ccc; margin: 10px; padding: 20px; }
+        .nav { background: #f0f0f0; padding: 10px; margin-bottom: 20px; }
+        .nav a { margin-right: 15px; }
+        .button { background: #007bff; color: white; padding: 10px 20px; border: none; cursor: pointer; }
+        .progress { background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden; }
+        .progress-bar { background: #007bff; height: 100%; width: 60%; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <h1>儿童发育评估应用 - 页面原型</h1>
+        <a href="#splash">启动页</a>
+        <a href="#baby-list">宝宝列表</a>
+        <a href="#baby-create">创建宝宝</a>
+        <a href="#test-prepare">测试准备</a>
+        <a href="#test-progress">测试进行</a>
+        <a href="#test-result">测试结果</a>
+        <a href="#history">历史记录</a>
+    </div>
+
+    <!-- 启动页 -->
+    <div id="splash" class="page">
+        <h2>启动页</h2>
+        <div style="text-align: center; padding: 50px;">
+            <h1>儿童发育评估</h1>
+            <p>专业的0-6岁儿童发育行为评估工具</p>
+            <button class="button" onclick="showPage('baby-list')">开始使用</button>
+        </div>
+    </div>
+
+    <!-- 宝宝列表页 -->
+    <div id="baby-list" class="page" style="display: none;">
+        <h2>宝宝列表</h2>
+        <div>
+            <h3>我的宝宝</h3>
+            <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0;">
+                <h4>小明</h4>
+                <p>年龄: 2岁3个月</p>
+                <p>性别: 男</p>
+                <button class="button" onclick="showPage('test-prepare')">开始评估</button>
+                <button onclick="showPage('history')">查看历史</button>
+            </div>
+            <button class="button" onclick="showPage('baby-create')">+ 添加新宝宝</button>
+        </div>
+    </div>
+
+    <!-- 创建宝宝页 -->
+    <div id="baby-create" class="page" style="display: none;">
+        <h2>创建宝宝档案</h2>
+        <form>
+            <div style="margin: 10px 0;">
+                <label>宝宝姓名:</label>
+                <input type="text" placeholder="请输入宝宝姓名">
+            </div>
+            <div style="margin: 10px 0;">
+                <label>出生日期:</label>
+                <input type="date">
+            </div>
+            <div style="margin: 10px 0;">
+                <label>性别:</label>
+                <input type="radio" name="gender" value="male"> 男
+                <input type="radio" name="gender" value="female"> 女
+            </div>
+            <button class="button" onclick="showPage('baby-list')">保存</button>
+            <button onclick="showPage('baby-list')">取消</button>
+        </form>
+    </div>
+
+    <!-- 测试准备页 -->
+    <div id="test-prepare" class="page" style="display: none;">
+        <h2>测试准备</h2>
+        <div>
+            <h3>宝宝信息</h3>
+            <p>姓名: 小明</p>
+            <p>当前月龄: 27.3个月</p>
+            <p>主测月龄: 27个月</p>
+            
+            <h3>测试说明</h3>
+            <p>本次测试将评估以下5个能区:</p>
+            <ul>
+                <li>大运动能区</li>
+                <li>精细动作能区</li>
+                <li>语言能区</li>
+                <li>适应能力能区</li>
+                <li>社会行为能区</li>
+            </ul>
+            <p>预计测试时间: 15-20分钟</p>
+            <button class="button" onclick="showPage('test-progress')">开始测试</button>
+            <button onclick="showPage('baby-list')">返回</button>
+        </div>
+    </div>
+
+    <!-- 测试进行页 -->
+    <div id="test-progress" class="page" style="display: none;">
+        <h2>测试进行中</h2>
+        
+        <!-- 进度条 -->
+        <div style="margin: 20px 0;">
+            <h3>测试进度</h3>
+            <div class="progress">
+                <div class="progress-bar"></div>
+            </div>
+            <p>已完成: 3/5 能区 (60%)</p>
+        </div>
+
+        <!-- 当前能区 -->
+        <div style="margin: 20px 0;">
+            <h3>当前测试: 语言能区</h3>
+            <p>项目: 说出自己的姓名</p>
+            <p>要求: 能够清楚地说出自己的姓名</p>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div style="margin: 20px 0;">
+            <button class="button" style="background: #28a745;">通过</button>
+            <button class="button" style="background: #dc3545;">不通过</button>
+            <button onclick="showPage('test-result')">完成测试</button>
+        </div>
+
+        <!-- 引导提示 -->
+        <div style="background: #fff3cd; padding: 15px; border-radius: 5px;">
+            <h4>💡 测试提示</h4>
+            <p>请观察宝宝是否能清楚地说出自己的姓名，如果宝宝能够做到，请点击"通过"</p>
+        </div>
+    </div>
+
+    <!-- 测试结果页 -->
+    <div id="test-result" class="page" style="display: none;">
+        <h2>测试结果</h2>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <h1 style="color: #007bff;">发育商: 108</h1>
+            <p style="font-size: 18px; color: #28a745;">发育水平: 良好</p>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <h3>各能区得分</h3>
+            <ul>
+                <li>大运动能区: 110</li>
+                <li>精细动作能区: 105</li>
+                <li>语言能区: 108</li>
+                <li>适应能力能区: 112</li>
+                <li>社会行为能区: 106</li>
+            </ul>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <h3>发育建议</h3>
+            <p>宝宝的发育水平良好，建议继续关注语言能力的发展，可以多与宝宝进行语言交流。</p>
+        </div>
+
+        <button class="button" onclick="showPage('history')">查看历史</button>
+        <button onclick="showPage('baby-list')">返回首页</button>
+    </div>
+
+    <!-- 历史记录页 -->
+    <div id="history" class="page" style="display: none;">
+        <h2>测试历史</h2>
+        
+        <div style="margin: 20px 0;">
+            <h3>宝宝: 小明</h3>
+            <select>
+                <option>选择宝宝</option>
+                <option>小明</option>
+            </select>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <h3>测试记录</h3>
+            <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0;">
+                <h4>2024年1月15日</h4>
+                <p>月龄: 27.3个月 | 发育商: 108 | 水平: 良好</p>
+                <button onclick="showPage('test-result')">查看详情</button>
+            </div>
+            <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0;">
+                <h4>2023年12月1日</h4>
+                <p>月龄: 26.1个月 | 发育商: 105 | 水平: 良好</p>
+                <button onclick="showPage('test-result')">查看详情</button>
+            </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <h3>发育趋势</h3>
+            <p>图表区域 - 显示发育商变化趋势</p>
+        </div>
+
+        <button onclick="showPage('baby-list')">返回首页</button>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+            // 显示指定页面
+            document.getElementById(pageId).style.display = 'block';
+        }
+
+        // 默认显示启动页
+        showPage('splash');
+    </script>
+</body>
+</html> 
