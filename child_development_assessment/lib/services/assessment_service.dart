@@ -40,6 +40,78 @@ class AssessmentService {
     return _ageGroups[currentIndex - 1];
   }
 
+  // 获取指定月龄的测试项目
+  List<AssessmentItem> getCurrentAgeItems(List<AssessmentData> allData, int age) {
+    return allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
+  }
+
+  // 获取向前测试项目
+  List<AssessmentItem> getForwardItems(List<AssessmentData> allData, int mainAge, Map<int, bool> testResults) {
+    List<AssessmentItem> items = [];
+    var forwardAges = getForwardTestAges(mainAge, _convertTestResults(testResults));
+    for (int age in forwardAges) {
+      items.addAll(getCurrentAgeItems(allData, age));
+    }
+    return items;
+  }
+
+  // 获取向后测试项目
+  List<AssessmentItem> getBackwardItems(List<AssessmentData> allData, int mainAge, Map<int, bool> testResults) {
+    List<AssessmentItem> items = [];
+    var backwardAges = getBackwardTestAges(mainAge, _convertTestResults(testResults));
+    for (int age in backwardAges) {
+      items.addAll(getCurrentAgeItems(allData, age));
+    }
+    return items;
+  }
+
+  // 获取测试阶段信息
+  TestStageInfo getTestStageInfo(List<AssessmentData> allData, int mainAge, Map<int, bool> testResults) {
+    int totalItems = getCurrentAgeItems(allData, mainAge).length;
+    var forwardItems = getForwardItems(allData, mainAge, testResults);
+    var backwardItems = getBackwardItems(allData, mainAge, testResults);
+    totalItems += forwardItems.length + backwardItems.length;
+    
+    return TestStageInfo(totalItems: totalItems);
+  }
+
+  // 获取各能区项目数量
+  Map<String, int> getAreaItemCounts(List<AssessmentItem> items) {
+    Map<String, int> counts = {
+      'motor': 0,
+      'fineMotor': 0,
+      'language': 0,
+      'adaptive': 0,
+      'social': 0,
+    };
+    
+    for (var item in items) {
+      // 这里需要根据实际情况获取能区信息
+      String area = 'motor'; // 默认值，实际应该从数据中获取
+      counts[area] = (counts[area] ?? 0) + 1;
+    }
+    
+    return counts;
+  }
+
+  // 转换测试结果格式
+  Map<int, Map<String, bool>> _convertTestResults(Map<int, bool> testResults) {
+    Map<int, Map<String, bool>> converted = {};
+    for (var entry in testResults.entries) {
+      int itemId = entry.key;
+      bool passed = entry.value;
+      // 这里需要根据itemId获取月龄和能区信息
+      int age = 1; // 默认值，实际应该从数据中获取
+      String area = 'motor'; // 默认值，实际应该从数据中获取
+      
+      if (!converted.containsKey(age)) {
+        converted[age] = {};
+      }
+      converted[age]![area] = passed;
+    }
+    return converted;
+  }
+
   // 测试指定月龄并返回结果
   AgeTestResult testAge(List<AssessmentData> allData, int age) {
     var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
@@ -157,33 +229,26 @@ class AssessmentService {
   }
 
   // 计算智龄 - 按照标准规则
-  double calculateMentalAge(String area, Map<int, Map<String, bool>> allAgeResults) {
+  double calculateMentalAge(String area, List<AssessmentItem> currentTestItems, Map<int, bool> testResults, Map<int, String> itemAreaMap) {
     double totalScore = 0;
-    List<int> ages = allAgeResults.keys.toList()..sort((a, b) => b.compareTo(a)); // 从高月龄开始
     
-    int consecutivePasses = 0;
-    
-    for (int age in ages) {
-      var ageResults = allAgeResults[age]!;
-      if (ageResults.containsKey(area) && ageResults[area] == true) {
+    // 计算当前测试项目中该能区的分数
+    for (var item in currentTestItems) {
+      if (itemAreaMap[item.id] == area && testResults[item.id] == true) {
+        // 根据item的月龄计算分数
+        int age = getItemAge(item.id);
         totalScore += getAreaScoreForAge(area, age);
-        consecutivePasses++;
-      } else {
-        break; // 遇到不通过的项目就停止
-      }
-    }
-    
-    // 如果连续两个月龄通过，默认前面的全部通过
-    if (consecutivePasses >= 2) {
-      // 计算默认通过的项目分数
-      for (int age in ages) {
-        if (age < ages[consecutivePasses - 1]) { // 小于最高通过月龄
-          totalScore += getAreaScoreForAge(area, age);
-        }
       }
     }
     
     return totalScore;
+  }
+
+  // 获取项目的月龄
+  int getItemAge(int itemId) {
+    // 这里需要根据实际情况获取item的月龄
+    // 暂时返回默认值
+    return 1;
   }
 
   // 从数据中获取能区信息
@@ -266,5 +331,14 @@ class AgeTestResult {
     required this.age,
     required this.totalItems,
     required this.areaItems,
+  });
+}
+
+// 测试阶段信息
+class TestStageInfo {
+  final int totalItems;
+
+  TestStageInfo({
+    required this.totalItems,
   });
 } 

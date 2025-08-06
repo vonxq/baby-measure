@@ -12,8 +12,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  double _selectedAge = 12.0;
+  int _selectedAge = 6; // 默认选中6月龄
   final TextEditingController _nameController = TextEditingController();
+  
+  // 月龄选项列表
+  final List<int> _ageOptions = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84
+  ];
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
 
@@ -203,37 +208,46 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 border: Border.all(color: Colors.blue[200]!),
                               ),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    '${_selectedAge.toStringAsFixed(1)}个月',
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.blue[700],
-                                    ),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.calendar_today, color: Colors.blue[600], size: 20),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        '当前选择：${_selectedAge}个月',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue[700],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   const SizedBox(height: 16),
-                                  SliderTheme(
-                                    data: SliderTheme.of(context).copyWith(
-                                      activeTrackColor: Colors.blue[600],
-                                      inactiveTrackColor: Colors.blue[200],
-                                      thumbColor: Colors.blue[600],
-                                      overlayColor: Colors.blue[200],
-                                      valueIndicatorColor: Colors.blue[600],
-                                      valueIndicatorTextStyle: const TextStyle(color: Colors.white),
+                                  DropdownButtonFormField<int>(
+                                    value: _selectedAge,
+                                    decoration: InputDecoration(
+                                      labelText: '月龄',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      filled: true,
+                                      fillColor: Colors.white,
                                     ),
-                                    child: Slider(
-                                      value: _selectedAge,
-                                      min: 1.0,
-                                      max: 72.0,
-                                      divisions: 71,
-                                      label: '${_selectedAge.toStringAsFixed(1)}个月',
-                                      onChanged: (value) {
+                                    items: _ageOptions.map((int age) {
+                                      return DropdownMenuItem<int>(
+                                        value: age,
+                                        child: Text('${age}个月'),
+                                      );
+                                    }).toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
                                         setState(() {
-                                          _selectedAge = value;
+                                          _selectedAge = newValue;
                                         });
-                                      },
-                                    ),
+                                      }
+                                    },
                                   ),
                                 ],
                               ),
@@ -243,65 +257,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       ),
                       const SizedBox(height: 32),
 
-                      // 测试按钮区域
-                      Row(
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: 56,
-                              child: ElevatedButton(
-                                onPressed: _nameController.text.trim().isNotEmpty ? () => _startTest() : null,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue[600],
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  elevation: 4,
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.play_arrow),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      '标准测试',
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                      // 动态测评按钮
+                      SizedBox(
+                        height: 56,
+                        child: ElevatedButton(
+                          onPressed: _nameController.text.trim().isNotEmpty ? () => _startDynamicTest() : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green[600],
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
                             ),
+                            elevation: 4,
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: SizedBox(
-                              height: 56,
-                              child: ElevatedButton(
-                                onPressed: _nameController.text.trim().isNotEmpty ? () => _startDynamicTest() : null,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green[600],
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  elevation: 4,
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.psychology),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      '动态测评',
-                                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.psychology),
+                              SizedBox(width: 8),
+                              Text(
+                                '开始动态测评',
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                       const SizedBox(height: 24),
 
@@ -350,44 +330,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  void _startTest() {
-    final name = _nameController.text.trim();
-    if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Row(
-            children: [
-              Icon(Icons.warning, color: Colors.white),
-              SizedBox(width: 8),
-              Text('请输入宝宝姓名'),
-            ],
-          ),
-          backgroundColor: Colors.orange[600],
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-      );
-      return;
-    }
 
-    final navigator = Navigator.of(context);
-    context.read<AssessmentProvider>().startTest(name, _selectedAge).then((_) {
-      navigator.push(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const TestPage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            );
-          },
-        ),
-      );
-    });
-  }
 
   void _startDynamicTest() {
     final name = _nameController.text.trim();
@@ -410,21 +353,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     final navigator = Navigator.of(context);
-    context.read<AssessmentProvider>().startDynamicAssessment(name, _selectedAge).then((_) {
-      navigator.push(
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const DynamicTestPage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            );
-          },
-        ),
-      );
-    });
+    context.read<AssessmentProvider>().startDynamicAssessment(name, _selectedAge.toDouble());
+    navigator.push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => const DynamicTestPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          );
+        },
+      ),
+    );
   }
 } 

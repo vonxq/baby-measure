@@ -64,6 +64,25 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
 
               // 检查是否需要显示过渡页
               if (provider.currentStage == TestStage.completed) {
+                // 直接跳转到结果页
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) => const ResultPage(),
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        return SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(1.0, 0.0),
+                            end: Offset.zero,
+                          ).animate(animation),
+                          child: child,
+                        );
+                      },
+                    ),
+                  );
+                });
+                
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -72,30 +91,9 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                       const SizedBox(height: 16),
                       const Text('动态测评完成！', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 16),
-                      ElevatedButton.icon(
-                        onPressed: () => Navigator.pushReplacement(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) => const ResultPage(),
-                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                              return SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(1.0, 0.0),
-                                  end: Offset.zero,
-                                ).animate(animation),
-                                child: child,
-                              );
-                            },
-                          ),
-                        ),
-                        icon: const Icon(Icons.assessment),
-                        label: const Text('查看结果'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue[600],
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        ),
-                      ),
+                      const CircularProgressIndicator(),
+                      const SizedBox(height: 16),
+                      const Text('正在生成结果...', style: TextStyle(fontSize: 16)),
                     ],
                   ),
                 );

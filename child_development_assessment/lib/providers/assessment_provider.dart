@@ -36,6 +36,13 @@ class AssessmentProvider with ChangeNotifier {
   int _currentStageItemIndex = 0;
   Map<String, int> _areaItemCounts = {};
   Map<int, Map<String, List<bool>>> _dynamicTestResults = {}; // 月龄 -> 能区 -> 项目通过情况
+  
+  // 当前测试的月龄跟踪
+  int _currentTestAge = 0;
+  List<int> _forwardTestAges = [];
+  List<int> _backwardTestAges = [];
+  int _currentForwardIndex = 0;
+  int _currentBackwardIndex = 0;
 
   // Getters
   List<AssessmentData> get allData => _allData;
@@ -120,6 +127,14 @@ class AssessmentProvider with ChangeNotifier {
     _currentStageItemIndex = 0;
     _testResults.clear();
     _dynamicTestResults.clear();
+    
+    // 初始化月龄跟踪
+    _currentTestAge = _mainTestAge;
+    _forwardTestAges = _dynamicAssessmentService.getForwardTestAges(_mainTestAge, _dynamicTestResults);
+    _backwardTestAges = _dynamicAssessmentService.getBackwardTestAges(_mainTestAge, _dynamicTestResults);
+    _currentForwardIndex = 0;
+    _currentBackwardIndex = 0;
+    
     _loadCurrentStageItems();
     notifyListeners();
   }
@@ -172,21 +187,19 @@ class AssessmentProvider with ChangeNotifier {
         _currentStageItems = _assessmentService.getCurrentAgeItems(_allData, _mainTestAge);
         break;
       case TestStage.forward:
-        // 获取向前测试的月龄
-        var forwardAges = _dynamicAssessmentService.getForwardTestAges(_mainTestAge, _dynamicTestResults);
-        if (forwardAges.isNotEmpty) {
-          int nextAge = forwardAges.first;
-          _currentStageItems = _assessmentService.getCurrentAgeItems(_allData, nextAge);
+        // 获取当前向前测试的月龄
+        if (_currentForwardIndex < _forwardTestAges.length) {
+          _currentTestAge = _forwardTestAges[_currentForwardIndex];
+          _currentStageItems = _assessmentService.getCurrentAgeItems(_allData, _currentTestAge);
         } else {
           _currentStageItems = [];
         }
         break;
       case TestStage.backward:
-        // 获取向后测试的月龄
-        var backwardAges = _dynamicAssessmentService.getBackwardTestAges(_mainTestAge, _dynamicTestResults);
-        if (backwardAges.isNotEmpty) {
-          int nextAge = backwardAges.first;
-          _currentStageItems = _assessmentService.getCurrentAgeItems(_allData, nextAge);
+        // 获取当前向后测试的月龄
+        if (_currentBackwardIndex < _backwardTestAges.length) {
+          _currentTestAge = _backwardTestAges[_currentBackwardIndex];
+          _currentStageItems = _assessmentService.getCurrentAgeItems(_allData, _currentTestAge);
         } else {
           _currentStageItems = [];
         }
@@ -248,45 +261,60 @@ class AssessmentProvider with ChangeNotifier {
     }
   }
 
-  // 检查并移动到下一阶段
+    // 检查并移动到下一阶段
   void _checkAndMoveToNextStage() {
     switch (_currentStage) {
       case TestStage.current:
-        // 当前月龄测试完成，使用动态测评服务决定下一步
-        var forwardAges = _dynamicAssessmentService.getForwardTestAges(_mainTestAge, _dynamicTestResults);
-        var backwardAges = _dynamicAssessmentService.getBackwardTestAges(_mainTestAge, _dynamicTestResults);
-        
-        if (forwardAges.isNotEmpty) {
+        // 当前月龄测试完成，检查是否需要向前测试
+        if (_forwardTestAges.isNotEmpty) {
           _currentStage = TestStage.forward;
+          _currentForwardIndex = 0;
           _loadCurrentStageItems();
-        } else if (backwardAges.isNotEmpty) {
+        } else if (_backwardTestAges.isNotEmpty) {
           _currentStage = TestStage.backward;
+          _currentBackwardIndex = 0;
           _loadCurrentStageItems();
         } else {
           _currentStage = TestStage.completed;
-          _loadCurrentStageItems();
+          _generateFinalResult();
         }
         break;
       case TestStage.forward:
-        // 向前测查完成，检查是否需要向后测查
-        var backwardAges = _dynamicAssessmentService.getBackwardTestAges(_mainTestAge, _dynamicTestResults);
-        if (backwardAges.isNotEmpty) {
-          _currentStage = TestStage.backward;
+        // 当前向前月龄测试完成，检查是否还有更多向前月龄需要测试
+        _currentForwardIndex++;
+        if (_currentForwardIndex < _forwardTestAges.length) {
+          // 还有更多向前月龄需要测试，继续测试下一个
           _loadCurrentStageItems();
         } else {
-          _currentStage = TestStage.completed;
-          _loadCurrentStageItems();
+          // 向前测试完成，检查是否需要向后测试
+          if (_backwardTestAges.isNotEmpty) {
+            _currentStage = TestStage.backward;
+            _currentBackwardIndex = 0;
+            _loadCurrentStageItems();
+          } else {
+            _currentStage = TestStage.completed;
+            _generateFinalResult();
+          }
         }
         break;
       case TestStage.backward:
-        // 向后测查完成，测试结束
-        _currentStage = TestStage.completed;
-        _loadCurrentStageItems();
+        // 当前向后月龄测试完成，检查是否还有更多向后月龄需要测试
+        _currentBackwardIndex++;
+        if (_currentBackwardIndex < _backwardTestAges.length) {
+          // 还有更多向后月龄需要测试，继续测试下一个
+          _loadCurrentStageItems();
+        } else {
+          // 向后测试完成，测试结束
+          _currentStage = TestStage.completed;
+          _generateFinalResult();
+        }
         break;
       case TestStage.completed:
-        // 测试已完成
+        // 测试已完成，生成结果
+        _generateFinalResult();
         break;
     }
+    
     notifyListeners();
   }
 
@@ -424,6 +452,93 @@ class AssessmentProvider with ChangeNotifier {
     _areaItemCounts.clear();
     _dynamicTestResults.clear();
     notifyListeners();
+  }
+
+  // 生成最终结果
+  void _generateFinalResult() async {
+    _setLoading(true);
+    try {
+      // 使用动态测评服务计算结果
+      var dynamicResult = _dynamicAssessmentService.executeDynamicAssessment(
+        _allData,
+        _mainTestAge,
+        _dynamicTestResults,
+      );
+      
+      // 计算各能区结果
+      final areas = ['motor', 'fineMotor', 'language', 'adaptive', 'social'];
+      final areaResults = <AreaResult>[];
+      
+      for (String area in areas) {
+        // 计算该能区的智龄和发育商
+        double mentalAge = 0.0;
+        double developmentQuotient = 0.0;
+        
+        // 根据测试结果计算智龄
+        for (var entry in _testResults.entries) {
+          int itemId = entry.key;
+          bool passed = entry.value;
+          
+          // 获取项目的能区
+          String itemArea = _itemAreaMap[itemId] ?? 'unknown';
+          if (itemArea == area && passed) {
+            // 获取项目的月龄
+            int itemAge = _getItemAgeFromData(itemId);
+            mentalAge += _assessmentService.getAreaScoreForAge(area, itemAge);
+          }
+        }
+        
+        developmentQuotient = _assessmentService.calculateDevelopmentQuotient(mentalAge, _actualAge);
+        
+        areaResults.add(AreaResult(
+          area: _assessmentService.getAreaName(area),
+          mentalAge: mentalAge,
+          developmentQuotient: developmentQuotient,
+        ));
+      }
+
+      // 计算总体结果
+      double totalMentalAge = 0.0;
+      for (var result in areaResults) {
+        totalMentalAge += result.mentalAge;
+      }
+      totalMentalAge = totalMentalAge / areaResults.length;
+      
+      final totalDevelopmentQuotient = _assessmentService.calculateDevelopmentQuotient(totalMentalAge, _actualAge);
+
+      _finalResult = TestResult(
+        userName: _userName,
+        date: DateTime.now().toIso8601String(),
+        birthDate: DateTime.now().subtract(Duration(days: (_actualAge * 30).round())).toIso8601String(),
+        month: _actualAge,
+        testResults: areaResults,
+        allResult: AreaResult(
+          area: '总体',
+          mentalAge: totalMentalAge,
+          developmentQuotient: totalDevelopmentQuotient,
+        ),
+      );
+
+      // 保存结果
+      await _dataService.saveTestResult(_finalResult!.toJson());
+      _error = '';
+    } catch (e) {
+      _error = '生成结果失败: $e';
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // 从数据中获取项目的月龄
+  int _getItemAgeFromData(int itemId) {
+    for (var data in _allData) {
+      for (var item in data.testItems) {
+        if (item.id == itemId) {
+          return data.ageMonth;
+        }
+      }
+    }
+    return 1; // 默认值
   }
 
   // 设置加载状态

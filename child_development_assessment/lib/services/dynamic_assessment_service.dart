@@ -78,14 +78,14 @@ class DynamicAssessmentService {
     var mainAgeResult = _testAgeWithResults(allData, mainTestAge, testResults[mainTestAge] ?? {});
     
     // 2. 向前测试
-    List<int> forwardAges = _getForwardTestAges(mainTestAge, testResults);
+    List<int> forwardAges = getForwardTestAges(mainTestAge, testResults);
     Map<int, AgeTestResult> forwardResults = {};
     for (int age in forwardAges) {
       forwardResults[age] = _testAgeWithResults(allData, age, testResults[age] ?? {});
     }
     
     // 3. 向后测试
-    List<int> backwardAges = _getBackwardTestAges(mainTestAge, testResults);
+    List<int> backwardAges = getBackwardTestAges(mainTestAge, testResults);
     Map<int, AgeTestResult> backwardResults = {};
     for (int age in backwardAges) {
       backwardResults[age] = _testAgeWithResults(allData, age, testResults[age] ?? {});
@@ -115,7 +115,7 @@ class DynamicAssessmentService {
     List<int> forwardAges = [];
     int currentAge = mainAge;
     
-    // 先测试前两个标准月龄
+    // 从主测月龄向前测查2个月龄
     for (int i = 0; i < 2; i++) {
       int prevAge = getPreviousAge(currentAge);
       if (prevAge >= 1) {
@@ -126,24 +126,40 @@ class DynamicAssessmentService {
       }
     }
     
-    // 检查是否需要继续向前测试
-    bool needMoreForward = true;
-    while (needMoreForward) {
-      needMoreForward = false;
-      for (int age in forwardAges) {
-        if (ageResults.containsKey(age)) {
-          var results = ageResults[age]!;
-          // 检查是否有不通过的能区
-          bool hasFailed = false;
-          for (String area in results.keys) {
-            if (results[area]!.contains(false)) {
-              hasFailed = true;
-              break;
+    // 如果有测试结果，检查每个能区是否需要继续向前测查
+    if (ageResults.isNotEmpty) {
+      // 检查每个能区的连续通过情况
+      bool needMoreForward = true;
+      while (needMoreForward) {
+        needMoreForward = false;
+        
+        // 检查每个能区
+        for (String area in ['motor', 'fineMotor', 'language', 'adaptive', 'social']) {
+          // 检查该能区是否有连续2个月龄均通过
+          bool areaNeedsMore = true;
+          for (int i = 0; i < forwardAges.length - 1; i++) {
+            int age1 = forwardAges[i];
+            int age2 = forwardAges[i + 1];
+            
+            if (ageResults.containsKey(age1) && ageResults.containsKey(age2)) {
+              var results1 = ageResults[age1]!;
+              var results2 = ageResults[age2]!;
+              
+              // 检查该能区在这两个月龄是否均通过
+              bool age1Passed = results1.containsKey(area) && results1[area]!.every((passed) => passed);
+              bool age2Passed = results2.containsKey(area) && results2[area]!.every((passed) => passed);
+              
+              if (age1Passed && age2Passed) {
+                // 该能区连续2个月龄均通过，不需要继续向前
+                areaNeedsMore = false;
+                break;
+              }
             }
           }
-          if (hasFailed) {
-            // 继续向前测试
-            int nextPrevAge = getPreviousAge(age);
+          
+          // 如果该能区需要继续向前测查
+          if (areaNeedsMore) {
+            int nextPrevAge = getPreviousAge(forwardAges.last);
             if (nextPrevAge >= 1 && !forwardAges.contains(nextPrevAge)) {
               forwardAges.add(nextPrevAge);
               needMoreForward = true;
@@ -161,7 +177,7 @@ class DynamicAssessmentService {
     List<int> backwardAges = [];
     int currentAge = mainAge;
     
-    // 先测试后两个标准月龄
+    // 从主测月龄向后测查2个月龄
     for (int i = 0; i < 2; i++) {
       int nextAge = getNextAge(currentAge);
       if (nextAge <= 84) {
@@ -172,24 +188,40 @@ class DynamicAssessmentService {
       }
     }
     
-    // 检查是否需要继续向后测试
-    bool needMoreBackward = true;
-    while (needMoreBackward) {
-      needMoreBackward = false;
-      for (int age in backwardAges) {
-        if (ageResults.containsKey(age)) {
-          var results = ageResults[age]!;
-          // 检查是否有通过的能区
-          bool hasPassed = false;
-          for (String area in results.keys) {
-            if (results[area]!.contains(true)) {
-              hasPassed = true;
-              break;
+    // 如果有测试结果，检查每个能区是否需要继续向后测查
+    if (ageResults.isNotEmpty) {
+      // 检查每个能区的连续不通过情况
+      bool needMoreBackward = true;
+      while (needMoreBackward) {
+        needMoreBackward = false;
+        
+        // 检查每个能区
+        for (String area in ['motor', 'fineMotor', 'language', 'adaptive', 'social']) {
+          // 检查该能区是否有连续2个月龄均不通过
+          bool areaNeedsMore = true;
+          for (int i = 0; i < backwardAges.length - 1; i++) {
+            int age1 = backwardAges[i];
+            int age2 = backwardAges[i + 1];
+            
+            if (ageResults.containsKey(age1) && ageResults.containsKey(age2)) {
+              var results1 = ageResults[age1]!;
+              var results2 = ageResults[age2]!;
+              
+              // 检查该能区在这两个月龄是否均不通过
+              bool age1Failed = results1.containsKey(area) && results1[area]!.every((passed) => !passed);
+              bool age2Failed = results2.containsKey(area) && results2[area]!.every((passed) => !passed);
+              
+              if (age1Failed && age2Failed) {
+                // 该能区连续2个月龄均不通过，不需要继续向后
+                areaNeedsMore = false;
+                break;
+              }
             }
           }
-          if (hasPassed) {
-            // 继续向后测试
-            int nextNextAge = getNextAge(age);
+          
+          // 如果该能区需要继续向后测查
+          if (areaNeedsMore) {
+            int nextNextAge = getNextAge(backwardAges.last);
             if (nextNextAge <= 84 && !backwardAges.contains(nextNextAge)) {
               backwardAges.add(nextNextAge);
               needMoreBackward = true;
