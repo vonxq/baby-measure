@@ -3,6 +3,7 @@ import '../models/assessment_data.dart';
 import '../models/assessment_item.dart';
 import '../models/test_result.dart';
 import '../services/assessment_service.dart';
+import '../services/dynamic_assessment_service.dart';
 import '../services/data_service.dart';
 
 enum TestStage {
@@ -14,6 +15,7 @@ enum TestStage {
 
 class AssessmentProvider with ChangeNotifier {
   final AssessmentService _assessmentService = AssessmentService();
+  final DynamicAssessmentService _dynamicAssessmentService = DynamicAssessmentService();
   final DataService _dataService = DataService();
 
   List<AssessmentData> _allData = [];
@@ -33,6 +35,7 @@ class AssessmentProvider with ChangeNotifier {
   List<AssessmentItem> _currentStageItems = [];
   int _currentStageItemIndex = 0;
   Map<String, int> _areaItemCounts = {};
+  Map<int, Map<String, List<bool>>> _dynamicTestResults = {}; // 月龄 -> 能区 -> 项目通过情况
 
   // Getters
   List<AssessmentData> get allData => _allData;
@@ -53,6 +56,7 @@ class AssessmentProvider with ChangeNotifier {
   int get currentStageItemIndex => _currentStageItemIndex;
   Map<String, int> get areaItemCounts => _areaItemCounts;
   int get mainTestAge => _mainTestAge;
+  Map<int, Map<String, List<bool>>> get dynamicTestResults => _dynamicTestResults;
   
   // 获取item的area
   String getItemArea(int itemId) {
@@ -107,6 +111,37 @@ class AssessmentProvider with ChangeNotifier {
     }
   }
 
+  // 开始动态测评
+  void startDynamicAssessment(String userName, double actualAge) {
+    _userName = userName;
+    _actualAge = actualAge;
+    _mainTestAge = _assessmentService.determineMainTestAge(actualAge);
+    _currentStage = TestStage.current;
+    _currentStageItemIndex = 0;
+    _testResults.clear();
+    _dynamicTestResults.clear();
+    _loadCurrentStageItems();
+    notifyListeners();
+  }
+
+  // 记录当前月龄的测试结果
+  void recordCurrentAgeResults(Map<String, List<bool>> areaResults) {
+    _dynamicTestResults[_mainTestAge] = areaResults;
+    _checkAndMoveToNextStage();
+  }
+
+  // 记录向前测试结果
+  void recordForwardAgeResults(int age, Map<String, List<bool>> areaResults) {
+    _dynamicTestResults[age] = areaResults;
+    _checkAndMoveToNextStage();
+  }
+
+  // 记录向后测试结果
+  void recordBackwardAgeResults(int age, Map<String, List<bool>> areaResults) {
+    _dynamicTestResults[age] = areaResults;
+    _checkAndMoveToNextStage();
+  }
+
   // 开始测试
   Future<void> startTest(String userName, double actualAge) async {
     _setLoading(true);
@@ -137,10 +172,24 @@ class AssessmentProvider with ChangeNotifier {
         _currentStageItems = _assessmentService.getCurrentAgeItems(_allData, _mainTestAge);
         break;
       case TestStage.forward:
-        _currentStageItems = _assessmentService.getForwardItems(_allData, _mainTestAge, _testResults);
+        // 获取向前测试的月龄
+        var forwardAges = _dynamicAssessmentService.getForwardTestAges(_mainTestAge, _dynamicTestResults);
+        if (forwardAges.isNotEmpty) {
+          int nextAge = forwardAges.first;
+          _currentStageItems = _assessmentService.getCurrentAgeItems(_allData, nextAge);
+        } else {
+          _currentStageItems = [];
+        }
         break;
       case TestStage.backward:
-        _currentStageItems = _assessmentService.getBackwardItems(_allData, _mainTestAge, _testResults);
+        // 获取向后测试的月龄
+        var backwardAges = _dynamicAssessmentService.getBackwardTestAges(_mainTestAge, _dynamicTestResults);
+        if (backwardAges.isNotEmpty) {
+          int nextAge = backwardAges.first;
+          _currentStageItems = _assessmentService.getCurrentAgeItems(_allData, nextAge);
+        } else {
+          _currentStageItems = [];
+        }
         break;
       case TestStage.completed:
         _currentStageItems = [];
@@ -203,35 +252,25 @@ class AssessmentProvider with ChangeNotifier {
   void _checkAndMoveToNextStage() {
     switch (_currentStage) {
       case TestStage.current:
-        // 当前月龄测试完成，检查是否需要向前测查
-        if (_shouldMoveToForwardStage()) {
+        // 当前月龄测试完成，使用动态测评服务决定下一步
+        var forwardAges = _dynamicAssessmentService.getForwardTestAges(_mainTestAge, _dynamicTestResults);
+        var backwardAges = _dynamicAssessmentService.getBackwardTestAges(_mainTestAge, _dynamicTestResults);
+        
+        if (forwardAges.isNotEmpty) {
           _currentStage = TestStage.forward;
           _loadCurrentStageItems();
-        } else if (_shouldMoveToBackwardStage()) {
+        } else if (backwardAges.isNotEmpty) {
           _currentStage = TestStage.backward;
           _loadCurrentStageItems();
         } else {
-          // 如果当前月龄测试完成，但还没有足够的测试项目，强制进入下一阶段
-          if (_testResults.length < 10) { // 至少需要测试一定数量的项目
-            if (_shouldMoveToForwardStage()) {
-              _currentStage = TestStage.forward;
-              _loadCurrentStageItems();
-            } else if (_shouldMoveToBackwardStage()) {
-              _currentStage = TestStage.backward;
-              _loadCurrentStageItems();
-            } else {
-              _currentStage = TestStage.completed;
-              _loadCurrentStageItems();
-            }
-          } else {
-            _currentStage = TestStage.completed;
-            _loadCurrentStageItems();
-          }
+          _currentStage = TestStage.completed;
+          _loadCurrentStageItems();
         }
         break;
       case TestStage.forward:
         // 向前测查完成，检查是否需要向后测查
-        if (_shouldMoveToBackwardStage()) {
+        var backwardAges = _dynamicAssessmentService.getBackwardTestAges(_mainTestAge, _dynamicTestResults);
+        if (backwardAges.isNotEmpty) {
           _currentStage = TestStage.backward;
           _loadCurrentStageItems();
         } else {
@@ -321,8 +360,12 @@ class AssessmentProvider with ChangeNotifier {
   Future<void> completeTest() async {
     _setLoading(true);
     try {
-      // 获取所有测试项目
-      _currentTestItems = _assessmentService.getTestItems(_allData, _actualAge, _testResults);
+      // 使用动态测评服务计算结果
+      var dynamicResult = _dynamicAssessmentService.executeDynamicAssessment(
+        _allData,
+        _mainTestAge,
+        _dynamicTestResults,
+      );
       
       // 计算各能区结果
       final areas = ['motor', 'fineMotor', 'language', 'adaptive', 'social'];
@@ -379,6 +422,7 @@ class AssessmentProvider with ChangeNotifier {
     _currentStageItems.clear();
     _currentStageItemIndex = 0;
     _areaItemCounts.clear();
+    _dynamicTestResults.clear();
     notifyListeners();
   }
 

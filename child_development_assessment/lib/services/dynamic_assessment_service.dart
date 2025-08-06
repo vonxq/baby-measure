@@ -111,7 +111,7 @@ class DynamicAssessmentService {
   }
 
   // 向前测试逻辑
-  List<int> _getForwardTestAges(int mainAge, Map<int, Map<String, List<bool>>> ageResults) {
+  List<int> getForwardTestAges(int mainAge, Map<int, Map<String, List<bool>>> ageResults) {
     List<int> forwardAges = [];
     int currentAge = mainAge;
     
@@ -157,7 +157,7 @@ class DynamicAssessmentService {
   }
 
   // 向后测试逻辑
-  List<int> _getBackwardTestAges(int mainAge, Map<int, Map<String, List<bool>>> ageResults) {
+  List<int> getBackwardTestAges(int mainAge, Map<int, Map<String, List<bool>>> ageResults) {
     List<int> backwardAges = [];
     int currentAge = mainAge;
     
