@@ -27,8 +27,8 @@ class AssessmentService {
     int mainTestAge = determineMainTestAge(actualAge);
     List<AssessmentItem> allItems = [];
     
-    // 获取主测月龄±2个月龄的项目（基础范围）
-    // 实际测试中会根据通过情况动态调整
+    // 按照标准测查程序：主测月龄±2个月龄的基础范围
+    // 注意：实际测试中应该根据通过情况动态调整，但为了简化实现，我们先提供足够的测试项目
     for (int age in [mainTestAge - 2, mainTestAge - 1, mainTestAge, mainTestAge + 1, mainTestAge + 2]) {
       if (age > 0) {
         var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
@@ -36,10 +36,10 @@ class AssessmentService {
       }
     }
     
-    // 按能区分组，确保每个能区都有足够的测试项目
+    // 为每个能区添加更多月龄的项目，确保有足够的测试范围
+    // 这样可以支持动态测查逻辑（虽然当前UI是静态的）
     Map<String, List<AssessmentItem>> areaItems = {};
     for (var item in allItems) {
-      // 根据itemId推断能区（临时方案，实际应该从数据中获取）
       String area = _getAreaFromId(item.id);
       if (!areaItems.containsKey(area)) {
         areaItems[area] = [];
@@ -47,26 +47,24 @@ class AssessmentService {
       areaItems[area]!.add(item);
     }
     
-    // 为每个能区添加更多月龄的项目，确保有足够的测试范围
+    // 为每个能区添加更多月龄的项目，支持向前和向后测查
     for (String area in areaItems.keys) {
       var existingItems = areaItems[area]!;
       var existingAges = existingItems.map((item) => (item.id / 100).floor()).toSet();
       
-      // 向前扩展2个月龄
-      for (int age in [mainTestAge - 3, mainTestAge - 4]) {
+      // 向前扩展更多月龄（支持向前测查）
+      for (int age in [mainTestAge - 3, mainTestAge - 4, mainTestAge - 5, mainTestAge - 6]) {
         if (age > 0 && !existingAges.contains(age)) {
           var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
-          // 过滤出该能区的项目
           var areaSpecificItems = items.where((item) => _getAreaFromId(item.id) == area).toList();
           allItems.addAll(areaSpecificItems);
         }
       }
       
-      // 向后扩展2个月龄
-      for (int age in [mainTestAge + 3, mainTestAge + 4]) {
+      // 向后扩展更多月龄（支持向后测查）
+      for (int age in [mainTestAge + 3, mainTestAge + 4, mainTestAge + 5, mainTestAge + 6]) {
         if (age <= 84 && !existingAges.contains(age)) {
           var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
-          // 过滤出该能区的项目
           var areaSpecificItems = items.where((item) => _getAreaFromId(item.id) == area).toList();
           allItems.addAll(areaSpecificItems);
         }
@@ -74,6 +72,44 @@ class AssessmentService {
     }
     
     return allItems;
+  }
+
+  // 动态测查逻辑（供未来实现使用）
+  List<AssessmentItem> getDynamicTestItems(List<AssessmentData> allData, double actualAge, Map<int, bool> currentResults) {
+    int mainTestAge = determineMainTestAge(actualAge);
+    List<AssessmentItem> dynamicItems = [];
+    
+    // 按能区分别处理
+    List<String> areas = ['motor', 'fineMotor', 'language', 'adaptive', 'social'];
+    
+    for (String area in areas) {
+      var areaItems = _getAreaItemsForAge(allData, mainTestAge, area);
+      
+      // 根据当前结果动态决定是否需要更多测试项目
+      var additionalItems = _getAdditionalItemsForArea(allData, mainTestAge, area, currentResults);
+      areaItems.addAll(additionalItems);
+      
+      dynamicItems.addAll(areaItems);
+    }
+    
+    return dynamicItems;
+  }
+
+  // 获取指定能区在指定月龄的项目
+  List<AssessmentItem> _getAreaItemsForAge(List<AssessmentData> allData, int age, String area) {
+    var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
+    return items.where((item) => _getAreaFromId(item.id) == area).toList();
+  }
+
+  // 根据当前结果获取额外需要的项目
+  List<AssessmentItem> _getAdditionalItemsForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
+    List<AssessmentItem> additionalItems = [];
+    
+    // 分析当前结果，决定是否需要向前或向后测查
+    // 这里可以实现真正的动态逻辑
+    // 暂时返回空列表，保持当前静态实现
+    
+    return additionalItems;
   }
 
   // 根据itemId推断能区（临时方案）
@@ -101,47 +137,90 @@ class AssessmentService {
     }
   }
 
-  // 计算各能区智龄
+  // 计算各能区智龄 - 按照标准计算规则
   double calculateMentalAge(String area, List<AssessmentItem> items, Map<int, bool> results, Map<int, String> itemAreaMap) {
     // 过滤出该能区的项目
     var areaItems = items.where((item) {
       return itemAreaMap[item.id] == area;
     }).toList();
     
-    areaItems.sort((a, b) => b.id.compareTo(a.id)); // 按月龄从高到低排序
+    // 按月龄从高到低排序（从高月龄开始计算）
+    areaItems.sort((a, b) => b.id.compareTo(a.id));
     
     double totalScore = 0;
     int consecutivePasses = 0;
     
+    // 按照标准：把连续通过的测查项目读至最高分
     for (var item in areaItems) {
       if (results[item.id] == true) {
         totalScore += getScore(item.id);
         consecutivePasses++;
       } else {
+        // 遇到不通过的项目就停止
         break;
       }
     }
     
-    // 如果连续通过2个月龄，默认前面全部通过
+    // 按照标准：连续两个月龄通过则不再往前继续测，默认前面的全部通过
     if (consecutivePasses >= 2) {
-      totalScore += getDefaultPassScore(area);
+      // 计算默认通过的项目分数
+      totalScore += _calculateDefaultPassScore(area, areaItems, consecutivePasses);
     }
     
     return totalScore;
   }
 
-  // 获取项目分数 - 从数据中获取，不再硬编码
-  double getScore(int itemId) {
-    // 这里应该从数据中获取分数，暂时使用简化逻辑
-    if (itemId <= 1200) return 1.0; // 12个月龄以下
-    if (itemId <= 3600) return 3.0; // 36个月龄以下
-    return 6.0; // 其他
+  // 计算默认通过的项目分数
+  double _calculateDefaultPassScore(String area, List<AssessmentItem> areaItems, int consecutivePasses) {
+    if (consecutivePasses < 2) return 0;
+    
+    // 找到连续通过的最高月龄
+    int highestPassAge = 0;
+    for (int i = 0; i < consecutivePasses; i++) {
+      int itemAge = (areaItems[i].id / 100).floor();
+      if (itemAge > highestPassAge) {
+        highestPassAge = itemAge;
+      }
+    }
+    
+    // 计算默认通过的项目分数（从最高月龄往前计算）
+    double defaultScore = 0;
+    for (var item in areaItems) {
+      int itemAge = (item.id / 100).floor();
+      if (itemAge < highestPassAge) {
+        defaultScore += getScore(item.id);
+      }
+    }
+    
+    return defaultScore;
   }
 
-  // 获取默认通过分数
+  // 获取项目分数 - 按照标准计分规则
+  double getScore(int itemId) {
+    int monthAge = (itemId / 100).floor();
+    
+    // 按照标准计分规则
+    if (monthAge >= 1 && monthAge <= 12) {
+      // 1月龄～12月龄：每个能区1.0分
+      return 1.0;
+    } else if (monthAge >= 15 && monthAge <= 36) {
+      // 15月龄～36月龄：每个能区3.0分
+      return 3.0;
+    } else if (monthAge >= 42 && monthAge <= 84) {
+      // 42月龄～84月龄：每个能区6.0分
+      return 6.0;
+    }
+    
+    // 默认情况
+    return 1.0;
+  }
+
+  // 获取默认通过分数 - 按照标准计算
   double getDefaultPassScore(String area) {
-    // 简化实现，实际应根据具体规则计算
-    return 10.0;
+    // 根据能区和月龄计算默认通过分数
+    // 这里需要根据具体的月龄范围来计算
+    // 暂时使用简化实现
+    return 5.0;
   }
 
   // 计算发育商
@@ -150,11 +229,16 @@ class AssessmentService {
     return (mentalAge / actualAge) * 100;
   }
 
-  // 计算总体智龄
+  // 计算总体智龄 - 按照标准计算规则
   double calculateTotalMentalAge(Map<String, double> areaResults) {
     if (areaResults.isEmpty) return 0;
+    
+    // 按照标准：将五个能区所得分数相加，再除以5就是总的智龄，保留一位小数
     double total = areaResults.values.reduce((a, b) => a + b);
-    return total / areaResults.length;
+    double average = total / areaResults.length;
+    
+    // 保留一位小数
+    return double.parse(average.toStringAsFixed(1));
   }
 
   // 获取能区名称
