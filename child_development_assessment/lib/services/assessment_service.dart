@@ -38,7 +38,7 @@ class AssessmentService {
     
     // 按能区分组当前月龄的结果
     for (var item in currentAgeItems) {
-      String area = _getAreaFromId(item.id);
+      String area = getAreaFromData(allData, item.id);
       if (!currentAgeResults.containsKey(area)) {
         currentAgeResults[area] = [];
       }
@@ -62,7 +62,7 @@ class AssessmentService {
   bool _shouldForwardTestForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
     // 获取当前月龄该能区的项目
     var currentAreaItems = getCurrentAgeItems(allData, mainTestAge)
-        .where((item) => _getAreaFromId(item.id) == area)
+        .where((item) => getAreaFromData(allData, item.id) == area)
         .toList();
     
     // 检查当前月龄该能区的测试结果
@@ -81,7 +81,7 @@ class AssessmentService {
     // 从主测月龄向前查找，直到找到连续两个月龄都通过的项目
     for (int age = mainTestAge - 1; age >= 1; age--) {
       var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
-      var areaItems = ageItems.where((item) => _getAreaFromId(item.id) == area).toList();
+      var areaItems = ageItems.where((item) => getAreaFromData(allData, item.id) == area).toList();
       
       if (areaItems.isEmpty) continue;
       
@@ -116,7 +116,7 @@ class AssessmentService {
     
     // 按能区分组当前月龄的结果
     for (var item in currentAgeItems) {
-      String area = _getAreaFromId(item.id);
+      String area = getAreaFromData(allData, item.id);
       if (!currentAgeResults.containsKey(area)) {
         currentAgeResults[area] = [];
       }
@@ -140,7 +140,7 @@ class AssessmentService {
   bool _shouldBackwardTestForArea(List<AssessmentData> allData, int mainTestAge, String area, Map<int, bool> currentResults) {
     // 获取当前月龄该能区的项目
     var currentAreaItems = getCurrentAgeItems(allData, mainTestAge)
-        .where((item) => _getAreaFromId(item.id) == area)
+        .where((item) => getAreaFromData(allData, item.id) == area)
         .toList();
     
     // 检查当前月龄该能区的测试结果
@@ -159,7 +159,7 @@ class AssessmentService {
     // 从主测月龄向后查找，直到找到连续两个月龄都不通过的项目
     for (int age = mainTestAge + 1; age <= 84; age++) {
       var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
-      var areaItems = ageItems.where((item) => _getAreaFromId(item.id) == area).toList();
+      var areaItems = ageItems.where((item) => getAreaFromData(allData, item.id) == area).toList();
       
       if (areaItems.isEmpty) continue;
       
@@ -213,7 +213,7 @@ class AssessmentService {
       var areaItems = allData
           .where((data) => data.ageMonth == age)
           .expand((data) => data.testItems)
-          .where((item) => _getAreaFromId(item.id) == area)
+          .where((item) => getAreaFromData(allData, item.id) == area)
           .toList();
       
       if (areaItems.isEmpty) continue;
@@ -240,7 +240,7 @@ class AssessmentService {
       var areaItems = allData
           .where((data) => data.ageMonth == age)
           .expand((data) => data.testItems)
-          .where((item) => _getAreaFromId(item.id) == area)
+          .where((item) => getAreaFromData(allData, item.id) == area)
           .toList();
       
       if (areaItems.isEmpty) continue;
@@ -261,17 +261,19 @@ class AssessmentService {
   // 获取指定能区在指定月龄的项目
   List<AssessmentItem> _getAreaItemsForAge(List<AssessmentData> allData, int age, String area) {
     var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
-    return items.where((item) => _getAreaFromId(item.id) == area).toList();
+    return items.where((item) => getAreaFromData(allData, item.id) == area).toList();
   }
 
   // 根据itemId推断能区（临时方案）
   String _getAreaFromId(int itemId) {
-    // 根据itemId的范围推断能区
-    // 这是一个简化的实现，实际应该从数据中获取
+    // 从实际数据中获取能区信息
+    // 这里应该从AssessmentData中获取area信息
+    // 暂时使用简化的逻辑，实际应该从数据中读取
     int monthAge = (itemId / 100).floor();
     int itemIndex = itemId % 100;
     
-    // 根据月龄和项目索引推断能区
+    // 根据实际数据结构调整
+    // 6个月龄应该按照1-12月龄的逻辑处理
     if (monthAge <= 12) {
       // 1-12月龄：每个能区2个项目
       if (itemIndex <= 2) return 'motor';
@@ -287,6 +289,19 @@ class AssessmentService {
       if (itemIndex <= 4) return 'language';
       return 'social';
     }
+  }
+
+  // 从数据中获取能区信息
+  String getAreaFromData(List<AssessmentData> allData, int itemId) {
+    for (var data in allData) {
+      for (var item in data.testItems) {
+        if (item.id == itemId) {
+          return data.area;
+        }
+      }
+    }
+    // 如果找不到，使用推断方法
+    return _getAreaFromId(itemId);
   }
 
   // 从数据中获取月龄

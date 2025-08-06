@@ -8,6 +8,7 @@ class TestProgressIndicator extends StatelessWidget {
   final AssessmentItem? currentItem;
   final Map<String, int> areaProgress;
   final TestStage? currentStage;
+  final AssessmentProvider? provider;
 
   const TestProgressIndicator({
     super.key,
@@ -16,6 +17,7 @@ class TestProgressIndicator extends StatelessWidget {
     this.currentItem,
     required this.areaProgress,
     this.currentStage,
+    this.provider,
   });
 
   @override
@@ -86,7 +88,7 @@ class TestProgressIndicator extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '当前测试：${_getAreaName(_getAreaFromId(currentItem!.id))} - ${(currentItem!.id / 100).floor()}月龄',
+                      '当前测试：${_getAreaName(_getAreaFromItem(currentItem!))} - ${(currentItem!.id / 100).floor()}月龄',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -100,7 +102,7 @@ class TestProgressIndicator extends StatelessWidget {
             const SizedBox(height: 12),
           ],
           
-          // 各能区项目数量
+          // 各能区项目数量 - 改为一行显示
           Text(
             '本阶段各能区项目',
             style: TextStyle(
@@ -111,58 +113,62 @@ class TestProgressIndicator extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           
-          // 能区项目数量
-          ...areaProgress.entries.map((entry) => _buildAreaItemCount(entry.key, entry.value)),
+          // 能区项目数量 - 一行显示
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: areaProgress.entries
+                .where((entry) => entry.value > 0)
+                .map((entry) => _buildAreaItemChip(entry.key, entry.value))
+                .toList(),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildAreaItemCount(String area, int count) {
-    if (count == 0) return const SizedBox.shrink();
-    
+  Widget _buildAreaItemChip(String area, int count) {
     Color areaColor = _getAreaColor(area);
     String areaName = _getAreaName(area);
     
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: areaColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: areaColor.withValues(alpha: 0.3)),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 8,
-            height: 8,
+            width: 6,
+            height: 6,
             decoration: BoxDecoration(
               color: areaColor,
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              areaName,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
-              ),
+          const SizedBox(width: 6),
+          Text(
+            areaName,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[700],
             ),
           ),
+          const SizedBox(width: 4),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
               color: areaColor,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              '$count题',
+              '$count',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -207,17 +213,26 @@ class TestProgressIndicator extends StatelessWidget {
     }
   }
 
-  String _getAreaFromId(int itemId) {
-    int monthAge = (itemId / 100).floor();
-    int itemIndex = itemId % 100;
+  String _getAreaFromItem(AssessmentItem item) {
+    // 从AssessmentProvider获取能区信息
+    if (provider != null) {
+      return provider!.getItemArea(item.id);
+    }
     
+    // 如果provider不可用，使用简化的推断逻辑
+    int monthAge = (item.id / 100).floor();
+    int itemIndex = item.id % 100;
+    
+    // 根据实际数据结构调整
     if (monthAge <= 12) {
+      // 1-12月龄：每个能区2个项目
       if (itemIndex <= 2) return 'motor';
       if (itemIndex <= 4) return 'fineMotor';
       if (itemIndex <= 6) return 'adaptive';
       if (itemIndex <= 8) return 'language';
       return 'social';
     } else {
+      // 其他月龄：每个能区1个项目
       if (itemIndex <= 1) return 'motor';
       if (itemIndex <= 2) return 'fineMotor';
       if (itemIndex <= 3) return 'adaptive';
@@ -225,5 +240,4 @@ class TestProgressIndicator extends StatelessWidget {
       return 'social';
     }
   }
-} 
-} 
+}

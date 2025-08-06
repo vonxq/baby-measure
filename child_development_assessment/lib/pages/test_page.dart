@@ -125,13 +125,26 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: Text(
-                            '发育评估测试',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue[700],
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '发育评估测试',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue[700],
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                provider.getCurrentStageDescription(),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         IconButton(
@@ -161,52 +174,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                             totalItems: provider.currentStageItems.length,
                             currentItem: provider.currentItem,
                             areaProgress: provider.areaItemCounts,
-                          ),
-                          const SizedBox(height: 16),
-
-                          // 当前阶段信息
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.05),
-                                  blurRadius: 5,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(_getStageIcon(provider.currentStage), 
-                                         color: _getStageColor(provider.currentStage), 
-                                         size: 20),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      provider.getCurrentStageName(),
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: _getStageColor(provider.currentStage),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  provider.getCurrentStageDescription(),
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
+                            provider: provider,
                           ),
                           const SizedBox(height: 16),
 
