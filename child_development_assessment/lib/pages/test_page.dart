@@ -12,24 +12,15 @@ class TestPage extends StatefulWidget {
 }
 
 class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
-  late AnimationController _progressController;
   late AnimationController _cardController;
-  late Animation<double> _progressAnimation;
   late Animation<double> _cardAnimation;
 
   @override
   void initState() {
     super.initState();
-    _progressController = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
     _cardController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
-    );
-    _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _progressController, curve: Curves.easeInOut),
     );
     _cardAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _cardController, curve: Curves.easeInOut),
@@ -39,7 +30,6 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _progressController.dispose();
     _cardController.dispose();
     super.dispose();
   }
@@ -343,7 +333,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
     final totalCount = provider.currentTestItems.length;
     final itemId = provider.currentItem!.id;
     final monthAge = (itemId / 100).floor();
-    return '${monthAge}月龄 $currentIndex/$totalCount';
+    return '$monthAge月龄 $currentIndex/$totalCount';
   }
 
   // 获取分区名称
@@ -384,29 +374,33 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
       try {
         await provider.completeTest();
         // 跳转到结果页面
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const ResultPage(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
-              );
-            },
-          ),
-        );
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => const ResultPage(),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(1.0, 0.0),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                );
+              },
+            ),
+          );
+        }
       } catch (e) {
         // 显示错误信息
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('计算结果失败: $e'),
-            backgroundColor: Colors.red[600],
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('计算结果失败: $e'),
+              backgroundColor: Colors.red[600],
+            ),
+          );
+        }
       }
     }
   }

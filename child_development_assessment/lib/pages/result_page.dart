@@ -384,9 +384,13 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
   Future<void> _exportToJson(BuildContext context, TestResult result) async {
     try {
       final filePath = await ExportService.exportToJson(result);
-      _showSuccessDialog(context, 'JSON文件已导出到: $filePath');
+      if (context.mounted) {
+        _showSuccessDialog(context, 'JSON文件已导出到: $filePath');
+      }
     } catch (e) {
-      _showErrorDialog(context, '导出失败: $e');
+      if (context.mounted) {
+        _showErrorDialog(context, '导出失败: $e');
+      }
     }
   }
 
@@ -394,9 +398,13 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
   Future<void> _exportToCsv(BuildContext context, TestResult result) async {
     try {
       final filePath = await ExportService.exportToCsv(result);
-      _showSuccessDialog(context, 'CSV文件已导出到: $filePath');
+      if (context.mounted) {
+        _showSuccessDialog(context, 'CSV文件已导出到: $filePath');
+      }
     } catch (e) {
-      _showErrorDialog(context, '导出失败: $e');
+      if (context.mounted) {
+        _showErrorDialog(context, '导出失败: $e');
+      }
     }
   }
 
