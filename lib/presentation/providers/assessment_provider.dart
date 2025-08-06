@@ -169,4 +169,10 @@ class AssessmentProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
   }
+
+  // 设置当前结果（用于历史记录查看）
+  void setCurrentResult(AssessmentResult result) {
+    _currentResult = result;
+    notifyListeners();
+  }
 } 
