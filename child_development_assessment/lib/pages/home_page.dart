@@ -246,7 +246,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       SizedBox(
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: _nameController.text.trim().isEmpty ? null : () => _startTest(),
+                          onPressed: _nameController.text.trim().isNotEmpty ? () => _startTest() : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue[600],
                             foregroundColor: Colors.white,
@@ -316,7 +316,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void _startTest() {
-    if (_nameController.text.trim().isEmpty) {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Row(
@@ -335,7 +336,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     final navigator = Navigator.of(context);
-    context.read<AssessmentProvider>().startTest(_nameController.text.trim(), _selectedAge).then((_) {
+    context.read<AssessmentProvider>().startTest(name, _selectedAge).then((_) {
       navigator.push(
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => const TestPage(),

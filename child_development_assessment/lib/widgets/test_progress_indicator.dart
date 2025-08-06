@@ -88,7 +88,7 @@ class TestProgressIndicator extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '当前测试：${_getAreaName(_getAreaFromItem(currentItem!))} - ${(currentItem!.id / 100).floor()}月龄',
+                      '当前测试：${_getAreaName(_getAreaFromItem(currentItem!))} - ${_getMonthAgeFromItem(currentItem!)}月龄',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -239,5 +239,16 @@ class TestProgressIndicator extends StatelessWidget {
       if (itemIndex <= 4) return 'language';
       return 'social';
     }
+  }
+
+  int _getMonthAgeFromItem(AssessmentItem item) {
+    // 从AssessmentProvider获取月龄信息
+    if (provider != null) {
+      return provider!.getItemMonthAge(item.id);
+    }
+    
+    // 如果provider不可用，使用简化的推断逻辑
+    int monthAge = (item.id / 100).floor();
+    return monthAge;
   }
 }

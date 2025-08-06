@@ -59,6 +59,18 @@ class AssessmentProvider with ChangeNotifier {
     return _itemAreaMap[itemId] ?? 'unknown';
   }
 
+  // 获取item的月龄
+  int getItemMonthAge(int itemId) {
+    for (var data in _allData) {
+      for (var item in data.testItems) {
+        if (item.id == itemId) {
+          return data.ageMonth;
+        }
+      }
+    }
+    return 0;
+  }
+
   // 从数据中获取月龄
   int getMonthAgeFromData(int itemId) {
     for (var data in _allData) {
