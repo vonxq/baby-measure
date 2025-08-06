@@ -59,16 +59,9 @@ class AssessmentService {
       if (result) {
         // 通过的项目
         totalScore += item.score;
-        if (!foundFail) {
-          // 如果前面没有失败的项目，继续计算
-          continue;
-        } else {
-          // 如果前面有失败的项目，停止计算
-          break;
-        }
+        // 继续计算，直到遇到失败的项目
       } else {
-        // 失败的项目
-        foundFail = true;
+        // 失败的项目，停止计算
         break;
       }
     }
