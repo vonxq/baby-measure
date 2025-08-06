@@ -50,8 +50,9 @@ class AssessmentService {
     // 检查每个能区是否需要向前测查
     for (String area in currentAgeResults.keys) {
       if (_shouldForwardTestForArea(allData, mainTestAge, area, currentResults)) {
-        // 按月龄分组向前测查
-        for (int age = mainTestAge - 1; age >= 1; age--) {
+        // 按月龄分组向前测查，至少测查2个月龄
+        int forwardCount = 0;
+        for (int age = mainTestAge - 1; age >= 1 && forwardCount < 2; age--) {
           var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
           var areaItems = ageItems.where((item) => getAreaFromData(allData, item.id) == area).toList();
           
@@ -62,8 +63,7 @@ class AssessmentService {
           
           if (!hasTestedItems) {
             forwardItems.addAll(areaItems);
-            // 只添加一个月龄的项目，然后检查是否需要继续
-            break;
+            forwardCount++;
           } else {
             // 如果已经测试过，检查是否全部通过
             bool allPassed = areaItems.every((item) => currentResults[item.id] == true);
@@ -104,8 +104,9 @@ class AssessmentService {
     // 检查每个能区是否需要向后测查
     for (String area in currentAgeResults.keys) {
       if (_shouldBackwardTestForArea(allData, mainTestAge, area, currentResults)) {
-        // 按月龄分组向后测查
-        for (int age = mainTestAge + 1; age <= 84; age++) {
+        // 按月龄分组向后测查，至少测查2个月龄
+        int backwardCount = 0;
+        for (int age = mainTestAge + 1; age <= 84 && backwardCount < 2; age++) {
           var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
           var areaItems = ageItems.where((item) => getAreaFromData(allData, item.id) == area).toList();
           
@@ -116,8 +117,7 @@ class AssessmentService {
           
           if (!hasTestedItems) {
             backwardItems.addAll(areaItems);
-            // 只添加一个月龄的项目，然后检查是否需要继续
-            break;
+            backwardCount++;
           } else {
             // 如果已经测试过，检查是否全部不通过
             bool allFailed = areaItems.every((item) => currentResults[item.id] == false);
@@ -341,7 +341,7 @@ class AssessmentService {
     // 找到连续通过的最高月龄
     int highestPassAge = 0;
     for (int i = 0; i < consecutivePasses; i++) {
-      int itemAge = (areaItems[i].id / 100).floor();
+      int itemAge = (areaItems[i].id / 10).floor(); // 修正月龄计算
       if (itemAge > highestPassAge) {
         highestPassAge = itemAge;
       }
@@ -350,7 +350,7 @@ class AssessmentService {
     // 计算默认通过的项目分数（从最高月龄往前计算）
     double defaultScore = 0;
     for (var item in areaItems) {
-      int itemAge = (item.id / 100).floor();
+      int itemAge = (item.id / 10).floor(); // 修正月龄计算
       if (itemAge < highestPassAge) {
         defaultScore += getScore(item.id);
       }
@@ -374,7 +374,7 @@ class AssessmentService {
 
   // 获取项目分数 - 按照标准计分规则
   double getScore(int itemId) {
-    int monthAge = (itemId / 100).floor();
+    int monthAge = (itemId / 10).floor(); // 修正月龄计算
     
     // 按照标准计分规则
     if (monthAge >= 1 && monthAge <= 12) {

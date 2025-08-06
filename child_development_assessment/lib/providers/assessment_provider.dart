@@ -211,8 +211,22 @@ class AssessmentProvider with ChangeNotifier {
           _currentStage = TestStage.backward;
           _loadCurrentStageItems();
         } else {
-          _currentStage = TestStage.completed;
-          _loadCurrentStageItems();
+          // 如果当前月龄测试完成，但还没有足够的测试项目，强制进入下一阶段
+          if (_testResults.length < 10) { // 至少需要测试一定数量的项目
+            if (_shouldMoveToForwardStage()) {
+              _currentStage = TestStage.forward;
+              _loadCurrentStageItems();
+            } else if (_shouldMoveToBackwardStage()) {
+              _currentStage = TestStage.backward;
+              _loadCurrentStageItems();
+            } else {
+              _currentStage = TestStage.completed;
+              _loadCurrentStageItems();
+            }
+          } else {
+            _currentStage = TestStage.completed;
+            _loadCurrentStageItems();
+          }
         }
         break;
       case TestStage.forward:
