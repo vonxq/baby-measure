@@ -11,7 +11,7 @@ class AssessmentProvider with ChangeNotifier {
 
   List<AssessmentData> _allData = [];
   List<AssessmentItem> _currentTestItems = [];
-  Map<int, bool> _testResults = {};
+  final Map<int, bool> _testResults = {};
   int _currentItemIndex = 0;
   bool _isLoading = false;
   String _error = '';

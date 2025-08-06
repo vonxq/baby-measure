@@ -4,8 +4,10 @@ import '../providers/assessment_provider.dart';
 import 'test_page.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
@@ -18,7 +20,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -58,8 +60,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircularProgressIndicator(color: Colors.blue[600]),
-                      SizedBox(height: 16),
-                      Text('正在加载数据...', style: TextStyle(fontSize: 16)),
+                      const SizedBox(height: 16),
+                      const Text('正在加载数据...', style: TextStyle(fontSize: 16)),
                     ],
                   ),
                 );
@@ -71,13 +73,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
-                      SizedBox(height: 16),
-                      Text(provider.error, style: TextStyle(fontSize: 16)),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
+                      Text(provider.error, style: const TextStyle(fontSize: 16)),
+                      const SizedBox(height: 16),
                       ElevatedButton.icon(
                         onPressed: () => provider.initializeData(),
-                        icon: Icon(Icons.refresh),
-                        label: Text('重试'),
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('重试'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue[600],
                           foregroundColor: Colors.white,
@@ -91,21 +93,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               return FadeTransition(
                 opacity: _fadeAnimation,
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // 标题区域
                       Container(
-                        padding: EdgeInsets.all(24),
+                        padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 10,
-                              offset: Offset(0, 4),
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
@@ -116,7 +118,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               size: 64,
                               color: Colors.blue[600],
                             ),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
                             Text(
                               '儿童发育评估',
                               style: TextStyle(
@@ -125,7 +127,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 color: Colors.blue[700],
                               ),
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Text(
                               '0-6岁儿童发育行为评估量表',
                               style: TextStyle(
@@ -136,19 +138,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ],
                         ),
                       ),
-                      SizedBox(height: 32),
+                      const SizedBox(height: 32),
 
                       // 输入区域
                       Container(
-                        padding: EdgeInsets.all(24),
+                        padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.black.withValues(alpha: 0.1),
                               blurRadius: 10,
-                              offset: Offset(0, 4),
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
@@ -163,7 +165,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 color: Colors.blue[700],
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
 
                             // 姓名输入
                             TextField(
@@ -181,19 +183,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                               ),
                             ),
-                            SizedBox(height: 24),
+                            const SizedBox(height: 24),
 
                             // 月龄选择
-                            Text(
+                            const Text(
                               '选择月龄',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 16),
+                            const SizedBox(height: 16),
                             Container(
-                              padding: EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: Colors.blue[50],
                                 borderRadius: BorderRadius.circular(12),
@@ -209,7 +211,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       color: Colors.blue[700],
                                     ),
                                   ),
-                                  SizedBox(height: 16),
+                                  const SizedBox(height: 16),
                                   SliderTheme(
                                     data: SliderTheme.of(context).copyWith(
                                       activeTrackColor: Colors.blue[600],
@@ -217,7 +219,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                       thumbColor: Colors.blue[600],
                                       overlayColor: Colors.blue[200],
                                       valueIndicatorColor: Colors.blue[600],
-                                      valueIndicatorTextStyle: TextStyle(color: Colors.white),
+                                      valueIndicatorTextStyle: const TextStyle(color: Colors.white),
                                     ),
                                     child: Slider(
                                       value: _selectedAge,
@@ -238,10 +240,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ],
                         ),
                       ),
-                      SizedBox(height: 32),
+                      const SizedBox(height: 32),
 
                       // 开始测试按钮
-                      Container(
+                      SizedBox(
                         height: 56,
                         child: ElevatedButton(
                           onPressed: _nameController.text.trim().isEmpty ? null : () => _startTest(),
@@ -253,7 +255,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             ),
                             elevation: 4,
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.play_arrow),
@@ -266,11 +268,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                         ),
                       ),
-                      SizedBox(height: 24),
+                      const SizedBox(height: 24),
 
                       // 说明卡片
                       Container(
-                        padding: EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           color: Colors.orange[50],
                           borderRadius: BorderRadius.circular(16),
@@ -282,7 +284,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             Row(
                               children: [
                                 Icon(Icons.info_outline, color: Colors.orange[600]),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Text(
                                   '测试说明',
                                   style: TextStyle(
@@ -293,12 +295,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 12),
-                            Text('• 请根据宝宝的实际情况选择月龄'),
-                            SizedBox(height: 4),
-                            Text('• 测试过程中请如实回答每个问题'),
-                            SizedBox(height: 4),
-                            Text('• 测试结果仅供参考，如有疑问请咨询专业医生'),
+                            const SizedBox(height: 12),
+                            const Text('• 请根据宝宝的实际情况选择月龄'),
+                            const SizedBox(height: 4),
+                            const Text('• 测试过程中请如实回答每个问题'),
+                            const SizedBox(height: 4),
+                            const Text('• 测试结果仅供参考，如有疑问请咨询专业医生'),
                           ],
                         ),
                       ),
@@ -317,7 +319,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (_nameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Row(
+          content: const Row(
             children: [
               Icon(Icons.warning, color: Colors.white),
               SizedBox(width: 8),
@@ -332,15 +334,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       return;
     }
 
+    final navigator = Navigator.of(context);
     context.read<AssessmentProvider>().startTest(_selectedAge).then((_) {
-      Navigator.push(
-        context,
+      navigator.push(
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => TestPage(),
+          pageBuilder: (context, animation, secondaryAnimation) => const TestPage(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return SlideTransition(
               position: Tween<Offset>(
-                begin: Offset(1.0, 0.0),
+                begin: const Offset(1.0, 0.0),
                 end: Offset.zero,
               ).animate(animation),
               child: child,
