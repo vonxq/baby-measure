@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import '../providers/baby_provider.dart';
 import '../../data/models/baby.dart';
 import '../../core/utils/error_handler.dart';
@@ -22,6 +24,8 @@ class _BabyEditPageState extends State<BabyEditPage> {
   String _selectedGender = 'male';
   bool _isLoading = false;
   bool _isEditMode = false;
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -31,6 +35,7 @@ class _BabyEditPageState extends State<BabyEditPage> {
       _nameController.text = widget.baby!.name;
       _selectedBirthDate = widget.baby!.birthDate;
       _selectedGender = widget.baby!.gender;
+      // TODO: 加载现有头像
     }
   }
 
@@ -104,18 +109,40 @@ class _BabyEditPageState extends State<BabyEditPage> {
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.blue[300]!, width: 2),
                 ),
-                child: Icon(
-                  Icons.camera_alt,
-                  size: 40,
-                  color: Colors.blue[600],
-                ),
+                child: _selectedImage != null
+                    ? ClipOval(
+                        child: Image.file(
+                          _selectedImage!,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Icon(
+                        Icons.camera_alt,
+                        size: 40,
+                        color: Colors.blue[600],
+                      ),
               ),
             ),
             SizedBox(height: 8),
             Text(
-              '点击选择头像',
+              _selectedImage != null ? '点击更换头像' : '点击选择头像',
               style: TextStyle(color: Colors.grey[600], fontSize: 12),
             ),
+            if (_selectedImage != null)
+              Padding(
+                padding: EdgeInsets.only(top: 8),
+                child: TextButton.icon(
+                  onPressed: _removeAvatar,
+                  icon: Icon(Icons.delete, size: 16),
+                  label: Text('删除头像'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.red,
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -242,11 +269,59 @@ class _BabyEditPageState extends State<BabyEditPage> {
     );
   }
 
-  void _selectAvatar() {
-    // TODO: 实现头像选择功能
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('头像选择功能开发中...')),
+  void _selectAvatar() async {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.camera_alt),
+              title: Text('拍照'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_library),
+              title: Text('从相册选择'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
     );
+  }
+
+  void _pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        maxWidth: 300,
+        maxHeight: 300,
+        imageQuality: 80,
+      );
+      
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image.path);
+        });
+      }
+    } catch (e) {
+      ErrorHandler.showError('选择图片失败: $e');
+    }
+  }
+
+  void _removeAvatar() {
+    setState(() {
+      _selectedImage = null;
+    });
   }
 
   void _selectBirthDate() async {
