@@ -161,7 +161,8 @@ class AssessmentProvider extends ChangeNotifier {
   // 设置加载状态
   void _setLoading(bool loading) {
     _isLoading = loading;
-    notifyListeners();
+    // 使用Future.microtask来避免在build期间调用notifyListeners
+    Future.microtask(() => notifyListeners());
   }
 
   // 清除错误

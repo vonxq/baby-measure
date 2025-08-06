@@ -33,6 +33,25 @@ class AssessmentService {
         .where((item) => int.tryParse(item.ageGroup) == mainTestAge)
         .toList();
     
+    // 如果没有找到项目，尝试使用最接近的月龄
+    if (testItems.isEmpty) {
+      // 查找最接近的月龄
+      int closestAge = _ageGroups[0];
+      double minDiff = (ageInMonths - _ageGroups[0]).abs();
+      
+      for (int age in _ageGroups) {
+        double diff = (ageInMonths - age).abs();
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestAge = age;
+        }
+      }
+      
+      testItems = allItems
+          .where((item) => int.tryParse(item.ageGroup) == closestAge)
+          .toList();
+    }
+    
     // 按能区排序
     testItems.sort((a, b) => a.areaType.compareTo(b.areaType));
     

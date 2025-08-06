@@ -36,6 +36,43 @@ class AssessmentItem {
     );
   }
 
+  // 从优化格式JSON创建对象
+  factory AssessmentItem.fromOptimizedJson(Map<String, dynamic> json) {
+    // 将category映射到中文名称
+    String categoryName;
+    switch (json['category']) {
+      case 'motor':
+        categoryName = '大运动';
+        break;
+      case 'fineMotor':
+        categoryName = '精细动作';
+        break;
+      case 'language':
+        categoryName = '语言';
+        break;
+      case 'adaptive':
+        categoryName = '适应能力';
+        break;
+      case 'social':
+        categoryName = '社会行为';
+        break;
+      default:
+        categoryName = '未知';
+    }
+    
+    return AssessmentItem(
+      id: json['id'].toString(),
+      category: categoryName,
+      ageGroup: json['month'].toString(),
+      itemName: json['description'],
+      description: json['description'],
+      passCriteria: json['description'], // 使用description作为通过标准
+      score: 1.0, // 默认分数为1
+      isImportant: false,
+      canAskParent: false,
+    );
+  }
+
   // 转换为JSON
   Map<String, dynamic> toJson() {
     return {

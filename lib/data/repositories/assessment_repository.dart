@@ -10,12 +10,11 @@ class AssessmentRepository {
   // 获取所有评估项目
   Future<List<AssessmentItem>> getAllItems() async {
     try {
-      final String jsonString = await rootBundle.loadString('data/assessment_items.json');
-      final Map<String, dynamic> jsonData = json.decode(jsonString);
-      final List<dynamic> itemsJson = jsonData['items'];
+      final String jsonString = await rootBundle.loadString('data/optimized_scale_data.json');
+      final List<dynamic> itemsJson = json.decode(jsonString);
       
       return itemsJson
-          .map((json) => AssessmentItem.fromJson(json))
+          .map((json) => AssessmentItem.fromOptimizedJson(json))
           .toList();
     } catch (e) {
       throw Exception('加载评估项目失败: $e');

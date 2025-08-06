@@ -10,14 +10,16 @@ void main() {
         name: '小明',
         birthDate: DateTime(2023, 1, 1),
         gender: 'male',
-        avatarPath: null,
+        avatar: null,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       expect(baby.id, '1');
       expect(baby.name, '小明');
       expect(baby.birthDate, DateTime(2023, 1, 1));
       expect(baby.gender, 'male');
-      expect(baby.avatarPath, null);
+      expect(baby.avatar, null);
     });
 
     test('should calculate age correctly', () {
@@ -26,7 +28,9 @@ void main() {
         name: '小明',
         birthDate: DateTime(2023, 1, 1),
         gender: 'male',
-        avatarPath: null,
+        avatar: null,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       final ageInMonths = baby.ageInMonths;

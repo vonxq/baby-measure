@@ -328,8 +328,8 @@ class _BabyEditPageState extends State<BabyEditPage> {
   void _selectBirthDate() async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedBirthDate ?? DateTime.now().subtract(Duration(days: 365)),
-      firstDate: DateTime.now().subtract(Duration(days: 365 * 6)),
+      initialDate: _selectedBirthDate ?? DateTime.now().subtract(Duration(days: 30)), // 默认选择30天前
+      firstDate: DateTime.now().subtract(Duration(days: 365 * 6)), // 最多6年前
       lastDate: DateTime.now(),
     );
     if (picked != null) {
