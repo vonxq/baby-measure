@@ -48,50 +48,30 @@
             <div class="progress">
                 <div class="progress-bar" style="width: 60%;"></div>
             </div>
-            <p>已完成: 3/5 个项目 (60%)</p>
+            <p>题目进度: 3/5 题 (60%)</p>
         </div>
 
-        <!-- 测试项目列表 -->
-        <div style="margin: 20px 0;">
-            <h3>测试项目</h3>
-            
-            <div class="test-item completed">
-                <h4>✅ 项目1: 独走几步</h4>
-                <p>要求: 宝宝能够独立行走几步</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item completed">
-                <h4>✅ 项目2: 扶物蹲下取物</h4>
-                <p>要求: 宝宝能够扶着物体蹲下取物</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item current">
-                <h4>🔄 项目3: 独走自如</h4>
-                <p>要求: 宝宝能够独立行走自如，不跌倒</p>
-                <p>状态: 正在测试</p>
-            </div>
-
-            <div class="test-item">
-                <h4>⏳ 项目4: 扶栏上楼</h4>
-                <p>要求: 宝宝能够扶着栏杆上楼</p>
-                <p>状态: 待测试</p>
-            </div>
-
-            <div class="test-item">
-                <h4>⏳ 项目5: 跑</h4>
-                <p>要求: 宝宝能够跑动</p>
-                <p>状态: 待测试</p>
-            </div>
-        </div>
-
-        <!-- 当前测试项目详情 -->
+        <!-- 当前测试题目 -->
         <div class="test-item current">
-            <h3>当前测试项目: 独走自如</h3>
-            <p><strong>测试要求:</strong> 宝宝能够独立行走自如，不跌倒</p>
-            <p><strong>操作方法:</strong> 让宝宝在平坦的地面上独立行走，观察是否能够自如行走而不跌倒</p>
-            <p><strong>通过标准:</strong> 宝宝能够独立行走自如，不跌倒</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <h2 style="color: #007bff;">第3题</h2>
+                <h3>独走自如</h3>
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <h4>📋 测试要求</h4>
+                <p>宝宝能够独立行走自如，不跌倒</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4>🔧 操作方法</h4>
+                <p>让宝宝在平坦的地面上独立行走，观察是否能够自如行走而不跌倒</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4>✅ 通过标准</h4>
+                <p>宝宝能够独立行走自如，不跌倒</p>
+            </div>
             
             <div class="tip">
                 <h4>💡 测试提示</h4>
@@ -99,9 +79,17 @@
                 <p>如果宝宝还不能独立行走自如，请点击"不通过"</p>
             </div>
 
-            <button class="button" style="background: #28a745;">通过</button>
-            <button class="button" style="background: #dc3545;">不通过</button>
-            <button class="button" onclick="nextArea()">完成此能区</button>
+            <!-- 操作按钮 -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="button" style="background: #28a745; font-size: 18px; padding: 15px 30px;">✅ 通过</button>
+                <button class="button" style="background: #dc3545; font-size: 18px; padding: 15px 30px;">❌ 不通过</button>
+            </div>
+
+            <!-- 导航按钮 -->
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="button" onclick="previousQuestion()" style="background: #6c757d;">⬅️ 上一题</button>
+                <button class="button" onclick="nextQuestion()" style="background: #007bff;">下一题 ➡️</button>
+            </div>
         </div>
     </div>
 
@@ -124,50 +112,30 @@
             <div class="progress">
                 <div class="progress-bar" style="width: 20%;"></div>
             </div>
-            <p>已完成: 1/5 个项目 (20%)</p>
+            <p>题目进度: 1/5 题 (20%)</p>
         </div>
 
-        <!-- 测试项目列表 -->
-        <div style="margin: 20px 0;">
-            <h3>测试项目</h3>
-            
-            <div class="test-item completed">
-                <h4>✅ 项目1: 用拇指和食指捏取小丸</h4>
-                <p>要求: 宝宝能够用拇指和食指捏取小丸</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item current">
-                <h4>🔄 项目2: 将小丸放入瓶中</h4>
-                <p>要求: 宝宝能够将小丸放入瓶中</p>
-                <p>状态: 正在测试</p>
-            </div>
-
-            <div class="test-item">
-                <h4>⏳ 项目3: 搭积木2块</h4>
-                <p>要求: 宝宝能够搭积木2块</p>
-                <p>状态: 待测试</p>
-            </div>
-
-            <div class="test-item">
-                <h4>⏳ 项目4: 模仿画直线</h4>
-                <p>要求: 宝宝能够模仿画直线</p>
-                <p>状态: 待测试</p>
-            </div>
-
-            <div class="test-item">
-                <h4>⏳ 项目5: 用笔乱画</h4>
-                <p>要求: 宝宝能够用笔乱画</p>
-                <p>状态: 待测试</p>
-            </div>
-        </div>
-
-        <!-- 当前测试项目详情 -->
+        <!-- 当前测试题目 -->
         <div class="test-item current">
-            <h3>当前测试项目: 将小丸放入瓶中</h3>
-            <p><strong>测试要求:</strong> 宝宝能够将小丸放入瓶中</p>
-            <p><strong>操作方法:</strong> 给宝宝一个小丸和一个瓶子，观察宝宝是否能将小丸放入瓶中</p>
-            <p><strong>通过标准:</strong> 宝宝能够将小丸放入瓶中</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <h2 style="color: #007bff;">第1题</h2>
+                <h3>将小丸放入瓶中</h3>
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <h4>📋 测试要求</h4>
+                <p>宝宝能够将小丸放入瓶中</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4>🔧 操作方法</h4>
+                <p>给宝宝一个小丸和一个瓶子，观察宝宝是否能将小丸放入瓶中</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4>✅ 通过标准</h4>
+                <p>宝宝能够将小丸放入瓶中</p>
+            </div>
             
             <div class="tip">
                 <h4>💡 测试提示</h4>
@@ -175,9 +143,17 @@
                 <p>如果宝宝还不能将小丸放入瓶中，请点击"不通过"</p>
             </div>
 
-            <button class="button" style="background: #28a745;">通过</button>
-            <button class="button" style="background: #dc3545;">不通过</button>
-            <button class="button" onclick="nextArea()">完成此能区</button>
+            <!-- 操作按钮 -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="button" style="background: #28a745; font-size: 18px; padding: 15px 30px;">✅ 通过</button>
+                <button class="button" style="background: #dc3545; font-size: 18px; padding: 15px 30px;">❌ 不通过</button>
+            </div>
+
+            <!-- 导航按钮 -->
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="button" onclick="previousQuestion()" style="background: #6c757d;">⬅️ 上一题</button>
+                <button class="button" onclick="nextQuestion()" style="background: #007bff;">下一题 ➡️</button>
+            </div>
         </div>
     </div>
 
@@ -200,50 +176,30 @@
             <div class="progress">
                 <div class="progress-bar" style="width: 40%;"></div>
             </div>
-            <p>已完成: 2/5 个项目 (40%)</p>
+            <p>题目进度: 2/5 题 (40%)</p>
         </div>
 
-        <!-- 测试项目列表 -->
-        <div style="margin: 20px 0;">
-            <h3>测试项目</h3>
-            
-            <div class="test-item completed">
-                <h4>✅ 项目1: 模仿发音</h4>
-                <p>要求: 宝宝能够模仿发音</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item completed">
-                <h4>✅ 项目2: 说"爸爸"、"妈妈"</h4>
-                <p>要求: 宝宝能够说"爸爸"、"妈妈"</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item current">
-                <h4>🔄 项目3: 说出自己的姓名</h4>
-                <p>要求: 宝宝能够说出自己的姓名</p>
-                <p>状态: 正在测试</p>
-            </div>
-
-            <div class="test-item">
-                <h4>⏳ 项目4: 说3个词</h4>
-                <p>要求: 宝宝能够说3个词</p>
-                <p>状态: 待测试</p>
-            </div>
-
-            <div class="test-item">
-                <h4>⏳ 项目5: 说短句</h4>
-                <p>要求: 宝宝能够说短句</p>
-                <p>状态: 待测试</p>
-            </div>
-        </div>
-
-        <!-- 当前测试项目详情 -->
+        <!-- 当前测试题目 -->
         <div class="test-item current">
-            <h3>当前测试项目: 说出自己的姓名</h3>
-            <p><strong>测试要求:</strong> 宝宝能够说出自己的姓名</p>
-            <p><strong>操作方法:</strong> 询问宝宝"你叫什么名字？"，观察宝宝是否能说出自己的姓名</p>
-            <p><strong>通过标准:</strong> 宝宝能够清楚地说出自己的姓名</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <h2 style="color: #007bff;">第2题</h2>
+                <h3>说出自己的姓名</h3>
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <h4>📋 测试要求</h4>
+                <p>宝宝能够说出自己的姓名</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4>🔧 操作方法</h4>
+                <p>询问宝宝"你叫什么名字？"，观察宝宝是否能说出自己的姓名</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4>✅ 通过标准</h4>
+                <p>宝宝能够清楚地说出自己的姓名</p>
+            </div>
             
             <div class="tip">
                 <h4>💡 测试提示</h4>
@@ -251,9 +207,17 @@
                 <p>如果宝宝还不能说出自己的姓名，请点击"不通过"</p>
             </div>
 
-            <button class="button" style="background: #28a745;">通过</button>
-            <button class="button" style="background: #dc3545;">不通过</button>
-            <button class="button" onclick="nextArea()">完成此能区</button>
+            <!-- 操作按钮 -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="button" style="background: #28a745; font-size: 18px; padding: 15px 30px;">✅ 通过</button>
+                <button class="button" style="background: #dc3545; font-size: 18px; padding: 15px 30px;">❌ 不通过</button>
+            </div>
+
+            <!-- 导航按钮 -->
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="button" onclick="previousQuestion()" style="background: #6c757d;">⬅️ 上一题</button>
+                <button class="button" onclick="nextQuestion()" style="background: #007bff;">下一题 ➡️</button>
+            </div>
         </div>
     </div>
 
@@ -276,50 +240,30 @@
             <div class="progress">
                 <div class="progress-bar" style="width: 60%;"></div>
             </div>
-            <p>已完成: 3/5 个项目 (60%)</p>
+            <p>题目进度: 3/5 题 (60%)</p>
         </div>
 
-        <!-- 测试项目列表 -->
-        <div style="margin: 20px 0;">
-            <h3>测试项目</h3>
-            
-            <div class="test-item completed">
-                <h4>✅ 项目1: 寻找声源</h4>
-                <p>要求: 宝宝能够寻找声源</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item completed">
-                <h4>✅ 项目2: 拿两块积木</h4>
-                <p>要求: 宝宝能够拿两块积木</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item completed">
-                <h4>✅ 项目3: 拿三块积木</h4>
-                <p>要求: 宝宝能够拿三块积木</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item current">
-                <h4>🔄 项目4: 搭积木2块</h4>
-                <p>要求: 宝宝能够搭积木2块</p>
-                <p>状态: 正在测试</p>
-            </div>
-
-            <div class="test-item">
-                <h4>⏳ 项目5: 搭积木3块</h4>
-                <p>要求: 宝宝能够搭积木3块</p>
-                <p>状态: 待测试</p>
-            </div>
-        </div>
-
-        <!-- 当前测试项目详情 -->
+        <!-- 当前测试题目 -->
         <div class="test-item current">
-            <h3>当前测试项目: 搭积木2块</h3>
-            <p><strong>测试要求:</strong> 宝宝能够搭积木2块</p>
-            <p><strong>操作方法:</strong> 给宝宝2块积木，观察宝宝是否能将积木搭起来</p>
-            <p><strong>通过标准:</strong> 宝宝能够将2块积木搭起来</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <h2 style="color: #007bff;">第3题</h2>
+                <h3>搭积木2块</h3>
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <h4>📋 测试要求</h4>
+                <p>宝宝能够搭积木2块</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4>🔧 操作方法</h4>
+                <p>给宝宝2块积木，观察宝宝是否能将积木搭起来</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4>✅ 通过标准</h4>
+                <p>宝宝能够将2块积木搭起来</p>
+            </div>
             
             <div class="tip">
                 <h4>💡 测试提示</h4>
@@ -327,9 +271,17 @@
                 <p>如果宝宝还不能将积木搭起来，请点击"不通过"</p>
             </div>
 
-            <button class="button" style="background: #28a745;">通过</button>
-            <button class="button" style="background: #dc3545;">不通过</button>
-            <button class="button" onclick="nextArea()">完成此能区</button>
+            <!-- 操作按钮 -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="button" style="background: #28a745; font-size: 18px; padding: 15px 30px;">✅ 通过</button>
+                <button class="button" style="background: #dc3545; font-size: 18px; padding: 15px 30px;">❌ 不通过</button>
+            </div>
+
+            <!-- 导航按钮 -->
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="button" onclick="previousQuestion()" style="background: #6c757d;">⬅️ 上一题</button>
+                <button class="button" onclick="nextQuestion()" style="background: #007bff;">下一题 ➡️</button>
+            </div>
         </div>
     </div>
 
@@ -352,50 +304,30 @@
             <div class="progress">
                 <div class="progress-bar" style="width: 80%;"></div>
             </div>
-            <p>已完成: 4/5 个项目 (80%)</p>
+            <p>题目进度: 4/5 题 (80%)</p>
         </div>
 
-        <!-- 测试项目列表 -->
-        <div style="margin: 20px 0;">
-            <h3>测试项目</h3>
-            
-            <div class="test-item completed">
-                <h4>✅ 项目1: 对镜中影像有反应</h4>
-                <p>要求: 宝宝对镜中影像有反应</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item completed">
-                <h4>✅ 项目2: 会玩躲猫猫</h4>
-                <p>要求: 宝宝会玩躲猫猫</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item completed">
-                <h4>✅ 项目3: 会表示"再见"</h4>
-                <p>要求: 宝宝会表示"再见"</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item completed">
-                <h4>✅ 项目4: 会表示"谢谢"</h4>
-                <p>要求: 宝宝会表示"谢谢"</p>
-                <p>结果: 通过</p>
-            </div>
-
-            <div class="test-item current">
-                <h4>🔄 项目5: 会自己用勺吃饭</h4>
-                <p>要求: 宝宝会自己用勺吃饭</p>
-                <p>状态: 正在测试</p>
-            </div>
-        </div>
-
-        <!-- 当前测试项目详情 -->
+        <!-- 当前测试题目 -->
         <div class="test-item current">
-            <h3>当前测试项目: 会自己用勺吃饭</h3>
-            <p><strong>测试要求:</strong> 宝宝会自己用勺吃饭</p>
-            <p><strong>操作方法:</strong> 给宝宝一个勺子和食物，观察宝宝是否能自己用勺吃饭</p>
-            <p><strong>通过标准:</strong> 宝宝能够自己用勺吃饭</p>
+            <div style="text-align: center; margin: 20px 0;">
+                <h2 style="color: #007bff;">第4题</h2>
+                <h3>会自己用勺吃饭</h3>
+            </div>
+            
+            <div style="margin: 20px 0;">
+                <h4>📋 测试要求</h4>
+                <p>宝宝会自己用勺吃饭</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4>🔧 操作方法</h4>
+                <p>给宝宝一个勺子和食物，观察宝宝是否能自己用勺吃饭</p>
+            </div>
+
+            <div style="margin: 20px 0;">
+                <h4>✅ 通过标准</h4>
+                <p>宝宝能够自己用勺吃饭</p>
+            </div>
             
             <div class="tip">
                 <h4>💡 测试提示</h4>
@@ -403,13 +335,26 @@
                 <p>如果宝宝还不能自己用勺吃饭，请点击"不通过"</p>
             </div>
 
-            <button class="button" style="background: #28a745;">通过</button>
-            <button class="button" style="background: #dc3545;">不通过</button>
-            <button class="button" onclick="showResult()">完成测试</button>
+            <!-- 操作按钮 -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="button" style="background: #28a745; font-size: 18px; padding: 15px 30px;">✅ 通过</button>
+                <button class="button" style="background: #dc3545; font-size: 18px; padding: 15px 30px;">❌ 不通过</button>
+            </div>
+
+            <!-- 导航按钮 -->
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="button" onclick="previousQuestion()" style="background: #6c757d;">⬅️ 上一题</button>
+                <button class="button" onclick="nextQuestion()" style="background: #007bff;">下一题 ➡️</button>
+            </div>
         </div>
     </div>
 
     <script>
+        // 当前题目状态
+        let currentArea = 1; // 当前能区 (1-5)
+        let currentQuestion = 3; // 当前题目 (1-5)
+        let totalQuestions = 5; // 每个能区的题目数量
+
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(page => {
                 page.style.display = 'none';
@@ -417,13 +362,69 @@
             document.getElementById(pageId).style.display = 'block';
         }
 
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                currentQuestion++;
+                updateQuestionDisplay();
+            } else if (currentArea < 5) {
+                // 切换到下一个能区
+                currentArea++;
+                currentQuestion = 1;
+                showPage('step' + currentArea);
+                updateQuestionDisplay();
+            } else {
+                // 测试完成
+                showResult();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                updateQuestionDisplay();
+            } else if (currentArea > 1) {
+                // 切换到上一个能区
+                currentArea--;
+                currentQuestion = totalQuestions;
+                showPage('step' + currentArea);
+                updateQuestionDisplay();
+            }
+        }
+
+        function updateQuestionDisplay() {
+            // 更新题目显示
+            const questionTitle = document.querySelector('.test-item.current h2');
+            const questionName = document.querySelector('.test-item.current h3');
+            const progressText = document.querySelector('.current-area p');
+            
+            if (questionTitle) {
+                questionTitle.textContent = `第${currentQuestion}题`;
+            }
+            
+            if (progressText) {
+                progressText.textContent = `题目进度: ${currentQuestion}/${totalQuestions} 题 (${Math.round(currentQuestion/totalQuestions*100)}%)`;
+            }
+
+            // 更新进度条
+            const progressBar = document.querySelector('.current-area .progress-bar');
+            if (progressBar) {
+                progressBar.style.width = (currentQuestion / totalQuestions * 100) + '%';
+            }
+
+            // 更新总体进度
+            const overallProgress = document.querySelector('.progress-bar');
+            if (overallProgress) {
+                const overallPercentage = ((currentArea - 1) * totalQuestions + currentQuestion) / (5 * totalQuestions) * 100;
+                overallProgress.style.width = overallPercentage + '%';
+            }
+        }
+
         function nextArea() {
-            // 模拟切换到下一个能区
-            const currentStep = document.querySelector('.page[style="display: block;"]').id;
-            const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
-            const currentIndex = steps.indexOf(currentStep);
-            if (currentIndex < steps.length - 1) {
-                showPage(steps[currentIndex + 1]);
+            if (currentArea < 5) {
+                currentArea++;
+                currentQuestion = 1;
+                showPage('step' + currentArea);
+                updateQuestionDisplay();
             }
         }
 
@@ -434,6 +435,7 @@
 
         // 默认显示第一步
         showPage('step1');
+        updateQuestionDisplay();
     </script>
 </body>
 </html> 
