@@ -213,34 +213,94 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                                           ),
                                           const SizedBox(height: 20),
 
-                                          // 题目描述
-                                          _buildInfoSection('描述', provider.currentItem!.desc),
-                                          const SizedBox(height: 16),
-
-                                          // 操作说明
-                                          _buildInfoSection('操作说明', provider.currentItem!.operation),
-                                          const SizedBox(height: 16),
-
-                                          // 通过要求
+                                          // 题目描述 - 用有颜色的卡片框起来
                                           Container(
                                             padding: const EdgeInsets.all(16),
                                             decoration: BoxDecoration(
-                                              color: Colors.blue[50],
+                                              color: Colors.orange[50],
                                               borderRadius: BorderRadius.circular(12),
-                                              border: Border.all(color: Colors.blue[200]!),
+                                              border: Border.all(color: Colors.orange[200]!),
                                             ),
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Row(
                                                   children: [
-                                                    Icon(Icons.check_circle, color: Colors.blue[600], size: 20),
+                                                    Icon(Icons.info, color: Colors.orange[600], size: 20),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      '题目描述',
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.orange[700],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  provider.currentItem!.desc,
+                                                  style: TextStyle(color: Colors.orange[700]),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+
+                                          // 操作说明 - 用有颜色的卡片框起来
+                                          Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              color: Colors.green[50],
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(color: Colors.green[200]!),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Icon(Icons.play_circle, color: Colors.green[600], size: 20),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      '操作说明',
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.green[700],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  provider.currentItem!.operation,
+                                                  style: TextStyle(color: Colors.green[700]),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+
+                                          // 通过要求 - 用有颜色的卡片框起来
+                                          Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              color: Colors.red[50],
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(color: Colors.red[200]!),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Icon(Icons.check_circle, color: Colors.red[600], size: 20),
                                                     const SizedBox(width: 8),
                                                     Text(
                                                       '通过标准',
                                                       style: TextStyle(
                                                         fontWeight: FontWeight.bold,
-                                                        color: Colors.blue[700],
+                                                        color: Colors.red[700],
                                                       ),
                                                     ),
                                                   ],
@@ -248,7 +308,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                                                 const SizedBox(height: 8),
                                                 Text(
                                                   provider.currentItem!.passCondition,
-                                                  style: TextStyle(color: Colors.blue[700]),
+                                                  style: TextStyle(color: Colors.red[700]),
                                                 ),
                                               ],
                                             ),

@@ -177,13 +177,17 @@ class AssessmentService {
     var currentItems = getCurrentAgeItems(allData, mainTestAge);
     allItems.addAll(currentItems);
     
-    // 2. 根据当前结果决定是否需要向前测查
-    var forwardItems = getForwardItems(allData, mainTestAge, currentResults);
-    allItems.addAll(forwardItems);
+    // 2. 强制向前测查2个月龄（按照标准要求）
+    for (int age = mainTestAge - 1; age >= mainTestAge - 2 && age >= 1; age--) {
+      var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
+      allItems.addAll(ageItems);
+    }
     
-    // 3. 根据当前结果决定是否需要向后测查
-    var backwardItems = getBackwardItems(allData, mainTestAge, currentResults);
-    allItems.addAll(backwardItems);
+    // 3. 强制向后测查2个月龄（按照标准要求）
+    for (int age = mainTestAge + 1; age <= mainTestAge + 2 && age <= 84; age++) {
+      var ageItems = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
+      allItems.addAll(ageItems);
+    }
     
     return allItems;
   }
