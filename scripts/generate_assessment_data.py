@@ -40,14 +40,19 @@ def extract_item_info(item_text: str) -> Dict[str, Any]:
 
 def get_area_name(row_index: int, scale_df: pd.DataFrame) -> str:
     """根据行索引获取能区名称"""
+    # 根据Excel表格的实际结构，每行代表一个测试项目
+    # 需要从项目名称或编号推断能区
     area_mapping = {
         0: 'motor',      # 大运动
-        1: 'motor',      # 大运动
+        1: 'motor',      # 大运动  
         2: 'fineMotor',  # 精细动作
         3: 'fineMotor',  # 精细动作
         4: 'adaptive',   # 适应能力
-        5: 'language',   # 语言
-        6: 'social',     # 社会行为
+        5: 'adaptive',   # 适应能力
+        6: 'language',   # 语言
+        7: 'language',   # 语言
+        8: 'social',     # 社会行为
+        9: 'social',     # 社会行为
     }
     return area_mapping.get(row_index, 'unknown')
 
@@ -85,8 +90,8 @@ def generate_assessment_data():
     
     assessment_data = []
     
-    # 遍历每个能区（行）
-    for row_idx in range(7):  # 7个能区
+    # 遍历每一行（每个测试项目）
+    for row_idx in range(len(scale_df)):
         area = get_area_name(row_idx, scale_df)
         
         # 遍历每个月龄（列）
@@ -153,15 +158,19 @@ def main():
         # 统计信息
         area_stats = {}
         age_stats = {}
+        total_items = 0
         
         for item in assessment_data:
             area = item['area']
             age = item['ageMonth']
+            test_items = item['testItems']
             
-            area_stats[area] = area_stats.get(area, 0) + len(item['testItems'])
-            age_stats[age] = age_stats.get(age, 0) + len(item['testItems'])
+            area_stats[area] = area_stats.get(area, 0) + len(test_items)
+            age_stats[age] = age_stats.get(age, 0) + len(test_items)
+            total_items += len(test_items)
         
-        print("\n统计信息:")
+        print(f"\n统计信息:")
+        print(f"总测试项目数: {total_items}")
         print("各能区项目数量:")
         for area, count in area_stats.items():
             print(f"  {area}: {count} 项")
