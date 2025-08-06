@@ -252,8 +252,8 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                                     _buildInfoSection('描述', provider.currentItem!.desc),
                                     const SizedBox(height: 16),
 
-                                    // 操作方法
-                                    _buildInfoSection('操作方法', provider.currentItem!.operation),
+                                    // 操作说明
+                                    _buildInfoSection('操作说明', provider.currentItem!.operation),
                                     const SizedBox(height: 16),
 
                                     // 通过要求
@@ -395,8 +395,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
     final totalCount = provider.currentTestItems.length;
     final itemId = provider.currentItem!.id;
     final monthAge = (itemId / 100).floor();
-    final areaName = _getAreaName(itemId, provider);
-    return '${monthAge}月-$areaName $currentIndex/$totalCount';
+    return '${monthAge}月龄 $currentIndex/$totalCount';
   }
 
   // 获取分区名称

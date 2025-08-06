@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/assessment_provider.dart';
 import '../models/test_result.dart';
+import 'score_explanation_page.dart';
 
 class ResultPage extends StatefulWidget {
   const ResultPage({super.key});
@@ -72,123 +73,200 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
 
               final result = provider.finalResult!;
               
-              return FadeTransition(
-                opacity: _fadeAnimation,
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // 总体结果卡片
-                      Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.1),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
+              return Column(
+                children: [
+                  // 可滚动的内容区域
+                  Expanded(
+                    child: FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(20),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
+                            // 总体结果卡片
                             Container(
-                              padding: const EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(24),
                               decoration: BoxDecoration(
-                                color: Colors.blue[100],
-                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.1),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                              child: Icon(
-                                Icons.assessment,
-                                size: 48,
-                                color: Colors.blue[600],
+                              child: Column(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue[100],
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.assessment,
+                                      size: 48,
+                                      color: Colors.blue[600],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    '测试完成',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue[700],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    '测试时间: ${DateTime.parse(result.date).toString().substring(0, 19)}',
+                                    style: TextStyle(color: Colors.grey[600]),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      _buildResultItem('总体智龄', '${result.allResult.mentalAge.toStringAsFixed(1)}个月'),
+                                      _buildResultItem('发育商', result.allResult.developmentQuotient.toStringAsFixed(1)),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  // 发育商评级
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: _getDevelopmentLevelColor(result.allResult.developmentQuotient).withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: _getDevelopmentLevelColor(result.allResult.developmentQuotient),
+                                        width: 1,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      _getDevelopmentLevel(result.allResult.developmentQuotient),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: _getDevelopmentLevelColor(result.allResult.developmentQuotient),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    _getDevelopmentLevelDescription(result.allResult.developmentQuotient),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 24),
+
+                            // 各能区结果
                             Text(
-                              '测试完成',
+                              '各能区详细结果',
                               style: TextStyle(
-                                fontSize: 24,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue[700],
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              '测试时间: ${DateTime.parse(result.date).toString().substring(0, 19)}',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            const SizedBox(height: 24),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _buildResultItem('总体智龄', '${result.allResult.mentalAge.toStringAsFixed(1)}个月'),
-                                _buildResultItem('发育商', result.allResult.developmentQuotient.toStringAsFixed(1)),
-                              ],
-                            ),
+                            const SizedBox(height: 16),
+
+                            ...result.testResults.map((areaResult) => _buildAreaResultCard(areaResult)),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 24),
-
-                      // 各能区结果
-                      Text(
-                        '各能区详细结果',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue[700],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      ...result.testResults.map((areaResult) => _buildAreaResultCard(areaResult)),
-                      const SizedBox(height: 24),
-
-                      // 操作按钮
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: () {
-                                provider.resetTest();
-                                Navigator.popUntil(context, (route) => route.isFirst);
-                              },
-                              icon: const Icon(Icons.refresh),
-                              label: const Text('重新测试'),
-                              style: OutlinedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-                              icon: const Icon(Icons.home),
-                              label: const Text('返回首页'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue[600],
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 16),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                elevation: 4,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  
+                  // 固定的按钮区域
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, -4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        // 分数说明按钮
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ScoreExplanationPage(),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.help_outline),
+                            label: const Text('查看分数说明'),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // 操作按钮
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  provider.resetTest();
+                                  Navigator.popUntil(context, (route) => route.isFirst);
+                                },
+                                icon: const Icon(Icons.refresh),
+                                label: const Text('重新测试'),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
+                                icon: const Icon(Icons.home),
+                                label: const Text('返回首页'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue[600],
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  elevation: 4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               );
             },
           ),
@@ -215,6 +293,33 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
         ),
       ],
     );
+  }
+
+  // 获取发育商评级
+  String _getDevelopmentLevel(double dq) {
+    if (dq > 130) return '优秀';
+    if (dq >= 110) return '良好';
+    if (dq >= 80) return '中等';
+    if (dq >= 70) return '临界偏低';
+    return '智力发育障碍';
+  }
+
+  // 获取发育商评级颜色
+  Color _getDevelopmentLevelColor(double dq) {
+    if (dq > 130) return Colors.green[600]!;
+    if (dq >= 110) return Colors.blue[600]!;
+    if (dq >= 80) return Colors.orange[600]!;
+    if (dq >= 70) return Colors.orange[700]!;
+    return Colors.red[600]!;
+  }
+
+  // 获取发育商评级说明
+  String _getDevelopmentLevelDescription(double dq) {
+    if (dq > 130) return '您的孩子发育水平优秀，各项能力发展良好。';
+    if (dq >= 110) return '您的孩子发育水平良好，各项能力发展正常。';
+    if (dq >= 80) return '您的孩子发育水平中等，建议关注发展情况。';
+    if (dq >= 70) return '您的孩子发育水平偏低，建议咨询专业医生。';
+    return '您的孩子可能存在发育障碍，请及时咨询专业医生进行评估。';
   }
 
   Widget _buildAreaResultCard(AreaResult areaResult) {
@@ -286,6 +391,27 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                         child: _buildResultItem('发育商', areaResult.developmentQuotient.toStringAsFixed(1)),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 8),
+                  // 各能区发育商评级
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _getDevelopmentLevelColor(areaResult.developmentQuotient).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: _getDevelopmentLevelColor(areaResult.developmentQuotient),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      _getDevelopmentLevel(areaResult.developmentQuotient),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: _getDevelopmentLevelColor(areaResult.developmentQuotient),
+                      ),
+                    ),
                   ),
                 ],
               ),

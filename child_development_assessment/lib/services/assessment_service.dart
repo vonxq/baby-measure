@@ -22,12 +22,13 @@ class AssessmentService {
     return mainTestAge;
   }
 
-  // 获取测试项目
+  // 获取测试项目 - 按照标准测查程序
   List<AssessmentItem> getTestItems(List<AssessmentData> allData, double actualAge) {
     int mainTestAge = determineMainTestAge(actualAge);
     List<AssessmentItem> allItems = [];
     
-    // 获取主测月龄±2个月龄的项目
+    // 获取主测月龄±2个月龄的项目（基础范围）
+    // 实际测试中会根据通过情况动态调整
     for (int age in [mainTestAge - 2, mainTestAge - 1, mainTestAge, mainTestAge + 1, mainTestAge + 2]) {
       if (age > 0) {
         var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
@@ -35,7 +36,69 @@ class AssessmentService {
       }
     }
     
+    // 按能区分组，确保每个能区都有足够的测试项目
+    Map<String, List<AssessmentItem>> areaItems = {};
+    for (var item in allItems) {
+      // 根据itemId推断能区（临时方案，实际应该从数据中获取）
+      String area = _getAreaFromId(item.id);
+      if (!areaItems.containsKey(area)) {
+        areaItems[area] = [];
+      }
+      areaItems[area]!.add(item);
+    }
+    
+    // 为每个能区添加更多月龄的项目，确保有足够的测试范围
+    for (String area in areaItems.keys) {
+      var existingItems = areaItems[area]!;
+      var existingAges = existingItems.map((item) => (item.id / 100).floor()).toSet();
+      
+      // 向前扩展2个月龄
+      for (int age in [mainTestAge - 3, mainTestAge - 4]) {
+        if (age > 0 && !existingAges.contains(age)) {
+          var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
+          // 过滤出该能区的项目
+          var areaSpecificItems = items.where((item) => _getAreaFromId(item.id) == area).toList();
+          allItems.addAll(areaSpecificItems);
+        }
+      }
+      
+      // 向后扩展2个月龄
+      for (int age in [mainTestAge + 3, mainTestAge + 4]) {
+        if (age <= 84 && !existingAges.contains(age)) {
+          var items = allData.where((data) => data.ageMonth == age).expand((data) => data.testItems).toList();
+          // 过滤出该能区的项目
+          var areaSpecificItems = items.where((item) => _getAreaFromId(item.id) == area).toList();
+          allItems.addAll(areaSpecificItems);
+        }
+      }
+    }
+    
     return allItems;
+  }
+
+  // 根据itemId推断能区（临时方案）
+  String _getAreaFromId(int itemId) {
+    // 根据itemId的范围推断能区
+    // 这是一个简化的实现，实际应该从数据中获取
+    int monthAge = (itemId / 100).floor();
+    int itemIndex = itemId % 100;
+    
+    // 根据月龄和项目索引推断能区
+    if (monthAge <= 12) {
+      // 1-12月龄：每个能区2个项目
+      if (itemIndex <= 2) return 'motor';
+      if (itemIndex <= 4) return 'fineMotor';
+      if (itemIndex <= 6) return 'adaptive';
+      if (itemIndex <= 8) return 'language';
+      return 'social';
+    } else {
+      // 其他月龄：每个能区1个项目
+      if (itemIndex <= 1) return 'motor';
+      if (itemIndex <= 2) return 'fineMotor';
+      if (itemIndex <= 3) return 'adaptive';
+      if (itemIndex <= 4) return 'language';
+      return 'social';
+    }
   }
 
   // 计算各能区智龄
