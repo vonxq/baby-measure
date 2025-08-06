@@ -203,71 +203,120 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           // 题目标题
-                                          Text(
-                                            provider.currentItem!.name,
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold,
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue[50],
+                                              borderRadius: BorderRadius.circular(8),
+                                              border: Border.all(color: Colors.blue[200]!),
+                                            ),
+                                            child: Text(
+                                              provider.currentItem!.name,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue[700],
+                                              ),
                                             ),
                                           ),
                                           const SizedBox(height: 16),
                                           
                                           // 题目描述
                                           if (provider.currentItem!.desc.isNotEmpty) ...[
-                                            Text(
-                                              '描述：',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.grey[700],
-                                              ),
+                                            Row(
+                                              children: [
+                                                Icon(Icons.info_outline, color: Colors.orange[600], size: 20),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  '描述：',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.orange[700],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                             const SizedBox(height: 8),
-                                            Text(
-                                              provider.currentItem!.desc,
-                                              style: const TextStyle(fontSize: 16),
+                                            Container(
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: Colors.orange[50],
+                                                borderRadius: BorderRadius.circular(8),
+                                                border: Border.all(color: Colors.orange[200]!),
+                                              ),
+                                              child: Text(
+                                                provider.currentItem!.desc,
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.orange[800],
+                                                ),
+                                              ),
                                             ),
                                             const SizedBox(height: 16),
                                           ],
                                           
                                           // 操作方法
-                                          Text(
-                                            '操作方法：',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.grey[700],
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            provider.currentItem!.operation,
-                                            style: const TextStyle(fontSize: 16),
-                                          ),
-                                          const SizedBox(height: 16),
-                                          
-                                          // 通过标准
-                                          Text(
-                                            '通过标准：',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.grey[700],
-                                            ),
+                                          Row(
+                                            children: [
+                                              Icon(Icons.play_circle_outline, color: Colors.purple[600], size: 20),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                '操作方法：',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.purple[700],
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           const SizedBox(height: 8),
                                           Container(
                                             padding: const EdgeInsets.all(12),
                                             decoration: BoxDecoration(
-                                              color: Colors.green[50],
+                                              color: Colors.purple[50],
                                               borderRadius: BorderRadius.circular(8),
-                                              border: Border.all(color: Colors.green[200]!),
+                                              border: Border.all(color: Colors.purple[200]!),
+                                            ),
+                                            child: Text(
+                                              provider.currentItem!.operation,
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.purple[800],
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          
+                                          // 通过标准
+                                          Row(
+                                            children: [
+                                              Icon(Icons.flag, color: Colors.teal[600], size: 20),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                '通过标准：',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.teal[700],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: Colors.teal[50],
+                                              borderRadius: BorderRadius.circular(8),
+                                              border: Border.all(color: Colors.teal[200]!),
                                             ),
                                             child: Text(
                                               provider.currentItem!.passCondition,
                                               style: TextStyle(
                                                 fontSize: 16,
-                                                color: Colors.green[700],
+                                                color: Colors.teal[700],
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),

@@ -285,22 +285,22 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                                           Container(
                                             padding: const EdgeInsets.all(16),
                                             decoration: BoxDecoration(
-                                              color: Colors.red[50],
+                                              color: Colors.teal[50],
                                               borderRadius: BorderRadius.circular(12),
-                                              border: Border.all(color: Colors.red[200]!),
+                                              border: Border.all(color: Colors.teal[200]!),
                                             ),
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Row(
                                                   children: [
-                                                    Icon(Icons.check_circle, color: Colors.red[600], size: 20),
+                                                    Icon(Icons.flag, color: Colors.teal[600], size: 20),
                                                     const SizedBox(width: 8),
                                                     Text(
                                                       '通过标准',
                                                       style: TextStyle(
                                                         fontWeight: FontWeight.bold,
-                                                        color: Colors.red[700],
+                                                        color: Colors.teal[700],
                                                       ),
                                                     ),
                                                   ],
@@ -308,7 +308,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                                                 const SizedBox(height: 8),
                                                 Text(
                                                   provider.currentItem!.passCondition,
-                                                  style: TextStyle(color: Colors.red[700]),
+                                                  style: TextStyle(color: Colors.teal[700]),
                                                 ),
                                               ],
                                             ),
