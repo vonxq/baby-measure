@@ -194,26 +194,46 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                                   ),
                                 ],
                               ),
-                              child: Padding(
+                              child: SingleChildScrollView(
                                 padding: const EdgeInsets.all(24),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // 题目编号
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue[100],
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Text(
-                                        '第 ${provider.currentItemIndex + 1} 题',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.blue[700],
+                                    // 题目编号和分区信息
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                          decoration: BoxDecoration(
+                                            color: Colors.blue[100],
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: Text(
+                                            _getQuestionLabel(provider),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue[700],
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                        const Spacer(),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: _getAreaColor(provider.currentItem!.id),
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            _getAreaName(provider.currentItem!.id),
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     const SizedBox(height: 20),
 
@@ -237,8 +257,8 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                                     const SizedBox(height: 16),
 
                                     // 通过要求
-                                                                          Container(
-                                        padding: const EdgeInsets.all(16),
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
                                       decoration: BoxDecoration(
                                         color: Colors.blue[50],
                                         borderRadius: BorderRadius.circular(12),
@@ -252,22 +272,23 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                                               Icon(Icons.check_circle, color: Colors.blue[600], size: 20),
                                               const SizedBox(width: 8),
                                               Text(
-                                                '通过要求',
+                                                '通过标准',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.blue[700],
                                                 ),
                                               ),
                                             ],
-                                                                                        ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                provider.currentItem!.passCondition,
-                                                style: TextStyle(color: Colors.blue[700]),
-                                              ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            provider.currentItem!.passCondition,
+                                            style: TextStyle(color: Colors.blue[700]),
+                                          ),
                                         ],
                                       ),
                                     ),
+                                    const SizedBox(height: 20),
                                   ],
                                 ),
                               ),
@@ -366,6 +387,42 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
         ),
       ],
     );
+  }
+
+  // 获取题目标签
+  String _getQuestionLabel(AssessmentProvider provider) {
+    final currentIndex = provider.currentItemIndex + 1;
+    final totalCount = provider.currentTestItems.length;
+    final itemId = provider.currentItem!.id;
+    final monthAge = (itemId / 100).floor();
+    final areaName = _getAreaName(itemId);
+    return '${monthAge}月-$areaName $currentIndex/$totalCount';
+  }
+
+  // 获取分区名称
+  String _getAreaName(int itemId) {
+    final areaCode = itemId % 100;
+    switch (areaCode) {
+      case 1: return '大运动';
+      case 2: return '精细动作';
+      case 3: return '语言';
+      case 4: return '适应能力';
+      case 5: return '社会行为';
+      default: return '未知';
+    }
+  }
+
+  // 获取分区颜色
+  Color _getAreaColor(int itemId) {
+    final areaCode = itemId % 100;
+    switch (areaCode) {
+      case 1: return Colors.green[600]!;
+      case 2: return Colors.blue[600]!;
+      case 3: return Colors.orange[600]!;
+      case 4: return Colors.purple[600]!;
+      case 5: return Colors.red[600]!;
+      default: return Colors.grey[600]!;
+    }
   }
 
   void _handleAnswer(bool passed, AssessmentProvider provider) async {

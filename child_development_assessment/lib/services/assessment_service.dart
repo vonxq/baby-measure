@@ -42,13 +42,15 @@ class AssessmentService {
   double calculateMentalAge(String area, List<AssessmentItem> items, Map<int, bool> results) {
     // 过滤出该能区的项目
     var areaItems = items.where((item) {
-      // 根据item.id的范围判断能区
-      if (area == 'motor' && item.id >= 100 && item.id < 200) return true;
-      if (area == 'fineMotor' && item.id >= 200 && item.id < 300) return true;
-      if (area == 'language' && item.id >= 300 && item.id < 400) return true;
-      if (area == 'adaptive' && item.id >= 400 && item.id < 500) return true;
-      if (area == 'social' && item.id >= 500 && item.id < 600) return true;
-      return false;
+      final areaCode = item.id % 100;
+      switch (area) {
+        case 'motor': return areaCode == 1;
+        case 'fineMotor': return areaCode == 2;
+        case 'language': return areaCode == 3;
+        case 'adaptive': return areaCode == 4;
+        case 'social': return areaCode == 5;
+        default: return false;
+      }
     }).toList();
     
     areaItems.sort((a, b) => b.id.compareTo(a.id)); // 按月龄从高到低排序
