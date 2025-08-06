@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/assessment_provider.dart';
-import '../widgets/test_progress_indicator.dart';
 import 'result_page.dart';
 
 class TestPage extends StatefulWidget {
@@ -99,205 +98,261 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                 );
               }
 
-              return Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // 进度指示器
-                    TestProgressIndicator(
-                      currentIndex: provider.currentItemIndex + 1,
-                      totalItems: provider.currentTestItems.length,
-                      currentItem: provider.currentItem,
-                      areaProgress: _getAreaProgress(provider),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 题目卡片
-                    Expanded(
-                      child: AnimatedBuilder(
-                        animation: _cardAnimation,
-                        builder: (context, child) {
-                          return Transform.scale(
-                            scale: _cardAnimation.value,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.1),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: SingleChildScrollView(
-                                padding: const EdgeInsets.all(24),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // 题目编号和分区信息
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                          decoration: BoxDecoration(
-                                            color: Colors.blue[100],
-                                            borderRadius: BorderRadius.circular(20),
-                                          ),
-                                          child: Text(
-                                            _getQuestionLabel(provider),
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.blue[700],
-                                            ),
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: _getAreaColor(provider.currentItem!.id, provider),
-                                            borderRadius: BorderRadius.circular(12),
-                                          ),
-                                          child: Text(
-                                            _getAreaName(provider.currentItem!.id, provider),
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20),
-
-                                    // 题目名称
-                                    Text(
-                                      provider.currentItem!.name,
-                                      style: TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.blue[800],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 20),
-
-                                    // 题目描述
-                                    _buildInfoSection('描述', provider.currentItem!.desc),
-                                    const SizedBox(height: 16),
-
-                                    // 操作说明
-                                    _buildInfoSection('操作说明', provider.currentItem!.operation),
-                                    const SizedBox(height: 16),
-
-                                    // 通过要求
-                                    Container(
-                                      padding: const EdgeInsets.all(16),
-                                      decoration: BoxDecoration(
-                                        color: Colors.blue[50],
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(color: Colors.blue[200]!),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Icon(Icons.check_circle, color: Colors.blue[600], size: 20),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                '通过标准',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.blue[700],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            provider.currentItem!.passCondition,
-                                            style: TextStyle(color: Colors.blue[700]),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 20),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // 操作按钮
-                    Row(
+              return Column(
+                children: [
+                  // 顶部导航栏
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
                       children: [
-                        // 上一题按钮
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: provider.currentItemIndex > 0 ? () {
-                              _cardController.reset();
-                              provider.previousItem();
-                              _cardController.forward();
-                            } : null,
-                            icon: const Icon(Icons.arrow_back),
-                            label: const Text('上一题'),
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
+                        IconButton(
+                          onPressed: () => _showExitDialog(context),
+                          icon: const Icon(Icons.close),
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        // 通过按钮
                         Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => _handleAnswer(true, provider),
-                            icon: const Icon(Icons.check),
-                            label: const Text('通过'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green[600],
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 4,
+                          child: Text(
+                            '发育评估测试',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue[700],
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        // 不通过按钮
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            onPressed: () => _handleAnswer(false, provider),
-                            icon: const Icon(Icons.close),
-                            label: const Text('不通过'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red[600],
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 4,
+                        IconButton(
+                          onPressed: () => _showExitDialog(context),
+                          icon: const Icon(Icons.exit_to_app),
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.red[50],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                  
+                  // 主要内容
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // 简化的进度指示器
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.05),
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.assessment, color: Colors.blue[600], size: 20),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '测试进度',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue[700],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      LinearProgressIndicator(
+                                        value: provider.currentTestItems.isNotEmpty 
+                                          ? (provider.currentItemIndex + 1) / provider.currentTestItems.length 
+                                          : 0,
+                                        backgroundColor: Colors.grey[200],
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
+                                        minHeight: 4,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  '${provider.currentItemIndex + 1}/${provider.currentTestItems.length}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // 题目卡片
+                          Expanded(
+                            child: AnimatedBuilder(
+                              animation: _cardAnimation,
+                              builder: (context, child) {
+                                return Transform.scale(
+                                  scale: _cardAnimation.value,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.1),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: SingleChildScrollView(
+                                      padding: const EdgeInsets.all(24),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          // 题目名称
+                                          Text(
+                                            provider.currentItem!.name,
+                                            style: TextStyle(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue[800],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 20),
+
+                                          // 题目描述
+                                          _buildInfoSection('描述', provider.currentItem!.desc),
+                                          const SizedBox(height: 16),
+
+                                          // 操作说明
+                                          _buildInfoSection('操作说明', provider.currentItem!.operation),
+                                          const SizedBox(height: 16),
+
+                                          // 通过要求
+                                          Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue[50],
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(color: Colors.blue[200]!),
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Icon(Icons.check_circle, color: Colors.blue[600], size: 20),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      '通过标准',
+                                                      style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.blue[700],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 8),
+                                                Text(
+                                                  provider.currentItem!.passCondition,
+                                                  style: TextStyle(color: Colors.blue[700]),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 20),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // 操作按钮
+                          Row(
+                            children: [
+                              // 上一题按钮
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  onPressed: provider.currentItemIndex > 0 ? () {
+                                    _cardController.reset();
+                                    provider.previousItem();
+                                    _cardController.forward();
+                                  } : null,
+                                  icon: const Icon(Icons.arrow_back),
+                                  label: const Text('上一题'),
+                                  style: OutlinedButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              // 通过按钮
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () => _handleAnswer(true, provider),
+                                  icon: const Icon(Icons.check),
+                                  label: const Text('通过'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.green[600],
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 4,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              // 不通过按钮
+                              Expanded(
+                                child: ElevatedButton.icon(
+                                  onPressed: () => _handleAnswer(false, provider),
+                                  icon: const Icon(Icons.close),
+                                  label: const Text('不通过'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red[600],
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 4,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               );
             },
           ),
@@ -325,41 +380,6 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
         ),
       ],
     );
-  }
-
-  // 获取题目标签
-  String _getQuestionLabel(AssessmentProvider provider) {
-    final currentIndex = provider.currentItemIndex + 1;
-    final totalCount = provider.currentTestItems.length;
-    final itemId = provider.currentItem!.id;
-    final monthAge = (itemId / 100).floor();
-    return '$monthAge月龄 $currentIndex/$totalCount';
-  }
-
-  // 获取分区名称
-  String _getAreaName(int itemId, AssessmentProvider provider) {
-    final area = provider.getItemArea(itemId);
-    switch (area) {
-      case 'motor': return '大运动';
-      case 'fineMotor': return '精细动作';
-      case 'language': return '语言';
-      case 'adaptive': return '适应能力';
-      case 'social': return '社会行为';
-      default: return '未知';
-    }
-  }
-
-  // 获取分区颜色
-  Color _getAreaColor(int itemId, AssessmentProvider provider) {
-    final area = provider.getItemArea(itemId);
-    switch (area) {
-      case 'motor': return Colors.green[600]!;
-      case 'fineMotor': return Colors.blue[600]!;
-      case 'language': return Colors.orange[600]!;
-      case 'adaptive': return Colors.purple[600]!;
-      case 'social': return Colors.red[600]!;
-      default: return Colors.grey[600]!;
-    }
   }
 
   void _handleAnswer(bool passed, AssessmentProvider provider) async {
@@ -405,23 +425,30 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
     }
   }
 
-  // 获取各能区进度
-  Map<String, int> _getAreaProgress(AssessmentProvider provider) {
-    Map<String, int> areaProgress = {
-      'motor': 0,
-      'fineMotor': 0,
-      'language': 0,
-      'adaptive': 0,
-      'social': 0,
-    };
-    
-    for (int i = 0; i <= provider.currentItemIndex; i++) {
-      if (i < provider.currentTestItems.length) {
-        String area = provider.getItemArea(provider.currentTestItems[i].id);
-        areaProgress[area] = (areaProgress[area] ?? 0) + 1;
-      }
-    }
-    
-    return areaProgress;
+  // 显示退出确认对话框
+  void _showExitDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('确认退出'),
+          content: const Text('确定要退出测试吗？当前进度将不会保存。'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('确认退出'),
+            ),
+          ],
+        );
+      },
+    );
   }
 } 

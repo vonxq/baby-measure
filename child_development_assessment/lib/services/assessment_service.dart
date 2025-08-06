@@ -137,6 +137,18 @@ class AssessmentService {
     }
   }
 
+  // 从数据中获取月龄
+  int getMonthAgeFromData(List<AssessmentData> allData, int itemId) {
+    for (var data in allData) {
+      for (var item in data.testItems) {
+        if (item.id == itemId) {
+          return data.ageMonth;
+        }
+      }
+    }
+    return 0;
+  }
+
   // 计算各能区智龄 - 按照标准计算规则
   double calculateMentalAge(String area, List<AssessmentItem> items, Map<int, bool> results, Map<int, String> itemAreaMap) {
     // 过滤出该能区的项目

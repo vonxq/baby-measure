@@ -493,10 +493,10 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: iconColor.withValues(alpha: 0.3)),
+                                      border: Border.all(color: iconColor.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+                                        color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -509,7 +509,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.2),
+                                            color: iconColor.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(iconData, color: iconColor, size: 28),
@@ -543,7 +543,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
-                      color: _getDevelopmentLevelColor(areaResult.developmentQuotient).withValues(alpha: 0.1),
+                                                  color: _getDevelopmentLevelColor(areaResult.developmentQuotient).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: _getDevelopmentLevelColor(areaResult.developmentQuotient),

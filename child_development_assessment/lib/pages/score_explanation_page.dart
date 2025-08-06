@@ -7,7 +7,7 @@ class ScoreExplanationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('分数说明'),
+        title: const Text('评分说明'),
         backgroundColor: Colors.blue[600],
         foregroundColor: Colors.white,
         elevation: 0,
@@ -23,7 +23,7 @@ class ScoreExplanationPage extends StatelessWidget {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // 发育商说明卡片
               Container(
@@ -153,11 +153,11 @@ class ScoreExplanationPage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    _buildAreaItem('大运动', '身体的姿势、头的平衡，以及坐、爬、立、走、跑、跳的能力', Colors.green[600]!),
-                    _buildAreaItem('精细动作', '使用手指的能力', Colors.blue[600]!),
-                    _buildAreaItem('语言', '理解语言和语言的表达能力', Colors.orange[600]!),
-                    _buildAreaItem('适应能力', '对周围自然环境和社会需要作出反应和适应的能力', Colors.purple[600]!),
-                    _buildAreaItem('社会行为', '对周围人们的交往能力和生活自理能力', Colors.red[600]!),
+                    _buildAreaItem('大运动', Colors.green[600]!, '包括抬头、翻身、坐、爬、站、走等大肌肉运动能力'),
+                    _buildAreaItem('精细动作', Colors.blue[600]!, '包括抓握、捏取、手眼协调等小肌肉运动能力'),
+                    _buildAreaItem('语言', Colors.orange[600]!, '包括发音、理解、表达等语言能力'),
+                    _buildAreaItem('适应能力', Colors.purple[600]!, '包括感知、认知、解决问题等适应环境的能力'),
+                    _buildAreaItem('社会行为', Colors.red[600]!, '包括人际交往、情感表达、生活自理等社会能力'),
                   ],
                 ),
               ),
@@ -210,7 +210,7 @@ class ScoreExplanationPage extends StatelessWidget {
     );
   }
 
-  Widget _buildRatingItem(String level, String range, Color color, String description) {
+  Widget _buildRatingItem(String title, String range, Color color, String description) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -222,18 +222,11 @@ class ScoreExplanationPage extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            width: 12,
+            height: 12,
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              level,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
+              shape: BoxShape.circle,
             ),
           ),
           const SizedBox(width: 12),
@@ -241,19 +234,32 @@ class ScoreExplanationPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  range,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: color,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: color,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      range,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   description,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 14,
                     color: Colors.grey[700],
                   ),
                 ),
@@ -265,7 +271,7 @@ class ScoreExplanationPage extends StatelessWidget {
     );
   }
 
-  Widget _buildAreaItem(String area, String description, Color color) {
+  Widget _buildAreaItem(String title, Color color, String description) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -277,28 +283,35 @@ class ScoreExplanationPage extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            width: 12,
+            height: 12,
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              area,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
+              shape: BoxShape.circle,
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              description,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[700],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: color,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[700],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
