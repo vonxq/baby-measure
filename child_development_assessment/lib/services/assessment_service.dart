@@ -170,7 +170,7 @@ class AssessmentService {
     return totalScore;
   }
 
-  // 计算默认通过的项目分数
+  // 计算默认通过的项目分数 - 按照标准规则
   double _calculateDefaultPassScore(String area, List<AssessmentItem> areaItems, int consecutivePasses) {
     if (consecutivePasses < 2) return 0;
     
@@ -193,6 +193,19 @@ class AssessmentService {
     }
     
     return defaultScore;
+  }
+
+  // 获取能区在指定月龄的分数 - 按照标准规则
+  double getAreaScoreForAge(String area, int age) {
+    // 按照标准：每个能区的分数
+    if (age >= 1 && age <= 12) {
+      return 1.0; // 1月龄～12月龄：每个能区1.0分
+    } else if (age >= 15 && age <= 36) {
+      return 3.0; // 15月龄～36月龄：每个能区3.0分
+    } else if (age >= 42 && age <= 84) {
+      return 6.0; // 42月龄～84月龄：每个能区6.0分
+    }
+    return 1.0; // 默认
   }
 
   // 获取项目分数 - 按照标准计分规则

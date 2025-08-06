@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/assessment_provider.dart';
+import '../widgets/test_progress_indicator.dart';
 import 'result_page.dart';
 
 class TestPage extends StatefulWidget {
@@ -113,65 +114,12 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // 顶部进度区域
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '测试进度',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue[700],
-                                ),
-                              ),
-                              Text(
-                                '${provider.currentItemIndex + 1} / ${provider.currentTestItems.length}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          AnimatedBuilder(
-                            animation: _progressAnimation,
-                            builder: (context, child) {
-                              return LinearProgressIndicator(
-                                value: provider.progress,
-                                backgroundColor: Colors.grey[300],
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
-                                minHeight: 8,
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '${(provider.progress * 100).toStringAsFixed(0)}%',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
-                      ),
+                    // 进度指示器
+                    TestProgressIndicator(
+                      currentIndex: provider.currentItemIndex + 1,
+                      totalItems: provider.currentTestItems.length,
+                      currentItem: provider.currentItem,
+                      areaProgress: _getAreaProgress(provider),
                     ),
                     const SizedBox(height: 24),
 
@@ -461,5 +409,25 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
         );
       }
     }
+  }
+
+  // 获取各能区进度
+  Map<String, int> _getAreaProgress(AssessmentProvider provider) {
+    Map<String, int> areaProgress = {
+      'motor': 0,
+      'fineMotor': 0,
+      'language': 0,
+      'adaptive': 0,
+      'social': 0,
+    };
+    
+    for (int i = 0; i <= provider.currentItemIndex; i++) {
+      if (i < provider.currentTestItems.length) {
+        String area = provider.getItemArea(provider.currentTestItems[i].id);
+        areaProgress[area] = (areaProgress[area] ?? 0) + 1;
+      }
+    }
+    
+    return areaProgress;
   }
 } 
