@@ -122,8 +122,17 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                 print('UI: currentStage = ${provider.currentStage}');
                 print('UI: currentArea = ${provider.currentArea}');
                 
-                // 当前阶段完成，显示能区结果页
-                return _buildAreaResultPage(provider);
+                // 如果currentItem为null，显示加载状态而不是能区结果页
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(color: Colors.blue[600]),
+                      const SizedBox(height: 16),
+                      const Text('正在加载题目...', style: TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                );
               }
 
               return Column(
@@ -202,6 +211,20 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                 print('UI Builder: currentItem = ${provider.currentItem?.name}');
                                 print('UI Builder: currentItem is null = ${provider.currentItem == null}');
                                 
+                                // 如果currentItem为null，显示加载状态
+                                if (provider.currentItem == null) {
+                                  return Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        CircularProgressIndicator(color: Colors.blue[600]),
+                                        const SizedBox(height: 16),
+                                        const Text('正在加载题目...', style: TextStyle(fontSize: 16)),
+                                      ],
+                                    ),
+                                  );
+                                }
+                                
                                 return Transform.scale(
                                   scale: _cardAnimation.value,
                                   child: Container(
@@ -233,7 +256,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                               children: [
                                                 Expanded(
                                                   child: Text(
-                                                    provider.currentItem?.name ?? '题目加载中...',
+                                                    provider.currentItem!.name,
                                                     style: TextStyle(
                                                       fontSize: 20,
                                                       fontWeight: FontWeight.bold,
@@ -249,7 +272,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                                     border: Border.all(color: Colors.orange[300]!),
                                                   ),
                                                   child: Text(
-                                                    '${(provider.currentItem?.score ?? 0.0).toStringAsFixed(1)}分',
+                                                    '${provider.currentItem!.score.toStringAsFixed(1)}分',
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       fontWeight: FontWeight.bold,
@@ -263,7 +286,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                           const SizedBox(height: 16),
                                           
                                           // 题目描述
-                                          if (provider.currentItem?.desc.isNotEmpty == true) ...[
+                                          if (provider.currentItem!.desc.isNotEmpty) ...[
                                             Row(
                                               children: [
                                                 Icon(Icons.info_outline, color: Colors.orange[600], size: 20),
@@ -287,7 +310,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                                 border: Border.all(color: Colors.orange[200]!),
                                               ),
                                               child: Text(
-                                                provider.currentItem?.desc ?? '',
+                                                provider.currentItem!.desc,
                                                 style: TextStyle(
                                                   fontSize: 16,
                                                   color: Colors.orange[800],
@@ -321,7 +344,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                               border: Border.all(color: Colors.purple[200]!),
                                             ),
                                             child: Text(
-                                              provider.currentItem?.operation ?? '',
+                                              provider.currentItem!.operation,
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.purple[800],
@@ -354,7 +377,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                               border: Border.all(color: Colors.teal[200]!),
                                             ),
                                             child: Text(
-                                              provider.currentItem?.passCondition ?? '',
+                                              provider.currentItem!.passCondition,
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.teal[700],
