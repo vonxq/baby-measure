@@ -106,46 +106,34 @@ class AssessmentService {
   // 向前测试逻辑 - 按能区
   List<int> getForwardTestAgesForArea(int mainAge, String area, Map<int, bool> testResults, List<AssessmentData> allData) {
     List<int> forwardAges = [];
-    int currentAge = mainAge;
     
-    // 先测试前两个标准月龄
-    for (int i = 0; i < 2; i++) {
-      int prevAge = getPreviousAge(currentAge);
-      if (prevAge >= 1) {
-        forwardAges.add(prevAge);
-        currentAge = prevAge;
-      } else {
-        break;
+    // 检查主测月龄是否全部通过
+    var mainAgeItems = getCurrentAgeAreaItems(allData, mainAge, area);
+    bool mainAgeAllPassed = true;
+    bool mainAgeTested = false;
+    
+    for (var item in mainAgeItems) {
+      if (testResults.containsKey(item.id)) {
+        mainAgeTested = true;
+        if (!testResults[item.id]!) {
+          mainAgeAllPassed = false;
+          break;
+        }
       }
     }
     
-    // 检查是否需要继续向前测试
-    bool continueForward = true;
-    while (continueForward) {
-      continueForward = false;
+    // 只有当主测月龄全部通过时，才进行向前测试
+    if (mainAgeTested && mainAgeAllPassed) {
+      int currentAge = mainAge;
       
-      for (int age in forwardAges) {
-        var items = getCurrentAgeAreaItems(allData, age, area);
-        bool allPassed = true;
-        bool hasTested = false;
-        
-        for (var item in items) {
-          if (testResults.containsKey(item.id)) {
-            hasTested = true;
-            if (!testResults[item.id]!) {
-              allPassed = false;
-              break;
-            }
-          }
-        }
-        
-        // 如果该月龄有测试项目且不是全部通过，需要继续向前测试
-        if (hasTested && !allPassed) {
-          int nextPrevAge = getPreviousAge(age);
-          if (nextPrevAge >= 1 && !forwardAges.contains(nextPrevAge)) {
-            forwardAges.add(nextPrevAge);
-            continueForward = true;
-          }
+      // 向前测试2个月龄
+      for (int i = 0; i < 2; i++) {
+        int prevAge = getPreviousAge(currentAge);
+        if (prevAge >= 1) {
+          forwardAges.add(prevAge);
+          currentAge = prevAge;
+        } else {
+          break;
         }
       }
     }
@@ -156,46 +144,34 @@ class AssessmentService {
   // 向后测试逻辑 - 按能区
   List<int> getBackwardTestAgesForArea(int mainAge, String area, Map<int, bool> testResults, List<AssessmentData> allData) {
     List<int> backwardAges = [];
-    int currentAge = mainAge;
     
-    // 先测试后两个标准月龄
-    for (int i = 0; i < 2; i++) {
-      int nextAge = getNextAge(currentAge);
-      if (nextAge <= 84) {
-        backwardAges.add(nextAge);
-        currentAge = nextAge;
-      } else {
-        break;
+    // 检查主测月龄是否有未通过项目
+    var mainAgeItems = getCurrentAgeAreaItems(allData, mainAge, area);
+    bool mainAgeHasFailed = false;
+    bool mainAgeTested = false;
+    
+    for (var item in mainAgeItems) {
+      if (testResults.containsKey(item.id)) {
+        mainAgeTested = true;
+        if (!testResults[item.id]!) {
+          mainAgeHasFailed = true;
+          break;
+        }
       }
     }
     
-    // 检查是否需要继续向后测试
-    bool continueBackward = true;
-    while (continueBackward) {
-      continueBackward = false;
+    // 只有当主测月龄有未通过项目时，才进行向后测试
+    if (mainAgeTested && mainAgeHasFailed) {
+      int currentAge = mainAge;
       
-      for (int age in backwardAges) {
-        var items = getCurrentAgeAreaItems(allData, age, area);
-        bool allFailed = true;
-        bool hasTested = false;
-        
-        for (var item in items) {
-          if (testResults.containsKey(item.id)) {
-            hasTested = true;
-            if (testResults[item.id]!) {
-              allFailed = false;
-              break;
-            }
-          }
-        }
-        
-        // 如果该月龄有测试项目且不是全部不通过，需要继续向后测试
-        if (hasTested && !allFailed) {
-          int nextNextAge = getNextAge(age);
-          if (nextNextAge <= 84 && !backwardAges.contains(nextNextAge)) {
-            backwardAges.add(nextNextAge);
-            continueBackward = true;
-          }
+      // 向后测试2个月龄
+      for (int i = 0; i < 2; i++) {
+        int nextAge = getNextAge(currentAge);
+        if (nextAge <= 84) {
+          backwardAges.add(nextAge);
+          currentAge = nextAge;
+        } else {
+          break;
         }
       }
     }
@@ -205,44 +181,46 @@ class AssessmentService {
 
   // 计算能区智龄
   double calculateAreaMentalAge(String area, Map<int, bool> areaTestResults, List<AssessmentData> allData) {
-    double totalScore = 0;
+    // 按儿心量表算法：找到连续通过的最高月龄
+    int highestPassedAge = 0;
+    Map<int, List<bool>> ageResults = {};
     
-    // 获取所有测试过的项目，按月龄排序
-    List<MapEntry<int, bool>> sortedResults = areaTestResults.entries.toList();
-    sortedResults.sort((a, b) {
-      int ageA = getItemAge(a.key, allData);
-      int ageB = getItemAge(b.key, allData);
-      return ageA.compareTo(ageB);
-    });
+    // 整理各月龄的测试结果
+    for (var entry in areaTestResults.entries) {
+      int itemAge = getItemAge(entry.key, allData);
+      if (!ageResults.containsKey(itemAge)) {
+        ageResults[itemAge] = [];
+      }
+      ageResults[itemAge]!.add(entry.value);
+    }
+    
+    // 检查各月龄是否全部通过
+    List<int> passedAges = [];
+    for (int age in ageResults.keys) {
+      var results = ageResults[age]!;
+      if (results.isNotEmpty && results.every((passed) => passed)) {
+        passedAges.add(age);
+      }
+    }
     
     // 找到连续通过的最高月龄
-    int highestPassedAge = 0;
-    for (var entry in sortedResults) {
-      if (entry.value) { // 通过的项目
-        int itemAge = getItemAge(entry.key, allData);
-        if (itemAge > highestPassedAge) {
-          highestPassedAge = itemAge;
+    if (passedAges.isNotEmpty) {
+      passedAges.sort();
+      highestPassedAge = passedAges.last;
+      
+      // 检查连续性：从最高月龄向下检查是否连续
+      for (int i = highestPassedAge - 1; i >= 1; i--) {
+        if (passedAges.contains(i)) {
+          // 继续检查下一个
+        } else {
+          // 不连续，停止
+          break;
         }
       }
     }
     
-    // 计算智龄：连续通过的项目读至最高分
-    for (var entry in sortedResults) {
-      if (entry.value) { // 只计算通过的项目
-        int itemAge = getItemAge(entry.key, allData);
-        if (itemAge <= highestPassedAge) {
-          // 计算该月龄的分数
-          double ageScore = getAreaScoreForAge(area, itemAge);
-          // 获取该月龄该能区的项目数量
-          int itemCount = getCurrentAgeAreaItems(allData, itemAge, area).length;
-          if (itemCount > 0) {
-            totalScore += ageScore / itemCount; // 平均分配分数
-          }
-        }
-      }
-    }
-    
-    return totalScore;
+    // 智龄就是连续通过的最高月龄
+    return highestPassedAge.toDouble();
   }
 
   // 获取项目的月龄

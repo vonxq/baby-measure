@@ -338,22 +338,56 @@ class AssessmentProvider with ChangeNotifier {
 
   // 检查是否应该继续向前测试
   bool _shouldContinueForwardTest() {
-    // 使用 assessment_service 的向前测试逻辑
-    String areaString = _getAreaString(_currentArea);
-    List<int> forwardAges = _assessmentService.getForwardTestAgesForArea(_mainTestAge, areaString, _testResults, _allData);
+    // 检查主测月龄是否全部通过
+    var mainAgeItems = _assessmentService.getCurrentAgeAreaItems(_allData, _mainTestAge, _getAreaString(_currentArea));
+    bool mainAgeAllPassed = true;
+    bool mainAgeTested = false;
     
-    // 如果向前测试月龄数量少于2个，说明还需要继续向前
-    return forwardAges.length < 2;
+    for (var item in mainAgeItems) {
+      if (_testResults.containsKey(item.id)) {
+        mainAgeTested = true;
+        if (!_testResults[item.id]!) {
+          mainAgeAllPassed = false;
+          break;
+        }
+      }
+    }
+    
+    // 只有当主测月龄全部通过时，才进行向前测试
+    if (mainAgeTested && mainAgeAllPassed) {
+      // 检查是否已经测试了足够的向前月龄
+      List<int> forwardAges = _assessmentService.getForwardTestAgesForArea(_mainTestAge, _getAreaString(_currentArea), _testResults, _allData);
+      return forwardAges.length < 2;
+    }
+    
+    return false;
   }
 
   // 检查是否应该继续向后测试
   bool _shouldContinueBackwardTest() {
-    // 使用 assessment_service 的向后测试逻辑
-    String areaString = _getAreaString(_currentArea);
-    List<int> backwardAges = _assessmentService.getBackwardTestAgesForArea(_mainTestAge, areaString, _testResults, _allData);
+    // 检查主测月龄是否有未通过项目
+    var mainAgeItems = _assessmentService.getCurrentAgeAreaItems(_allData, _mainTestAge, _getAreaString(_currentArea));
+    bool mainAgeHasFailed = false;
+    bool mainAgeTested = false;
     
-    // 如果向后测试月龄数量少于2个，说明还需要继续向后
-    return backwardAges.length < 2;
+    for (var item in mainAgeItems) {
+      if (_testResults.containsKey(item.id)) {
+        mainAgeTested = true;
+        if (!_testResults[item.id]!) {
+          mainAgeHasFailed = true;
+          break;
+        }
+      }
+    }
+    
+    // 只有当主测月龄有未通过项目时，才进行向后测试
+    if (mainAgeTested && mainAgeHasFailed) {
+      // 检查是否已经测试了足够的向后月龄
+      List<int> backwardAges = _assessmentService.getBackwardTestAgesForArea(_mainTestAge, _getAreaString(_currentArea), _testResults, _allData);
+      return backwardAges.length < 2;
+    }
+    
+    return false;
   }
 
   // 获取当前能区的智龄
