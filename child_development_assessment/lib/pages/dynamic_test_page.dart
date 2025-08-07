@@ -14,7 +14,6 @@ class DynamicTestPage extends StatefulWidget {
 class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderStateMixin {
   late AnimationController _cardController;
   late Animation<double> _cardAnimation;
-  String? _progressChangeMessage;
 
   @override
   void initState() {
@@ -32,7 +31,6 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // 确保动画控制器在依赖变化时重新启动
     if (_cardController.status == AnimationStatus.completed || _cardController.status == AnimationStatus.dismissed) {
       _cardController.reset();
       _cardController.forward();
@@ -72,14 +70,11 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                 );
               }
 
-              // 检查是否需要显示能区结果页
               if (provider.currentStage == TestStage.areaCompleted) {
                 return _buildAreaResultPage(provider);
               }
 
-              // 检查是否需要显示最终结果页
               if (provider.currentStage == TestStage.allCompleted) {
-                // 直接跳转到结果页
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   Navigator.pushReplacement(
                     context,
@@ -113,11 +108,8 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                   ),
                 );
               }
-
-
               
               if (provider.currentItem == null) {
-                // 如果currentItem为null，显示加载状态而不是能区结果页
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -193,8 +185,16 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // 进度条和提示信息
-                          _buildProgressSection(provider),
+                          // 整体能区进度条
+                          _buildOverallAreaProgress(provider),
+                          const SizedBox(height: 16),
+                          
+                          // 当前能区进度条
+                          _buildCurrentAreaProgress(provider),
+                          const SizedBox(height: 16),
+                          
+                          // 月龄测试进度条
+                          _buildAgeProgress(provider),
                           const SizedBox(height: 16),
 
                           // 题目卡片
@@ -202,7 +202,6 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                             child: AnimatedBuilder(
                               animation: _cardAnimation,
                               builder: (context, child) {
-                                // 如果currentItem为null，显示加载状态
                                 if (provider.currentItem == null) {
                                   return Center(
                                     child: Column(
@@ -216,7 +215,6 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                   );
                                 }
                                 
-                                // 确保动画值不为0，如果为0则使用1.0
                                 double scaleValue = _cardAnimation.value > 0 ? _cardAnimation.value : 1.0;
                                 return Transform.scale(
                                   scale: scaleValue,
@@ -237,6 +235,24 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
+                                          // 当前阶段标注
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                            decoration: BoxDecoration(
+                                              color: _getStageColor(provider.currentStage),
+                                              borderRadius: BorderRadius.circular(16),
+                                            ),
+                                            child: Text(
+                                              _getStageText(provider.currentStage),
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          
                                           // 题目标题
                                           Container(
                                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -280,104 +296,16 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                           
                                           // 题目描述
                                           if (provider.currentItem!.desc.isNotEmpty) ...[
-                                            Row(
-                                              children: [
-                                                Icon(Icons.info_outline, color: Colors.orange[600], size: 20),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  '题目描述：',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: Colors.orange[700],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Container(
-                                              padding: const EdgeInsets.all(12),
-                                              decoration: BoxDecoration(
-                                                color: Colors.orange[50],
-                                                borderRadius: BorderRadius.circular(8),
-                                                border: Border.all(color: Colors.orange[200]!),
-                                              ),
-                                              child: Text(
-                                                provider.currentItem!.desc,
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Colors.orange[800],
-                                                ),
-                                              ),
-                                            ),
+                                            _buildInfoSection('题目描述', provider.currentItem!.desc, Colors.orange),
                                             const SizedBox(height: 16),
                                           ],
                                           
                                           // 操作方法
-                                          Row(
-                                            children: [
-                                              Icon(Icons.play_circle_outline, color: Colors.purple[600], size: 20),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                '操作方法：',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.purple[700],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Container(
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: Colors.purple[50],
-                                              borderRadius: BorderRadius.circular(8),
-                                              border: Border.all(color: Colors.purple[200]!),
-                                            ),
-                                            child: Text(
-                                              provider.currentItem!.operation,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.purple[800],
-                                              ),
-                                            ),
-                                          ),
+                                          _buildInfoSection('操作方法', provider.currentItem!.operation, Colors.purple),
                                           const SizedBox(height: 16),
                                           
                                           // 通过标准
-                                          Row(
-                                            children: [
-                                              Icon(Icons.flag, color: Colors.teal[600], size: 20),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                '通过标准：',
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.teal[700],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Container(
-                                            padding: const EdgeInsets.all(12),
-                                            decoration: BoxDecoration(
-                                              color: Colors.teal[50],
-                                              borderRadius: BorderRadius.circular(8),
-                                              border: Border.all(color: Colors.teal[200]!),
-                                            ),
-                                            child: Text(
-                                              provider.currentItem!.passCondition,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.teal[700],
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
+                                          _buildInfoSection('通过标准', provider.currentItem!.passCondition, Colors.teal),
                                         ],
                                       ),
                                     ),
@@ -458,108 +386,345 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
     );
   }
 
-  Widget _buildProgressSection(AssessmentProvider provider) {
+  Widget _buildOverallAreaProgress(AssessmentProvider provider) {
+    int completedAreas = provider.areaCompleted.values.where((completed) => completed).length;
+    int totalAreas = 5;
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '整体能区进度',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[700],
+                ),
+              ),
+              Text(
+                '$completedAreas / $totalAreas',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[600],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          LinearProgressIndicator(
+            value: completedAreas / totalAreas,
+            backgroundColor: Colors.grey[200],
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
+            minHeight: 8,
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: TestArea.values.map((area) => _buildAreaChip(area, provider.areaCompleted[area] ?? false)).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAreaChip(TestArea area, bool completed) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: completed ? Colors.green[50] : Colors.grey[100],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: completed ? Colors.green[300]! : Colors.grey[300]!),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            completed ? Icons.check_circle : Icons.radio_button_unchecked,
+            size: 14,
+            color: completed ? Colors.green[600] : Colors.grey[400],
+          ),
+          const SizedBox(width: 4),
+          Text(
+            _getAreaShortName(area),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: completed ? Colors.green[700] : Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCurrentAreaProgress(AssessmentProvider provider) {
     int testedCount = provider.getCurrentAreaTestedCount();
     int totalCount = provider.getCurrentAreaTotalCount();
     int currentAge = provider.getCurrentAreaAge();
 
-    return Column(
-      children: [
-        // 进度条
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 5,
-                offset: const Offset(0, 2),
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
           ),
-          child: Column(
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${_getCurrentAreaName(provider.currentArea)}测试进度',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '当前测试月龄：$currentAge个月',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.orange[600],
-                        ),
-                      ),
-                    ],
-                  ),
                   Text(
-                    '$testedCount / $totalCount',
+                    '${_getCurrentAreaName(provider.currentArea)}进度',
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue[600],
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '当前月龄：$currentAge个月',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.orange[600],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              LinearProgressIndicator(
-                value: totalCount > 0 ? testedCount / totalCount : 0.0,
-                backgroundColor: Colors.grey[200],
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
-                minHeight: 8,
+              Text(
+                '$testedCount / $totalCount',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[600],
+                ),
               ),
             ],
           ),
-        ),
-        
-        // 进度变化提示
-        if (_progressChangeMessage != null) ...[
           const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.orange[50],
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.orange[200]!),
+          LinearProgressIndicator(
+            value: totalCount > 0 ? testedCount / totalCount : 0.0,
+            backgroundColor: Colors.grey[200],
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
+            minHeight: 8,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAgeProgress(AssessmentProvider provider) {
+    List<int> testedAges = provider.areaTestedAges[provider.currentArea] ?? [];
+    testedAges.sort();
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '月龄测试进度',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
             ),
+          ),
+          const SizedBox(height: 12),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
             child: Row(
-              children: [
-                Icon(Icons.info_outline, color: Colors.orange[600], size: 16),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    _progressChangeMessage!,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.orange[700],
-                    ),
-                  ),
-                ),
-              ],
+              children: testedAges.map((age) => _buildAgeChip(age, provider)).toList(),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAgeChip(int age, AssessmentProvider provider) {
+    Color chipColor = Colors.grey[400]!;
+    String status = '未测试';
+    
+    // 检查该月龄的测试状态
+    bool hasPassed = _hasAgePassed(age, provider);
+    bool hasFailed = _hasAgeFailed(age, provider);
+    
+    if (hasPassed && !hasFailed) {
+      chipColor = Colors.green[600]!;
+      status = '全通过';
+    } else if (hasPassed && hasFailed) {
+      chipColor = Colors.orange[600]!;
+      status = '部分通过';
+    } else if (hasFailed && !hasPassed) {
+      chipColor = Colors.red[600]!;
+      status = '全失败';
+    }
+    
+    return Container(
+      margin: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: chipColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: chipColor),
+      ),
+      child: Column(
+        children: [
+          Text(
+            '$age个月',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: chipColor,
+            ),
+          ),
+          Text(
+            status,
+            style: TextStyle(
+              fontSize: 10,
+              color: chipColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _hasAgePassed(int age, AssessmentProvider provider) {
+    String areaString = _getAreaString(provider.currentArea);
+    var items = provider.allData
+        .where((data) => data.ageMonth == age && data.area == areaString)
+        .expand((data) => data.testItems)
+        .toList();
+    
+    for (var item in items) {
+      if (provider.testResults.containsKey(item.id) && provider.testResults[item.id] == true) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool _hasAgeFailed(int age, AssessmentProvider provider) {
+    String areaString = _getAreaString(provider.currentArea);
+    var items = provider.allData
+        .where((data) => data.ageMonth == age && data.area == areaString)
+        .expand((data) => data.testItems)
+        .toList();
+    
+    for (var item in items) {
+      if (provider.testResults.containsKey(item.id) && provider.testResults[item.id] == false) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Widget _buildInfoSection(String title, String content, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.info_outline, color: color, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              '$title：',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: color.withValues(alpha: 0.3)),
+          ),
+          child: Text(
+            content,
+            style: TextStyle(
+              fontSize: 16,
+              color: color.withValues(alpha: 0.8),
+            ),
+          ),
+        ),
       ],
     );
   }
 
+  Color _getStageColor(TestStage stage) {
+    switch (stage) {
+      case TestStage.current:
+        return Colors.blue[600]!;
+      case TestStage.forward:
+        return Colors.orange[600]!;
+      case TestStage.backward:
+        return Colors.purple[600]!;
+      default:
+        return Colors.grey[600]!;
+    }
+  }
+
+  String _getStageText(TestStage stage) {
+    switch (stage) {
+      case TestStage.current:
+        return '主测月龄';
+      case TestStage.forward:
+        return '向前测查';
+      case TestStage.backward:
+        return '向后测查';
+      default:
+        return '未知阶段';
+    }
+  }
+
   Widget _buildAreaResultPage(AssessmentProvider provider) {
-    // 获取当前能区的智龄和发育商
     double mentalAge = provider.getCurrentAreaMentalAge();
     double developmentQuotient = provider.getCurrentAreaDevelopmentQuotient();
     
@@ -568,7 +733,6 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
       mentalAge: mentalAge,
       developmentQuotient: developmentQuotient,
       onContinue: () {
-        // 继续下一个能区
         provider.nextItem();
       },
     );
@@ -586,16 +750,12 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
       provider.nextItem();
       _cardController.forward();
     } else {
-      // 当前阶段完成，检查是否需要进入下一阶段
       _cardController.reset();
-      provider.nextItem(); // 这会触发阶段切换
+      provider.nextItem();
       
-      // 如果阶段已经切换到能区完成状态，显示能区结果页
       if (provider.currentStage == TestStage.areaCompleted) {
-        // 显示能区结果页
         setState(() {});
       } else if (provider.currentStage == TestStage.allCompleted) {
-        // 跳转到最终结果页面
         try {
           if (mounted) {
             Navigator.pushReplacement(
@@ -625,41 +785,9 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
           }
         }
       } else {
-        // 如果切换到新阶段，显示过渡页
         _cardController.forward();
-        
-        // 显示进度变化提示
-        _showProgressChangeMessage(provider);
       }
     }
-  }
-
-  void _showProgressChangeMessage(AssessmentProvider provider) {
-    String message = '';
-    
-    switch (provider.currentStage) {
-      case TestStage.forward:
-        message = '由于需要向前测查，增加了测试项目数量';
-        break;
-      case TestStage.backward:
-        message = '由于需要向后测查，增加了测试项目数量';
-        break;
-      default:
-        return;
-    }
-    
-    setState(() {
-      _progressChangeMessage = message;
-    });
-    
-    // 3秒后清除提示
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() {
-          _progressChangeMessage = null;
-        });
-      }
-    });
   }
 
   String _getCurrentAreaName(TestArea area) {
@@ -674,6 +802,36 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
         return '适应能力能区';
       case TestArea.social:
         return '社会行为能区';
+    }
+  }
+
+  String _getAreaShortName(TestArea area) {
+    switch (area) {
+      case TestArea.motor:
+        return '大运动';
+      case TestArea.fineMotor:
+        return '精细动作';
+      case TestArea.language:
+        return '语言';
+      case TestArea.adaptive:
+        return '适应能力';
+      case TestArea.social:
+        return '社会行为';
+    }
+  }
+
+  String _getAreaString(TestArea area) {
+    switch (area) {
+      case TestArea.motor:
+        return 'motor';
+      case TestArea.fineMotor:
+        return 'fineMotor';
+      case TestArea.language:
+        return 'language';
+      case TestArea.adaptive:
+        return 'adaptive';
+      case TestArea.social:
+        return 'social';
     }
   }
 
