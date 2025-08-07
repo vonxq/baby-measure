@@ -163,9 +163,18 @@ class AssessmentService {
     List<int> testedForwardAges = testedAges.where((age) => age < mainAge).toList();
     // sort从小到大排序
     testedForwardAges.sort((a, b) => a.compareTo(b));
-    // len < 2 没向前查过或者向前没月龄测试了
-    if (testedForwardAges.length < 2) {
+    // len = 0 没向前查过
+    if (testedForwardAges.length == 0) {
       return getPreviousAges(mainAge, 2);
+    }
+    // len = 1 向前测过1个月龄
+    if (testedForwardAges.length == 1) {
+      // 没通过，还得向前测两个月龄
+      if (!_isAllPassed(testedForwardAges.first, area, testResults, allData)) {
+        return getPreviousAges(testedForwardAges.first, 2);
+      }
+      // 通过，还得向前测1个月龄
+      return getPreviousAges(testedForwardAges.first, 1);
     }
     // 最小月龄没通过，还得向前测两个月龄
     if (!_isAllPassed(testedForwardAges.first, area, testResults, allData)) {
@@ -173,7 +182,7 @@ class AssessmentService {
     }
     // 最小月龄通过，上一月龄没通过，还得向前测1个月龄
     if (!_isAllPassed(testedForwardAges[1], area, testResults, allData)) {
-      return getPreviousAges(testedForwardAges.last, 1);
+      return getPreviousAges(testedForwardAges.first, 1);
     }
     // 最小月龄通过，上一月龄通过，结束测查
     return forwardAges;
@@ -190,16 +199,24 @@ class AssessmentService {
     List<int> testedBackwardAges = testedAges.where((age) => age > mainAge).toList();
      // sort从小到大排序
     testedBackwardAges.sort((a, b) => a.compareTo(b));
-    // len < 2 没向后查过或者向后没月龄测试了
-    if (testedBackwardAges.length < 2) {
+    // 第一次向后测查，没有测试过，还得向后测两个月龄
+    if (testedBackwardAges.length == 0) {
       return getNextAges(mainAge, 2);
     }
+    if (testedBackwardAges.length == 1) {
+      // 有通过的，还得向后测两个月龄
+      if (_hasPassed(testedBackwardAges.last, area, testResults, allData)) {
+        return getNextAges(testedBackwardAges.last, 2);
+      }
+      // 没通过，还得向后测1个月龄
+      return getNextAges(testedBackwardAges.last, 1);
+    }
     // 最大月龄有通过的，还得向后测两个月龄
-    if (!_hasPassed(testedBackwardAges.last, area, testResults, allData)) {
+    if (_hasPassed(testedBackwardAges.last, area, testResults, allData)) {
       return getNextAges(testedBackwardAges.last, 2);
     }
-    // 最大月龄没通过，上一月龄testedBackwardAges[len - 1]有通过的，还得向后测1个月龄
-    if (!_hasPassed(testedBackwardAges[testedBackwardAges.length - 1], area, testResults, allData)) {
+    // 最大月龄没通过，上一月龄testedBackwardAges[len - 2]有通过的，还得向后测1个月龄
+    if (_hasPassed(testedBackwardAges[testedBackwardAges.length - 2], area, testResults, allData)) {
       return getNextAges(testedBackwardAges.last, 1);
     }
     // 最大月龄没通过，上一月龄testedBackwardAges[len - 1]没通过，结束测查
