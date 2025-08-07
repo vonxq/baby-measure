@@ -28,19 +28,47 @@ class AssessmentService {
   int getNextAge(int currentAge) {
     int currentIndex = _ageGroups.indexOf(currentAge);
     if (currentIndex == -1 || currentIndex >= _ageGroups.length - 1) {
-      return currentAge + 1; // 如果找不到，返回下一个数字
+      return -1;
     }
     return _ageGroups[currentIndex + 1];
+  }
+
+  List<int> getNextAges(int currentAge, int count) {
+    List<int> ages = [];
+    for (int i = 0; i < count; i++) {
+      int nextAge = getNextAge(currentAge);
+      if (nextAge < 0) {
+        break;
+      }
+      ages.add(nextAge);
+      currentAge = nextAge;
+    }
+    return ages;
   }
 
   // 获取指定月龄的上一个标准月龄
   int getPreviousAge(int currentAge) {
     int currentIndex = _ageGroups.indexOf(currentAge);
     if (currentIndex == -1 || currentIndex <= 0) {
-      return currentAge - 1; // 如果找不到，返回上一个数字
+      return -1; // 如果找不到，返回-1
     }
     return _ageGroups[currentIndex - 1];
   }
+
+  List<int> getPreviousAges(int currentAge, int count) {
+    List<int> ages = [];
+    for (int i = 0; i < count; i++) {
+      int prevAge = getPreviousAge(currentAge);
+      if (prevAge < 0) {
+        break;
+      }
+      ages.add(prevAge);
+      currentAge = prevAge;
+    }
+    return ages;
+  }
+  
+  
 
   // 获取指定月龄和能区的测试项目
   List<AssessmentItem> getAreaItems(List<AssessmentData> allData, int age, String area) {
@@ -69,7 +97,8 @@ class AssessmentService {
     }
 
     // 2. 向前测试
-    List<int> forwardAges = getForwardTestAgesForArea(mainAge, area, testResults, allData);
+    List<int> testedAges = _getTestedAges(mainAge, testResults, allData);
+    List<int> forwardAges = getForwardTestAgesForArea(mainAge, testedAges, area, testResults, allData);
     for (int age in forwardAges) {
       var items = getCurrentAgeAreaItems(allData, age, area);
       for (var item in items) {
@@ -80,7 +109,7 @@ class AssessmentService {
     }
 
     // 3. 向后测试
-    List<int> backwardAges = getBackwardTestAgesForArea(mainAge, area, testResults, allData);
+    List<int> backwardAges = getBackwardTestAgesForArea(mainAge, testedAges, area, testResults, allData);
     for (int age in backwardAges) {
       var items = getCurrentAgeAreaItems(allData, age, area);
       for (var item in items) {
@@ -102,80 +131,78 @@ class AssessmentService {
       mentalAge: mentalAge,
     );
   }
+  bool _isAllPassed(int age, String area, Map<int, bool> testResults, List<AssessmentData> allData) {
+    var items = getCurrentAgeAreaItems(allData, age, area);
+    for (var item in items) {
+      if (!testResults.containsKey(item.id)) {
+        return false;
+      }
+      if (!testResults[item.id]!) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-  // 向前测试逻辑 - 按能区
-  List<int> getForwardTestAgesForArea(int mainAge, String area, Map<int, bool> testResults, List<AssessmentData> allData) {
-    List<int> forwardAges = [];
-    
-    // 检查主测月龄是否全部通过
-    var mainAgeItems = getCurrentAgeAreaItems(allData, mainAge, area);
-    bool mainAgeAllPassed = true;
-    bool mainAgeTested = false;
-    
-    for (var item in mainAgeItems) {
+  bool _hasPassed(int age, String area, Map<int, bool> testResults, List<AssessmentData> allData) {
+    var items = getCurrentAgeAreaItems(allData, age, area);
+    for (var item in items) {
       if (testResults.containsKey(item.id)) {
-        mainAgeTested = true;
-        if (!testResults[item.id]!) {
-          mainAgeAllPassed = false;
-          break;
+        if (testResults[item.id]!) {
+          return true;
         }
       }
     }
-    
-    // 只有当主测月龄全部通过时，才进行向前测试
-    if (mainAgeTested && mainAgeAllPassed) {
-      int currentAge = mainAge;
-      
-      // 向前测试2个月龄
-      for (int i = 0; i < 2; i++) {
-        int prevAge = getPreviousAge(currentAge);
-        if (prevAge >= 1) {
-          forwardAges.add(prevAge);
-          currentAge = prevAge;
-        } else {
-          break;
-        }
-      }
+    return false;
+  }
+  // 向前测试逻辑 - 按能区
+  List<int> getForwardTestAgesForArea(int mainAge, List<int> testedAges, String area, Map<int, bool> testResults, List<AssessmentData> allData) {
+    List<int> forwardAges = [];
+    // 向前测查该能区的连续 2 个月龄的项目均通过，则该能区的向前测查结束；若该能区向前连续 2 个月龄的项目有任何一项未通过，需继续往前测查，直到该能区向前的连续 2 个月龄的项目均通过为止。
+    // testedAges从小到大排序，取小于mainAge的所有List并从小到达排序
+    List<int> testedForwardAges = testedAges.where((age) => age < mainAge).toList();
+    // sort从小到大排序
+    testedForwardAges.sort((a, b) => a.compareTo(b));
+    // len < 2 没向前查过或者向前没月龄测试了
+    if (testedForwardAges.length < 2) {
+      return getPreviousAges(mainAge, 2);
     }
-    
+    // 最小月龄没通过，还得向前测两个月龄
+    if (!_isAllPassed(testedForwardAges.first, area, testResults, allData)) {
+      return getPreviousAges(testedForwardAges.first, 2);
+    }
+    // 最小月龄通过，上一月龄没通过，还得向前测1个月龄
+    if (!_isAllPassed(testedForwardAges[1], area, testResults, allData)) {
+      return getPreviousAges(testedForwardAges.last, 1);
+    }
+    // 最小月龄通过，上一月龄通过，结束测查
     return forwardAges;
   }
 
   // 向后测试逻辑 - 按能区
-  List<int> getBackwardTestAgesForArea(int mainAge, String area, Map<int, bool> testResults, List<AssessmentData> allData) {
+  List<int> getBackwardTestAgesForArea(int mainAge, List<int> testedAges, String area, Map<int, bool> testResults, List<AssessmentData> allData) {
     List<int> backwardAges = [];
-    
-    // 检查主测月龄是否有未通过项目
-    var mainAgeItems = getCurrentAgeAreaItems(allData, mainAge, area);
-    bool mainAgeHasFailed = false;
-    bool mainAgeTested = false;
-    
-    for (var item in mainAgeItems) {
-      if (testResults.containsKey(item.id)) {
-        mainAgeTested = true;
-        if (!testResults[item.id]!) {
-          mainAgeHasFailed = true;
-          break;
-        }
-      }
+    //  然后从主测月龄向后测连续 2 个月龄的项目
+    //  若向后测查的该能区的连续 2 个月龄的项目均不能通过
+    //  则该能区的向后测查结束；若该能区向后连续 2 个月龄的项目有任何一项通过
+    //  需继续往后测查，直到该能区向后的连续两个月龄的项目均不通过为止。
+    // testedAges从小到大排序，取大于mainAge的所有List并从小到达排序
+    List<int> testedBackwardAges = testedAges.where((age) => age > mainAge).toList();
+     // sort从小到大排序
+    testedBackwardAges.sort((a, b) => a.compareTo(b));
+    // len < 2 没向后查过或者向后没月龄测试了
+    if (testedBackwardAges.length < 2) {
+      return getNextAges(mainAge, 2);
     }
-    
-    // 只有当主测月龄有未通过项目时，才进行向后测试
-    if (mainAgeTested && mainAgeHasFailed) {
-      int currentAge = mainAge;
-      
-      // 向后测试2个月龄
-      for (int i = 0; i < 2; i++) {
-        int nextAge = getNextAge(currentAge);
-        if (nextAge <= 84) {
-          backwardAges.add(nextAge);
-          currentAge = nextAge;
-        } else {
-          break;
-        }
-      }
+    // 最大月龄有通过的，还得向后测两个月龄
+    if (!_hasPassed(testedBackwardAges.last, area, testResults, allData)) {
+      return getNextAges(testedBackwardAges.last, 2);
     }
-    
+    // 最大月龄没通过，上一月龄testedBackwardAges[len - 1]有通过的，还得向后测1个月龄
+    if (!_hasPassed(testedBackwardAges[testedBackwardAges.length - 1], area, testResults, allData)) {
+      return getNextAges(testedBackwardAges.last, 1);
+    }
+    // 最大月龄没通过，上一月龄testedBackwardAges[len - 1]没通过，结束测查
     return backwardAges;
   }
 
@@ -221,6 +248,16 @@ class AssessmentService {
     
     // 智龄就是连续通过的最高月龄
     return highestPassedAge.toDouble();
+  }
+
+  // 获取已测试的月龄列表
+  List<int> _getTestedAges(int mainAge, Map<int, bool> testResults, List<AssessmentData> allData) {
+    Set<int> testedAges = {};
+    for (var entry in testResults.entries) {
+      int itemAge = getItemAge(entry.key, allData);
+      testedAges.add(itemAge);
+    }
+    return testedAges.toList();
   }
 
   // 获取项目的月龄
@@ -305,13 +342,14 @@ class AssessmentService {
       var mainItems = getCurrentAgeAreaItems(allData, mainAge, area);
       totalItems += mainItems.length;
       
-      var forwardAges = getForwardTestAgesForArea(mainAge, area, testResults, allData);
+      List<int> testedAges = _getTestedAges(mainAge, testResults, allData);
+      var forwardAges = getForwardTestAgesForArea(mainAge, testedAges, area, testResults, allData);
       for (int age in forwardAges) {
         var items = getCurrentAgeAreaItems(allData, age, area);
         totalItems += items.length;
       }
       
-      var backwardAges = getBackwardTestAgesForArea(mainAge, area, testResults, allData);
+      var backwardAges = getBackwardTestAgesForArea(mainAge, testedAges, area, testResults, allData);
       for (int age in backwardAges) {
         var items = getCurrentAgeAreaItems(allData, age, area);
         totalItems += items.length;

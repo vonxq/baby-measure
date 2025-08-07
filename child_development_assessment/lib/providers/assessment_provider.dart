@@ -196,28 +196,13 @@ class AssessmentProvider with ChangeNotifier {
       case TestStage.current:
         // 主测月龄测试完成，开始向前测试
         _currentStage = TestStage.forward;
-        _startForwardTest();
+        _continueForwardTest();
         break;
       case TestStage.forward:
-        // 向前测试完成，检查是否需要继续向前或开始向后
-        if (_shouldContinueForwardTest()) {
-          // 继续向前测试
-          _continueForwardTest();
-        } else {
-          // 向前测试完成，开始向后测试
-          _currentStage = TestStage.backward;
-          _startBackwardTest();
-        }
+         _continueForwardTest();
         break;
       case TestStage.backward:
-        // 向后测试完成，检查是否需要继续向后或完成该能区
-        if (_shouldContinueBackwardTest()) {
-          // 继续向后测试
-          _continueBackwardTest();
-        } else {
-          // 向后测试完成，该能区测试完成
-          _completeCurrentArea();
-        }
+         _continueBackwardTest();
         break;
       case TestStage.areaCompleted:
         // 能区测试完成，移动到下一个能区
@@ -232,60 +217,36 @@ class AssessmentProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // 开始向前测试
-  void _startForwardTest() {
-    // 获取向前测试月龄（从主测月龄向前2个月龄）
-    int forwardAge = _assessmentService.getPreviousAge(_mainTestAge);
-    if (forwardAge >= 1) {
-      _areaCurrentAge[_currentArea] = forwardAge;
-      _areaTestedAges[_currentArea]!.add(forwardAge);
-      _loadCurrentAreaItems();
-    } else {
-      // 无法向前，直接开始向后测试
-      _currentStage = TestStage.backward;
-      _startBackwardTest();
-    }
-  }
-
   // 继续向前测试
   void _continueForwardTest() {
-    int currentAge = _areaCurrentAge[_currentArea] ?? _mainTestAge;
-    int nextAge = _assessmentService.getPreviousAge(currentAge);
-    if (nextAge >= 1) {
-      _areaCurrentAge[_currentArea] = nextAge;
-      _areaTestedAges[_currentArea]!.add(nextAge);
+    List<int> testedAges = _getTestedAges();
+    List<int> forwardAges = _assessmentService.getForwardTestAgesForArea(_mainTestAge, testedAges, _getAreaString(_currentArea), _testResults, _allData);
+    if (forwardAges.length > 0) {
+      // forwardAges从大到小排序取第一个
+      forwardAges.sort((a, b) => b.compareTo(a));
+      _areaCurrentAge[_currentArea] = forwardAges.first;
+      _areaTestedAges[_currentArea]!.add(forwardAges.first);
       _loadCurrentAreaItems();
-    } else {
+    }  else {
       // 无法继续向前，开始向后测试
       _currentStage = TestStage.backward;
-      _startBackwardTest();
+      _continueBackwardTest();
     }
   }
 
   // 开始向后测试
-  void _startBackwardTest() {
-    // 获取向后测试月龄（从主测月龄向后2个月龄）
-    int backwardAge = _assessmentService.getNextAge(_mainTestAge);
-    if (backwardAge <= 84) {
-      _areaCurrentAge[_currentArea] = backwardAge;
-      _areaTestedAges[_currentArea]!.add(backwardAge);
-      _loadCurrentAreaItems();
-    } else {
-      // 无法向后，完成该能区
-      _completeCurrentArea();
-    }
-  }
-
-  // 继续向后测试
   void _continueBackwardTest() {
-    int currentAge = _areaCurrentAge[_currentArea] ?? _mainTestAge;
-    int nextAge = _assessmentService.getNextAge(currentAge);
-    if (nextAge <= 84) {
-      _areaCurrentAge[_currentArea] = nextAge;
-      _areaTestedAges[_currentArea]!.add(nextAge);
+    // 获取向后测试月龄（从主测月龄向后2个月龄）
+    List<int> testedAges = _getTestedAges();
+    List<int> backwardAges = _assessmentService.getBackwardTestAgesForArea(_mainTestAge, testedAges, _getAreaString(_currentArea), _testResults, _allData);
+    // backwardAges从小到大排序取第一个
+    backwardAges.sort((a, b) => a.compareTo(b));
+    if (backwardAges.length > 0) {
+      _areaCurrentAge[_currentArea] = backwardAges.first;
+      _areaTestedAges[_currentArea]!.add(backwardAges.first);
       _loadCurrentAreaItems();
-    } else {
-      // 无法继续向后，完成该能区
+    }  else {
+      // 无法向后，完成该能区
       _completeCurrentArea();
     }
   }
@@ -336,58 +297,10 @@ class AssessmentProvider with ChangeNotifier {
     _loadCurrentAreaItems();
   }
 
-  // 检查是否应该继续向前测试
-  bool _shouldContinueForwardTest() {
-    // 检查主测月龄是否全部通过
-    var mainAgeItems = _assessmentService.getCurrentAgeAreaItems(_allData, _mainTestAge, _getAreaString(_currentArea));
-    bool mainAgeAllPassed = true;
-    bool mainAgeTested = false;
-    
-    for (var item in mainAgeItems) {
-      if (_testResults.containsKey(item.id)) {
-        mainAgeTested = true;
-        if (!_testResults[item.id]!) {
-          mainAgeAllPassed = false;
-          break;
-        }
-      }
-    }
-    
-    // 只有当主测月龄全部通过时，才进行向前测试
-    if (mainAgeTested && mainAgeAllPassed) {
-      // 检查是否已经测试了足够的向前月龄
-      List<int> forwardAges = _assessmentService.getForwardTestAgesForArea(_mainTestAge, _getAreaString(_currentArea), _testResults, _allData);
-      return forwardAges.length < 2;
-    }
-    
-    return false;
-  }
 
-  // 检查是否应该继续向后测试
-  bool _shouldContinueBackwardTest() {
-    // 检查主测月龄是否有未通过项目
-    var mainAgeItems = _assessmentService.getCurrentAgeAreaItems(_allData, _mainTestAge, _getAreaString(_currentArea));
-    bool mainAgeHasFailed = false;
-    bool mainAgeTested = false;
-    
-    for (var item in mainAgeItems) {
-      if (_testResults.containsKey(item.id)) {
-        mainAgeTested = true;
-        if (!_testResults[item.id]!) {
-          mainAgeHasFailed = true;
-          break;
-        }
-      }
-    }
-    
-    // 只有当主测月龄有未通过项目时，才进行向后测试
-    if (mainAgeTested && mainAgeHasFailed) {
-      // 检查是否已经测试了足够的向后月龄
-      List<int> backwardAges = _assessmentService.getBackwardTestAgesForArea(_mainTestAge, _getAreaString(_currentArea), _testResults, _allData);
-      return backwardAges.length < 2;
-    }
-    
-    return false;
+
+  List<int> _getTestedAges() {
+    return _areaTestedAges[_currentArea] ?? [];
   }
 
   // 获取当前能区的智龄
