@@ -33,7 +33,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
   void didChangeDependencies() {
     super.didChangeDependencies();
     // 确保动画控制器在依赖变化时重新启动
-    if (_cardController.status == AnimationStatus.completed) {
+    if (_cardController.status == AnimationStatus.completed || _cardController.status == AnimationStatus.dismissed) {
       _cardController.reset();
       _cardController.forward();
     }
@@ -114,14 +114,9 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                 );
               }
 
+
+              
               if (provider.currentItem == null) {
-                // 添加调试信息
-                print('UI: currentItem is null');
-                print('UI: currentStageItems.length = ${provider.currentStageItems.length}');
-                print('UI: currentStageItemIndex = ${provider.currentStageItemIndex}');
-                print('UI: currentStage = ${provider.currentStage}');
-                print('UI: currentArea = ${provider.currentArea}');
-                
                 // 如果currentItem为null，显示加载状态而不是能区结果页
                 return Center(
                   child: Column(
@@ -207,10 +202,6 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                             child: AnimatedBuilder(
                               animation: _cardAnimation,
                               builder: (context, child) {
-                                // 添加调试信息
-                                print('UI Builder: currentItem = ${provider.currentItem?.name}');
-                                print('UI Builder: currentItem is null = ${provider.currentItem == null}');
-                                
                                 // 如果currentItem为null，显示加载状态
                                 if (provider.currentItem == null) {
                                   return Center(
@@ -225,8 +216,10 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                   );
                                 }
                                 
+                                // 确保动画值不为0，如果为0则使用1.0
+                                double scaleValue = _cardAnimation.value > 0 ? _cardAnimation.value : 1.0;
                                 return Transform.scale(
-                                  scale: _cardAnimation.value,
+                                  scale: scaleValue,
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: Colors.white,
@@ -583,7 +576,6 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
 
   void _handleAnswer(bool passed, AssessmentProvider provider) {
     if (provider.currentItem == null) {
-      print('警告：_handleAnswer中currentItem为null');
       return;
     }
     

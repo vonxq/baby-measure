@@ -65,14 +65,10 @@ class AssessmentProvider with ChangeNotifier {
   AssessmentItem? get currentItem {
     bool hasItems = _currentStageItems.isNotEmpty;
     bool validIndex = _currentStageItemIndex < _currentStageItems.length;
-    print('currentItem getter: hasItems=$hasItems, validIndex=$validIndex, _currentStageItemIndex=$_currentStageItemIndex, _currentStageItems.length=${_currentStageItems.length}');
     
     if (hasItems && validIndex) {
-      var item = _currentStageItems[_currentStageItemIndex];
-      print('currentItem: ${item.name}');
-      return item;
+      return _currentStageItems[_currentStageItemIndex];
     } else {
-      print('currentItem: null');
       return null;
     }
   }
@@ -156,14 +152,7 @@ class AssessmentProvider with ChangeNotifier {
     
     // 使用 assessment_service 获取项目
     _currentStageItems = _assessmentService.getCurrentAgeAreaItems(_allData, testAge, currentAreaString);
-    print('_loadCurrentAreaItems ===== currentStageItems: ${_currentStageItems.length}, _currentArea: $_currentArea');
-    
-    // 添加安全检查
-    if (_currentStageItems.isNotEmpty) {
-      print('currentStageItemIndex: $_currentStageItemIndex, currentItem: ${_currentStageItems[_currentStageItemIndex].name}');
-    } else {
-      print('警告：当前能区没有找到测试项目！testAge: $testAge, currentAreaString: $currentAreaString');
-    }
+
     
     notifyListeners();
   }
