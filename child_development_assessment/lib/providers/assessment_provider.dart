@@ -398,13 +398,23 @@ class AssessmentProvider with ChangeNotifier {
         }
         break;
       case TestStage.backward:
-        // 当前向后月龄测试完成，检查是否还有更多向后月龄需要测试
+        // 当前向后月龄测试完成，检查是否需要继续向后测试
         _currentBackwardIndex++;
-        if (_currentBackwardIndex < _backwardTestAges.length) {
-          // 还有更多向后月龄需要测试，继续测试下一个
-          _loadCurrentStageItems();
+        
+        // 检查当前能区是否已经连续不通过2个月龄
+        if (_shouldContinueBackwardTest()) {
+          // 需要继续向后测试，获取下一个向后月龄
+          int nextAge = _getNextBackwardAge();
+          if (nextAge > 0) {
+            _currentTestAge = nextAge;
+            _loadCurrentStageItems();
+          } else {
+            // 无法继续向后，测试结束
+            _currentStage = TestStage.completed;
+            _generateFinalResult();
+          }
         } else {
-          // 向后测试完成，测试结束
+          // 当前能区向后测试完成，测试结束
           _currentStage = TestStage.completed;
           _generateFinalResult();
         }
@@ -488,6 +498,66 @@ class AssessmentProvider with ChangeNotifier {
       _currentStage = TestStage.completed;
       _generateFinalResult();
     }
+  }
+
+  // 检查是否应该继续向后测试
+  bool _shouldContinueBackwardTest() {
+    // 检查每个能区是否已经连续不通过2个月龄
+    final areas = ['motor', 'fineMotor', 'language', 'adaptive', 'social'];
+    
+    for (String area in areas) {
+      if (!_hasConsecutiveFailForArea(area, 2)) {
+        return true; // 如果有任何能区未连续不通过2个月龄，继续向后测试
+      }
+    }
+    
+    return false; // 所有能区都已连续不通过2个月龄，停止向后测试
+  }
+
+  // 检查指定能区是否连续不通过指定月龄数
+  bool _hasConsecutiveFailForArea(String area, int consecutiveCount) {
+    List<int> backwardAges = _getBackwardTestAges(_mainTestAge);
+    int consecutiveFailCount = 0;
+    
+    for (int age in backwardAges) {
+      bool allFailed = true;
+      
+      // 检查该月龄下该能区的所有项目是否都不通过
+      for (var data in _allData) {
+        if (data.ageMonth == age && data.area == area) {
+          for (var item in data.testItems) {
+            if (_testResults.containsKey(item.id) && _testResults[item.id]!) {
+              allFailed = false;
+              break;
+            }
+          }
+        }
+      }
+      
+      if (allFailed) {
+        consecutiveFailCount++;
+        if (consecutiveFailCount >= consecutiveCount) {
+          return true;
+        }
+      } else {
+        consecutiveFailCount = 0; // 重置连续计数
+      }
+    }
+    
+    return false;
+  }
+
+  // 获取下一个向后测试月龄
+  int _getNextBackwardAge() {
+    List<int> ageGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
+    
+    // 找到当前测试月龄在列表中的位置
+    int currentIndex = ageGroups.indexOf(_currentTestAge);
+    if (currentIndex >= ageGroups.length - 1) {
+      return 0; // 无法继续向后
+    }
+    
+    return ageGroups[currentIndex + 1];
   }
 
   // 获取总进度
