@@ -208,13 +208,35 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                               borderRadius: BorderRadius.circular(8),
                                               border: Border.all(color: Colors.blue[200]!),
                                             ),
-                                            child: Text(
-                                              provider.currentItem!.name,
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue[700],
-                                              ),
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    provider.currentItem!.name,
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.blue[700],
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.orange[100],
+                                                    borderRadius: BorderRadius.circular(12),
+                                                    border: Border.all(color: Colors.orange[300]!),
+                                                  ),
+                                                  child: Text(
+                                                    '${provider.currentItem!.score.toStringAsFixed(1)}分',
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.orange[700],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                           const SizedBox(height: 16),
@@ -438,7 +460,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '当前测试月龄：${currentAge}个月',
+                        '当前测试月龄：$currentAge个月',
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,

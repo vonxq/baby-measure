@@ -9,14 +9,18 @@
         "name": "抬肩坐起头竖直片刻",
         "desc": "抬肩坐起头竖直片刻",
         "operation": "婴儿仰卧，主试者面向婴儿站立，对婴儿微笑、说话，\n直到婴儿注视到主试者的脸。这时主试者轻轻握住婴儿\n双肩（四指并拢置于肩胛骨外侧，食指不能触碰颈部），\n将婴儿拉坐起来，观察婴儿控制头的能力",
-        "passCondition": "婴儿头可竖直保持2s或以上"
+        "passCondition": "婴儿头可竖直保持2s或以上",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 2,
         "name": "俯卧头部翘动",
         "desc": "俯卧头部翘动",
         "operation": "婴儿俯卧，前臂屈曲支撑，用玩具逗引婴儿抬头，观察\n其反应",
-        "passCondition": "婴儿有头部翘动即可通过"
+        "passCondition": "婴儿有头部翘动即可通过",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -30,14 +34,18 @@
         "name": "拉腕坐起头竖直短时",
         "desc": "拉腕坐起头竖直短时",
         "operation": "婴儿仰卧，主试者将拇指置于婴儿掌心，余四指握住腕\n部轻拉婴儿坐起，观察婴儿控制头部的能力",
-        "passCondition": "当把婴儿拉起成坐位时婴儿\n头可自行竖直， 保持5s或以上"
+        "passCondition": "当把婴儿拉起成坐位时婴儿\n头可自行竖直， 保持5s或以上",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 12,
         "name": "俯卧头抬离床面",
         "desc": "俯卧头抬离床面",
         "operation": "婴儿俯卧，前臂屈曲支撑，用玩具逗引婴儿抬头，观察\n其反应",
-        "passCondition": "婴儿可自行将头抬离床面达\n2s或以上。"
+        "passCondition": "婴儿可自行将头抬离床面达\n2s或以上。",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -51,14 +59,18 @@
         "name": "抱直头稳",
         "desc": "抱直头稳",
         "operation": "竖抱婴儿，观察婴儿控制头部的能力",
-        "passCondition": "能将头举正并稳定10s或以上"
+        "passCondition": "能将头举正并稳定10s或以上",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 22,
         "name": "俯卧抬头45°",
         "desc": "俯卧抬头45°",
         "operation": "婴儿俯卧，前臂屈曲支撑，头正中位，用玩具逗引婴儿\n抬头，观察其反应",
-        "passCondition": "头可自行抬离床面， 面部与床\n面成45 ° ,持续5s或以上"
+        "passCondition": "头可自行抬离床面， 面部与床\n面成45 ° ,持续5s或以上",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -72,14 +84,18 @@
         "name": "扶腋可站片刻",
         "desc": "扶腋可站片刻",
         "operation": "主试者扶婴儿腋下，置于立位后放松手的支持，观察其\n反应",
-        "passCondition": "婴儿可用自己双腿支持大部\n分体重达2s或以上"
+        "passCondition": "婴儿可用自己双腿支持大部\n分体重达2s或以上",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 31,
         "name": "俯卧抬头 90°",
         "desc": "俯卧抬头 90°",
         "operation": "婴儿俯卧，前臂屈曲支撑，头正中位，用玩具逗引婴儿\n抬头，观察其反应",
-        "passCondition": "头可自行抬离床面， 面部与床\n面呈90 ° ,持续5s或以上"
+        "passCondition": "头可自行抬离床面， 面部与床\n面呈90 ° ,持续5s或以上",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -93,14 +109,18 @@
         "name": "轻拉腕部即坐起",
         "desc": "轻拉腕部即坐起",
         "operation": "婴儿仰卧，主试者握住腕部，轻拉到坐的位置",
-        "passCondition": "婴儿自己能主动用力坐起， 拉\n坐过程中无头部后滞现象"
+        "passCondition": "婴儿自己能主动用力坐起， 拉\n坐过程中无头部后滞现象",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 41,
         "name": "独坐头身前倾",
         "desc": "独坐头身前倾",
         "operation": "将婴儿以坐姿置于床上",
-        "passCondition": "独坐保持5s或以上，头身向前\n倾"
+        "passCondition": "独坐保持5s或以上，头身向前\n倾",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -114,14 +134,18 @@
         "name": "仰卧翻身 R",
         "desc": "仰卧翻身 R",
         "operation": "婴儿仰卧，用玩具逗引其翻身",
-        "passCondition": "观察或询问， 婴儿可从仰卧自\n行翻到俯卧位"
+        "passCondition": "观察或询问， 婴儿可从仰卧自\n行翻到俯卧位",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 50,
         "name": "会拍桌子",
         "desc": "会拍桌子",
         "operation": "抱坐，主试者示范拍打桌面，鼓励婴儿照样做",
-        "passCondition": "婴儿经示范后或自发拍打桌\n面，并拍响"
+        "passCondition": "婴儿经示范后或自发拍打桌\n面，并拍响",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -135,14 +159,18 @@
         "name": "悬垂落地姿势*",
         "desc": "悬垂落地姿势*",
         "operation": "扶腋下使婴儿呈悬空位，足离床面20cm～30cm，立位瞬\n时落下，观察脚落地瞬时的姿势",
-        "passCondition": "婴儿能全脚掌着地"
+        "passCondition": "婴儿能全脚掌着地",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 60,
         "name": "独坐直",
         "desc": "独坐直",
         "operation": "将婴儿以坐姿置于床上",
-        "passCondition": "独坐时背直，无需手支撑床\n面，保持1min或以上"
+        "passCondition": "独坐时背直，无需手支撑床\n面，保持1min或以上",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -156,14 +184,18 @@
         "name": "双手扶物可站立",
         "desc": "双手扶物可站立",
         "operation": "将婴儿置于床上，协助婴儿双手抓握栏杆，胸部不靠栏\n杆，呈站立姿势观察",
-        "passCondition": "双手扶栏杆支撑全身重量， 保\n持站立位5s或以上"
+        "passCondition": "双手扶栏杆支撑全身重量， 保\n持站立位5s或以上",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 69,
         "name": "独坐自如",
         "desc": "独坐自如",
         "operation": "婴儿坐位，用玩具逗引，婴儿上身可自由转动取物，或\n轻轻将婴儿肩头向对侧推，观察其侧平衡",
-        "passCondition": "独坐时无须手支撑， 上身可自\n由转动取物或侧推后回正保\n持平衡不倒"
+        "passCondition": "独坐时无须手支撑， 上身可自\n由转动取物或侧推后回正保\n持平衡不倒",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -177,14 +209,18 @@
         "name": "拉双手会走",
         "desc": "拉双手会走",
         "operation": "站立位，主试者牵婴儿双手，牵手时不过多给力，鼓励\n婴儿向前行走",
-        "passCondition": "婴儿可自己用力， 较协调地移\n动双腿， 向前行走三步或以上"
+        "passCondition": "婴儿可自己用力， 较协调地移\n动双腿， 向前行走三步或以上",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 78,
         "name": "会爬",
         "desc": "会爬",
         "operation": "婴儿俯卧，用玩具逗引婴儿爬",
-        "passCondition": "婴儿能将腹部抬离床面， 四点\n支撑向前爬行（膝手爬）"
+        "passCondition": "婴儿能将腹部抬离床面， 四点\n支撑向前爬行（膝手爬）",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -198,14 +234,18 @@
         "name": "保护性支撑*",
         "desc": "保护性支撑*",
         "operation": "主试者站立在床或桌边，由婴儿背后扶持其腋下抱起，\n然后快速做俯冲动作，观察婴儿反应",
-        "passCondition": "婴儿出现双手张开， 向前伸\n臂，类似保护自己的动作"
+        "passCondition": "婴儿出现双手张开， 向前伸\n臂，类似保护自己的动作",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 87,
         "name": "自己坐起",
         "desc": "自己坐起",
         "operation": "将婴儿置于俯卧位，用玩具逗引，观察婴儿能否坐起",
-        "passCondition": "无需协助， 婴儿能较协调地从\n俯卧位坐起，并坐稳"
+        "passCondition": "无需协助， 婴儿能较协调地从\n俯卧位坐起，并坐稳",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -219,14 +259,18 @@
         "name": "独站片刻",
         "desc": "独站片刻",
         "operation": "将婴儿置于立位，待婴儿站稳后松开双手，观察其站立\n情况",
-        "passCondition": "婴儿能独自站立2s或以上"
+        "passCondition": "婴儿能独自站立2s或以上",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 95,
         "name": "扶物下蹲取物",
         "desc": "扶物下蹲取物",
         "operation": "婴儿手扶围栏站立，不得倚靠。将玩具放在其脚边，鼓\n励婴儿下蹲取物",
-        "passCondition": "一手扶栏杆蹲下，用另一只手\n捡玩具，并能再站起来"
+        "passCondition": "一手扶栏杆蹲下，用另一只手\n捡玩具，并能再站起来",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -240,14 +284,18 @@
         "name": "独站稳",
         "desc": "独站稳",
         "operation": "将小儿置于立位，待小儿站稳后松开双手，观察其站立\n情况",
-        "passCondition": "独自站立10s或以上，允许身\n体轻微晃动"
+        "passCondition": "独自站立10s或以上，允许身\n体轻微晃动",
+        "score": 0.5,
+        "area": "motor"
       },
       {
         "id": 104,
         "name": "牵一手可走",
         "desc": "牵一手可走",
         "operation": "主试者牵小儿一只手行走，不要用力，观察其行走情况",
-        "passCondition": "小儿自己迈步， 牵一手能协调\n地移动双腿， 至少向前迈三步\n以上"
+        "passCondition": "小儿自己迈步， 牵一手能协调\n地移动双腿， 至少向前迈三步\n以上",
+        "score": 0.5,
+        "area": "motor"
       }
     ]
   },
@@ -261,7 +309,9 @@
         "name": "独走自如",
         "desc": "独走自如",
         "operation": "观察小儿走路的情况",
-        "passCondition": "小儿行走自如，不左右摇摆，\n会控制步速，不惯性前冲"
+        "passCondition": "小儿行走自如，不左右摇摆，\n会控制步速，不惯性前冲",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -275,7 +325,9 @@
         "name": "扔球无方向",
         "desc": "扔球无方向",
         "operation": "主试者示范过肩扔球，鼓励小儿照样做",
-        "passCondition": "小儿举手过肩扔球， 可无方向"
+        "passCondition": "小儿举手过肩扔球， 可无方向",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -289,14 +341,18 @@
         "name": "脚尖走 R",
         "desc": "脚尖走 R",
         "operation": "主试者示范用脚尖行走，鼓励小儿照样做",
-        "passCondition": "小儿能用脚尖连续行走三步\n以上，脚跟不得着地"
+        "passCondition": "小儿能用脚尖连续行走三步\n以上，脚跟不得着地",
+        "score": 1.5,
+        "area": "motor"
       },
       {
         "id": 129,
         "name": "扶楼梯上楼",
         "desc": "扶楼梯上楼",
         "operation": "在楼梯上放一玩具，鼓励小儿上楼去取",
-        "passCondition": "小儿能扶楼梯扶手， 熟练地上\n三阶以上台阶。"
+        "passCondition": "小儿能扶楼梯扶手， 熟练地上\n三阶以上台阶。",
+        "score": 1.5,
+        "area": "motor"
       }
     ]
   },
@@ -310,7 +366,9 @@
         "name": "双足跳离地面",
         "desc": "双足跳离地面",
         "operation": "主试者示范双足同时离地跳起，鼓励小儿照样做",
-        "passCondition": "小儿会双足同时跳离地面， 同\n时落地，两次以上"
+        "passCondition": "小儿会双足同时跳离地面， 同\n时落地，两次以上",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -324,14 +382,18 @@
         "name": "独自上楼",
         "desc": "独自上楼",
         "operation": "鼓励小儿不扶扶手上楼梯，可示范",
-        "passCondition": "不扶扶手， 稳定地上楼梯三阶\n或以上"
+        "passCondition": "不扶扶手， 稳定地上楼梯三阶\n或以上",
+        "score": 1.5,
+        "area": "motor"
       },
       {
         "id": 147,
         "name": "独自下楼",
         "desc": "独自下楼",
         "operation": "鼓励小儿不扶扶手下楼梯，可示范",
-        "passCondition": "不扶扶手， 稳定地下楼梯三阶\n或以上"
+        "passCondition": "不扶扶手， 稳定地下楼梯三阶\n或以上",
+        "score": 1.5,
+        "area": "motor"
       }
     ]
   },
@@ -345,7 +407,9 @@
         "name": "独脚站 2s",
         "desc": "独脚站 2s",
         "operation": "主试者示范用独脚站立，鼓励小儿照样做",
-        "passCondition": "小儿不扶任何物体可单脚站\n立2s或以上"
+        "passCondition": "小儿不扶任何物体可单脚站\n立2s或以上",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -359,7 +423,9 @@
         "name": "立定跳远",
         "desc": "立定跳远",
         "operation": "主试者示范跳过16开白纸（20cm宽），鼓励小儿照样做",
-        "passCondition": "小儿双足同时离地跳起跃过\n纸，不得踩到纸"
+        "passCondition": "小儿双足同时离地跳起跃过\n纸，不得踩到纸",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -373,7 +439,9 @@
         "name": "双脚交替跳",
         "desc": "双脚交替跳",
         "operation": "主试者示范以高抬腿姿势原地交替跳起，鼓励小儿照样\n做",
-        "passCondition": "小儿可双足交替跳起， 双脚离\n地5cm"
+        "passCondition": "小儿可双足交替跳起， 双脚离\n地5cm",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -387,14 +455,18 @@
         "name": "交替上楼",
         "desc": "交替上楼",
         "operation": "主试者示范不扶扶手，双足交替上楼，鼓励小儿照样做",
-        "passCondition": "小儿上台阶交替用脚， 一步一\n台阶， 可交替上楼三阶或以上"
+        "passCondition": "小儿上台阶交替用脚， 一步一\n台阶， 可交替上楼三阶或以上",
+        "score": 3.0,
+        "area": "motor"
       },
       {
         "id": 184,
         "name": "并足从楼梯末级跳下",
         "desc": "并足从楼梯末级跳下",
         "operation": "主试者示范站在楼梯末级，双足并拢跳至地面，鼓励小\n儿照样做",
-        "passCondition": "小儿双足并拢跳至地面，双足\n落地后两脚间距离小于10cm"
+        "passCondition": "小儿双足并拢跳至地面，双足\n落地后两脚间距离小于10cm",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -408,14 +480,18 @@
         "name": "独脚站 5s",
         "desc": "独脚站 5s",
         "operation": "主试者示范用独脚站立，鼓励小儿照样做",
-        "passCondition": "小儿独脚站立5s或以上，身体\n稳定"
+        "passCondition": "小儿独脚站立5s或以上，身体\n稳定",
+        "score": 3.0,
+        "area": "motor"
       },
       {
         "id": 194,
         "name": "并足从楼梯末级跳下稳",
         "desc": "并足从楼梯末级跳下稳",
         "operation": "主试者示范站在楼梯末级，双足并拢跳至地面，鼓励小\n儿照样做",
-        "passCondition": "小儿双足并拢跳至地面， 双足\n落地后两脚间距离小于5cm，\n并站稳"
+        "passCondition": "小儿双足并拢跳至地面， 双足\n落地后两脚间距离小于5cm，\n并站稳",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -429,14 +505,18 @@
         "name": "独脚站 10s",
         "desc": "独脚站 10s",
         "operation": "主试者示范用独脚站立，鼓励小儿照样做",
-        "passCondition": "小儿独脚站立10s或以上，身\n体稳定"
+        "passCondition": "小儿独脚站立10s或以上，身\n体稳定",
+        "score": 3.0,
+        "area": "motor"
       },
       {
         "id": 204,
         "name": "足尖对足跟向前走 2m",
         "desc": "足尖对足跟向前走 2m",
         "operation": "主试者示范，脚跟对脚尖向前走直线，鼓励小儿照样做",
-        "passCondition": "小儿能脚跟对脚尖向前走2m\n（六步） ，允许身体有小幅晃\n动"
+        "passCondition": "小儿能脚跟对脚尖向前走2m\n（六步） ，允许身体有小幅晃\n动",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -450,14 +530,18 @@
         "name": "单脚跳",
         "desc": "单脚跳",
         "operation": "主试者示范原地单脚跳，鼓励小儿照样做",
-        "passCondition": "小儿能单脚连续跳3次或以\n上， 可伸开双臂保持平衡，允\n许小儿在一脚范围内跳动"
+        "passCondition": "小儿能单脚连续跳3次或以\n上， 可伸开双臂保持平衡，允\n许小儿在一脚范围内跳动",
+        "score": 3.0,
+        "area": "motor"
       },
       {
         "id": 214,
         "name": "踩踏板",
         "desc": "踩踏板",
         "operation": "主试者示范在一级台阶上以同一只脚上下台阶，鼓励小\n儿照样做",
-        "passCondition": "小儿以同一只脚能稳当并较\n熟练地完成3组，可稍有停顿"
+        "passCondition": "小儿以同一只脚能稳当并较\n熟练地完成3组，可稍有停顿",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -471,14 +555,18 @@
         "name": "接球",
         "desc": "接球",
         "operation": "主试者示范用双手而非前胸接球， 然后与小儿相距一米，\n将球拍给小儿，鼓励小儿用手接住球",
-        "passCondition": "小儿用手接住球， 三次中接住\n一次即可，用双臂或用前胸接\n球不通过"
+        "passCondition": "小儿用手接住球， 三次中接住\n一次即可，用双臂或用前胸接\n球不通过",
+        "score": 3.0,
+        "area": "motor"
       },
       {
         "id": 223,
         "name": "足尖对足跟向后走 2m",
         "desc": "足尖对足跟向后走 2m",
         "operation": "主试者示范，脚跟对脚尖向后走直线，鼓励小儿照样做",
-        "passCondition": "小儿能脚跟对脚尖向后走2m\n（六步） ，允许身体有小幅晃\n动"
+        "passCondition": "小儿能脚跟对脚尖向后走2m\n（六步） ，允许身体有小幅晃\n动",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -492,14 +580,18 @@
         "name": "抱肘连续跳",
         "desc": "抱肘连续跳",
         "operation": "主试者示范原地抱肘单脚跳，鼓励小儿照样做",
-        "passCondition": "小儿抱肘单脚原地连续跳3次\n或以上，基本在原地跳动"
+        "passCondition": "小儿抱肘单脚原地连续跳3次\n或以上，基本在原地跳动",
+        "score": 3.0,
+        "area": "motor"
       },
       {
         "id": 233,
         "name": "拍球（2 个）",
         "desc": "拍球（2 个）",
         "operation": "主试者示范拍球，鼓励小儿照样做（向下扔落地的第一\n下不算拍球）。允许试三次",
-        "passCondition": "小儿连续拍球2个或以上"
+        "passCondition": "小儿连续拍球2个或以上",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -513,14 +605,18 @@
         "name": "踢带绳的球",
         "desc": "踢带绳的球",
         "operation": "主试者示范用一手提绳，将球停稳，以内踝及足弓内侧\n来踢球，鼓励小儿照样做。如小儿用足外侧踢，可示范\n更正一次姿势",
-        "passCondition": "小儿连续用足内踝踢球2个或\n以上"
+        "passCondition": "小儿连续用足内踝踢球2个或\n以上",
+        "score": 3.0,
+        "area": "motor"
       },
       {
         "id": 243,
         "name": "拍球（5 个）",
         "desc": "拍球（5 个）",
         "operation": "主试者示范拍球，鼓励小儿照样做（向下扔落地的第一\n下不算拍球）。允许试三次",
-        "passCondition": "小儿连续拍球5个或以上"
+        "passCondition": "小儿连续拍球5个或以上",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -534,14 +630,18 @@
         "name": "连续踢带绳的球",
         "desc": "连续踢带绳的球",
         "operation": "主试者示范用一手提绳，将球停稳，以内踝及足弓内侧\n来踢球，鼓励小儿照样做。如小儿用足外侧踢，可示范\n更正一次姿势",
-        "passCondition": "小儿用足内踝踢球3个或以\n上，踢一下落地一下"
+        "passCondition": "小儿用足内踝踢球3个或以\n上，踢一下落地一下",
+        "score": 3.0,
+        "area": "motor"
       },
       {
         "id": 253,
         "name": "交替踩踏板",
         "desc": "交替踩踏板",
         "operation": "主试者示范在一级台阶上交替换脚上下共3组（示范时主\n试者要边喊口号边示范），请小儿照样做，若小儿不会\n两脚交替可提醒小儿“换脚”",
-        "passCondition": "小儿能稳当并较熟练地两脚\n交替完成3组，可稍有停顿"
+        "passCondition": "小儿能稳当并较熟练地两脚\n交替完成3组，可稍有停顿",
+        "score": 3.0,
+        "area": "motor"
       }
     ]
   },
@@ -555,14 +655,18 @@
         "name": "触碰手掌紧握拳",
         "desc": "触碰手掌紧握拳",
         "operation": "婴儿仰卧，主试者将食指从尺侧放入婴儿手掌中",
-        "passCondition": "婴儿能将拳头握紧"
+        "passCondition": "婴儿能将拳头握紧",
+        "score": 0.5,
+        "area": "fineMotor"
       },
       {
         "id": 4,
         "name": "手的自然状态",
         "desc": "手的自然状态",
         "operation": "主试者观察婴儿清醒时手的自然状态",
-        "passCondition": "双手拇指内收不达掌心， 无发\n紧即通过"
+        "passCondition": "双手拇指内收不达掌心， 无发\n紧即通过",
+        "score": 0.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -576,14 +680,18 @@
         "name": "花铃棒留握片刻",
         "desc": "花铃棒留握片刻",
         "operation": "婴儿仰卧，将花铃棒放在婴儿手中",
-        "passCondition": "握住花铃棒不松手达2s或以\n上"
+        "passCondition": "握住花铃棒不松手达2s或以\n上",
+        "score": 0.5,
+        "area": "fineMotor"
       },
       {
         "id": 14,
         "name": "拇指轻叩可分开*",
         "desc": "拇指轻叩可分开*",
         "operation": "主试者分别轻叩婴儿双手手背，观察拇指自然放松的状\n态",
-        "passCondition": "婴儿双手握拳稍紧， 拇指稍内\n收，但经轻叩即可打开"
+        "passCondition": "婴儿双手握拳稍紧， 拇指稍内\n收，但经轻叩即可打开",
+        "score": 0.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -597,14 +705,18 @@
         "name": "花铃棒留握 30s",
         "desc": "花铃棒留握 30s",
         "operation": "婴儿仰卧或侧卧，将花铃棒放入婴儿手中",
-        "passCondition": "婴儿能握住花铃棒30s，不借\n助床面的支持"
+        "passCondition": "婴儿能握住花铃棒30s，不借\n助床面的支持",
+        "score": 0.5,
+        "area": "fineMotor"
       },
       {
         "id": 24,
         "name": "两手搭在一起",
         "desc": "两手搭在一起",
         "operation": "婴儿仰卧， 主试者观察婴儿双手是否能够自发搭在一起，\n或主试者将其两手搭在一起，随即松手，观察婴儿双手\n状态。",
-        "passCondition": "婴儿能将双手搭在一起，保持\n3s～4s"
+        "passCondition": "婴儿能将双手搭在一起，保持\n3s～4s",
+        "score": 0.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -618,14 +730,18 @@
         "name": "摇动并注视花铃棒",
         "desc": "摇动并注视花铃棒",
         "operation": "抱坐，将花铃棒放入婴儿手中，鼓励婴儿摇动",
-        "passCondition": "婴儿能注视花铃棒， 并摇动数\n下"
+        "passCondition": "婴儿能注视花铃棒， 并摇动数\n下",
+        "score": 0.5,
+        "area": "fineMotor"
       },
       {
         "id": 33,
         "name": "试图抓物",
         "desc": "试图抓物",
         "operation": "婴儿仰卧，将花铃棒拿到婴儿可及的范围内，观察婴儿\n反应，但不能触碰婴儿",
-        "passCondition": "婴儿手臂试图抬起或有手抓\n动作即可通过"
+        "passCondition": "婴儿手臂试图抬起或有手抓\n动作即可通过",
+        "score": 0.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -639,14 +755,18 @@
         "name": "抓住近处玩具",
         "desc": "抓住近处玩具",
         "operation": "抱坐，婴儿手置于桌上。玩具（如花铃棒）放在距离婴\n儿手掌一侧2.5cm处，鼓励婴儿取玩具",
-        "passCondition": "婴儿可用一手或双手抓住玩\n具"
+        "passCondition": "婴儿可用一手或双手抓住玩\n具",
+        "score": 0.5,
+        "area": "fineMotor"
       },
       {
         "id": 43,
         "name": "玩手",
         "desc": "玩手",
         "operation": "观察婴儿能否把双手放在一起互相玩弄",
-        "passCondition": "婴儿会自发将双手抱到一起\n玩"
+        "passCondition": "婴儿会自发将双手抱到一起\n玩",
+        "score": 0.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -660,14 +780,18 @@
         "name": "会撕揉纸张",
         "desc": "会撕揉纸张",
         "operation": "将一张28g粉色打字纸放入婴儿手中，使婴儿能抓住纸，\n观察婴儿反应",
-        "passCondition": "能用双手反复揉搓纸张两次\n或以上，或将纸撕破"
+        "passCondition": "能用双手反复揉搓纸张两次\n或以上，或将纸撕破",
+        "score": 0.5,
+        "area": "fineMotor"
       },
       {
         "id": 52,
         "name": "耙弄到桌上一积木",
         "desc": "耙弄到桌上一积木",
         "operation": "抱坐，放一积木在婴儿容易够到的桌面上，观察婴儿反\n应",
-        "passCondition": "婴儿伸出手触碰到积木并抓\n握到"
+        "passCondition": "婴儿伸出手触碰到积木并抓\n握到",
+        "score": 0.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -681,14 +805,18 @@
         "name": "耙弄到小丸",
         "desc": "耙弄到小丸",
         "operation": "抱坐，将一小丸放在桌上，鼓励婴儿取",
-        "passCondition": "婴儿用所有手指弯曲做耙弄、\n搔抓动作， 最后成功地用全掌\n抓到小丸"
+        "passCondition": "婴儿用所有手指弯曲做耙弄、\n搔抓动作， 最后成功地用全掌\n抓到小丸",
+        "score": 0.5,
+        "area": "fineMotor"
       },
       {
         "id": 62,
         "name": "自取一积木，再取另一块",
         "desc": "自取一积木，再取另一块",
         "operation": "抱坐，出示一积木给婴儿，抓住后，再出示另一块，观\n察其反应",
-        "passCondition": "婴儿主动伸手去抓桌上的积\n木， 第一块积木握住并保留在\n手中后， 又成功地用另一只手\n抓住第二块积木"
+        "passCondition": "婴儿主动伸手去抓桌上的积\n木， 第一块积木握住并保留在\n手中后， 又成功地用另一只手\n抓住第二块积木",
+        "score": 0.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -702,14 +830,18 @@
         "name": "拇他指捏小丸",
         "desc": "拇他指捏小丸",
         "operation": "抱坐，将一小丸放在桌上，鼓励婴儿取",
-        "passCondition": "婴儿会用拇他指捏起小丸"
+        "passCondition": "婴儿会用拇他指捏起小丸",
+        "score": 0.5,
+        "area": "fineMotor"
       },
       {
         "id": 71,
         "name": "试图取第三块积木",
         "desc": "试图取第三块积木",
         "operation": "连续出示两块积木后婴儿均能拿到，再出示第三块积木\n鼓励婴儿取",
-        "passCondition": "有要取第三块积木的表现， 不\n一定能取到，前两块仍保留在\n手中"
+        "passCondition": "有要取第三块积木的表现， 不\n一定能取到，前两块仍保留在\n手中",
+        "score": 0.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -723,14 +855,18 @@
         "name": "拇食指捏小丸",
         "desc": "拇食指捏小丸",
         "operation": "抱坐，将一小丸放在桌上，鼓励婴儿取",
-        "passCondition": "婴儿会用拇食指捏起小丸"
+        "passCondition": "婴儿会用拇食指捏起小丸",
+        "score": 0.5,
+        "area": "fineMotor"
       },
       {
         "id": 80,
         "name": "从杯中取出积木",
         "desc": "从杯中取出积木",
         "operation": "主试者在婴儿注视下将积木放入杯中，鼓励婴儿取出",
-        "passCondition": "婴儿能自行将积木取出， 不能\n倒出"
+        "passCondition": "婴儿能自行将积木取出， 不能\n倒出",
+        "score": 0.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -744,7 +880,9 @@
         "name": "拇食指动作熟练",
         "desc": "拇食指动作熟练",
         "operation": "抱坐，将一小丸放在桌上，鼓励婴儿取",
-        "passCondition": "婴儿会用拇食指的指端协调、\n熟练且迅速地对捏起小丸"
+        "passCondition": "婴儿会用拇食指的指端协调、\n熟练且迅速地对捏起小丸",
+        "score": 1.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -758,7 +896,9 @@
         "name": "积木放入杯中",
         "desc": "积木放入杯中",
         "operation": "主试者示范将积木放入杯中，鼓励婴儿照样做",
-        "passCondition": "婴儿能有意识地将积木放入\n杯中并撒开手"
+        "passCondition": "婴儿能有意识地将积木放入\n杯中并撒开手",
+        "score": 1.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -772,14 +912,18 @@
         "name": "全掌握笔留笔道",
         "desc": "全掌握笔留笔道",
         "operation": "主试者示范用笔在纸上画道，鼓励小儿模仿",
-        "passCondition": "小儿握笔在纸上留下笔道即\n可"
+        "passCondition": "小儿握笔在纸上留下笔道即\n可",
+        "score": 0.5,
+        "area": "fineMotor"
       },
       {
         "id": 106,
         "name": "试把小丸投小瓶",
         "desc": "试把小丸投小瓶",
         "operation": "出示一小丸及30ml广口试剂瓶，主试者拿瓶，示范并指\n点将小丸放入瓶内，鼓励小儿照样做",
-        "passCondition": "小儿捏住小丸试往瓶内投放，\n但不一定成功"
+        "passCondition": "小儿捏住小丸试往瓶内投放，\n但不一定成功",
+        "score": 0.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -793,14 +937,18 @@
         "name": "自发乱画",
         "desc": "自发乱画",
         "operation": "主试者出示纸和笔，鼓励小儿画画",
-        "passCondition": "小儿能用笔在纸上自行乱画"
+        "passCondition": "小儿能用笔在纸上自行乱画",
+        "score": 1.5,
+        "area": "fineMotor"
       },
       {
         "id": 114,
         "name": "从瓶中拿到小丸",
         "desc": "从瓶中拿到小丸",
         "operation": "出示装有小丸的30ml广口试剂瓶，递给小儿，说“阿姨\n想要豆豆（小丸）怎么办？ ”或“把豆豆给妈妈”。鼓\n励小儿将小丸取出，但不能说倒出",
-        "passCondition": "小儿能将小丸拿出或倒出"
+        "passCondition": "小儿能将小丸拿出或倒出",
+        "score": 1.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -814,7 +962,9 @@
         "name": "模仿画道道",
         "desc": "模仿画道道",
         "operation": "主试者示范用蜡笔画出一无方向道道，鼓励小儿模仿",
-        "passCondition": "小儿能画出道道，起止自如，\n方向不限"
+        "passCondition": "小儿能画出道道，起止自如，\n方向不限",
+        "score": 3.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -828,14 +978,18 @@
         "name": "水晶线穿扣眼",
         "desc": "水晶线穿扣眼",
         "operation": "主试者示范用水晶线穿过扣眼，鼓励小儿照样做",
-        "passCondition": "小 儿 能 将 水 晶 线 穿 过 扣 眼\n0.5cm以上"
+        "passCondition": "小 儿 能 将 水 晶 线 穿 过 扣 眼\n0.5cm以上",
+        "score": 1.5,
+        "area": "fineMotor"
       },
       {
         "id": 131,
         "name": "模仿拉拉锁",
         "desc": "模仿拉拉锁",
         "operation": "示范拉拉锁， 拉上、拉下各一次。主试者固定拉锁两端，\n鼓励小儿照样做",
-        "passCondition": "小儿能双手配合将锁头来回\n移动，超过全拉锁的一半"
+        "passCondition": "小儿能双手配合将锁头来回\n移动，超过全拉锁的一半",
+        "score": 1.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -849,7 +1003,9 @@
         "name": "穿过扣眼后拉线",
         "desc": "穿过扣眼后拉线",
         "operation": "主试者示范用水晶线穿过扣眼，并将线拉出，鼓励小儿\n照样做",
-        "passCondition": "小儿能将水晶线穿过扣眼， 并\n能将线拉出"
+        "passCondition": "小儿能将水晶线穿过扣眼， 并\n能将线拉出",
+        "score": 3.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -863,14 +1019,18 @@
         "name": "模仿画竖道",
         "desc": "模仿画竖道",
         "operation": "主试者与小儿同向，示范画一垂直线，注意测查纸张放\n正，鼓励小儿模仿",
-        "passCondition": "小儿能画竖线， 长度＞2.5cm，\n所 画 线 与 垂 直 线 的 夹 角 应\n＜30 °"
+        "passCondition": "小儿能画竖线， 长度＞2.5cm，\n所 画 线 与 垂 直 线 的 夹 角 应\n＜30 °",
+        "score": 1.5,
+        "area": "fineMotor"
       },
       {
         "id": 149,
         "name": "对拉锁",
         "desc": "对拉锁",
         "operation": "出示打开的拉锁，示范将拉锁对好，鼓励小儿照样做",
-        "passCondition": "小儿能将拉锁头部分或全部\n插进锁孔"
+        "passCondition": "小儿能将拉锁头部分或全部\n插进锁孔",
+        "score": 1.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -884,14 +1044,18 @@
         "name": "穿扣子 3～5 个",
         "desc": "穿扣子 3～5 个",
         "operation": "主试者示范连续穿扣3～5个，鼓励小儿照样做",
-        "passCondition": "小儿能较熟练穿扣并拉过线3\n个或以上"
+        "passCondition": "小儿能较熟练穿扣并拉过线3\n个或以上",
+        "score": 1.5,
+        "area": "fineMotor"
       },
       {
         "id": 158,
         "name": "模仿搭桥",
         "desc": "模仿搭桥",
         "operation": "示范用下面二块，上面一块共三块积木搭成有孔的桥，\n并保留模型，鼓励小儿照样做。主试者不得提示桥孔",
-        "passCondition": "小儿能搭出有孔的桥"
+        "passCondition": "小儿能搭出有孔的桥",
+        "score": 1.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -905,14 +1069,18 @@
         "name": "模仿画圆",
         "desc": "模仿画圆",
         "operation": "主试者示范画一圆形，鼓励小儿模仿",
-        "passCondition": "小儿所画圆二头相交， 为闭合\n圆形，不能明显成角"
+        "passCondition": "小儿所画圆二头相交， 为闭合\n圆形，不能明显成角",
+        "score": 1.5,
+        "area": "fineMotor"
       },
       {
         "id": 167,
         "name": "拉拉锁",
         "desc": "拉拉锁",
         "operation": "出示打开的拉锁，示范将拉锁对好并拉上，鼓励小儿照\n样做",
-        "passCondition": "小儿能将拉锁头全部插进锁\n孔，并有拉的意识"
+        "passCondition": "小儿能将拉锁头全部插进锁\n孔，并有拉的意识",
+        "score": 1.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -926,14 +1094,18 @@
         "name": "模仿画交叉线",
         "desc": "模仿画交叉线",
         "operation": "主试者与小儿同向示范画交叉线，鼓励小儿模仿",
-        "passCondition": "小儿能画出两直线并相交成\n角，直线线条较连续"
+        "passCondition": "小儿能画出两直线并相交成\n角，直线线条较连续",
+        "score": 1.5,
+        "area": "fineMotor"
       },
       {
         "id": 176,
         "name": "会拧螺丝",
         "desc": "会拧螺丝",
         "operation": "主试者出示螺丝、螺母，嘱其拧上。如小儿不会，可示\n范",
-        "passCondition": "小儿能双手配合将螺丝、螺母\n组装起来"
+        "passCondition": "小儿能双手配合将螺丝、螺母\n组装起来",
+        "score": 1.5,
+        "area": "fineMotor"
       }
     ]
   },
@@ -947,14 +1119,18 @@
         "name": "拼圆形、正方形",
         "desc": "拼圆形、正方形",
         "operation": "主试者让小儿用4块塑料板拼圆形，用2块等边三角形板\n拼正方形，共限时2min",
-        "passCondition": "两个图形均要拼对"
+        "passCondition": "两个图形均要拼对",
+        "score": 3.0,
+        "area": "fineMotor"
       },
       {
         "id": 186,
         "name": "会用剪刀",
         "desc": "会用剪刀",
         "operation": "主试者示范用打印纸剪一直线，鼓励小儿照样做",
-        "passCondition": "小儿能够剪出直线， 长度大于\n10cm，与主剪方向角度小于\n15 °"
+        "passCondition": "小儿能够剪出直线， 长度大于\n10cm，与主剪方向角度小于\n15 °",
+        "score": 3.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -968,14 +1144,18 @@
         "name": "模仿画方形",
         "desc": "模仿画方形",
         "operation": "主试者示范画一正方形，鼓励小儿模仿",
-        "passCondition": "小儿能基本模仿画出， 所画图\n形允许稍有倾斜， 有一个角可\n以＜45 °"
+        "passCondition": "小儿能基本模仿画出， 所画图\n形允许稍有倾斜， 有一个角可\n以＜45 °",
+        "score": 3.0,
+        "area": "fineMotor"
       },
       {
         "id": 196,
         "name": "照图组装螺丝",
         "desc": "照图组装螺丝",
         "operation": "主试者出示组装好的螺丝图片5s后收起，将分开的螺丝、\n平垫和螺母交给小儿，请小儿凭记忆组装。主试者可针\n对落下的零件提示“还有呢？”",
-        "passCondition": "小儿无需提示或稍经提示后\n自行将螺丝、平垫、螺母按顺\n序组装起来"
+        "passCondition": "小儿无需提示或稍经提示后\n自行将螺丝、平垫、螺母按顺\n序组装起来",
+        "score": 3.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -989,14 +1169,18 @@
         "name": "折纸边角整齐",
         "desc": "折纸边角整齐",
         "operation": "主试者示范用一长方形纸横竖对齐各折一次，鼓励小儿\n照样做",
-        "passCondition": "小儿折纸基本成长方形， 折纸\n边差距＜ 1cm ，纸边夹角＜\n15 °"
+        "passCondition": "小儿折纸基本成长方形， 折纸\n边差距＜ 1cm ，纸边夹角＜\n15 °",
+        "score": 3.0,
+        "area": "fineMotor"
       },
       {
         "id": 206,
         "name": "筷子夹花生米",
         "desc": "筷子夹花生米",
         "operation": "主试者鼓励小儿用筷子夹花生米， 从桌子上夹到盒子里，\n连做三遍",
-        "passCondition": "小儿熟练地夹起三次以上， 过\n程中无掉落"
+        "passCondition": "小儿熟练地夹起三次以上， 过\n程中无掉落",
+        "score": 3.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -1010,14 +1194,18 @@
         "name": "照图拼椭圆形",
         "desc": "照图拼椭圆形",
         "operation": "将事先画好的椭圆形放在小儿面前， 瞩其将6块塑料片按\n图分别放进去，不予提醒，限时2min",
-        "passCondition": "小儿全部拼对"
+        "passCondition": "小儿全部拼对",
+        "score": 3.0,
+        "area": "fineMotor"
       },
       {
         "id": 216,
         "name": "试剪圆形",
         "desc": "试剪圆形",
         "operation": "主试者给小儿出示一张已画好圆形（直径7.5cm米）的1/2\nA4打印纸，鼓励小儿将圆形剪下（附原图）",
-        "passCondition": "小儿能剪出大致圆形， 允许出\n角"
+        "passCondition": "小儿能剪出大致圆形， 允许出\n角",
+        "score": 3.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -1031,14 +1219,18 @@
         "name": "会写自己的名字",
         "desc": "会写自己的名字",
         "operation": "主试者让小儿写出自己的名字",
-        "passCondition": "小儿能正确写出自己的名字。"
+        "passCondition": "小儿能正确写出自己的名字。",
+        "score": 3.0,
+        "area": "fineMotor"
       },
       {
         "id": 225,
         "name": "剪平滑圆形",
         "desc": "剪平滑圆形",
         "operation": "主试者给小儿出示一张已画好圆形（直径7.5cm）的1/2 A4\n打印纸，鼓励小儿将圆形剪下（附原图）",
-        "passCondition": "小儿能剪出平滑的圆形， 无成\n角、毛边"
+        "passCondition": "小儿能剪出平滑的圆形， 无成\n角、毛边",
+        "score": 3.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -1052,14 +1244,18 @@
         "name": "拼长方形",
         "desc": "拼长方形",
         "operation": "主试者让小儿用2块非等边三角形板拼长方形，出示时要\n求短边相对，限时2min",
-        "passCondition": "小儿拼对长方形"
+        "passCondition": "小儿拼对长方形",
+        "score": 3.0,
+        "area": "fineMotor"
       },
       {
         "id": 235,
         "name": "临摹组合图形",
         "desc": "临摹组合图形",
         "operation": "主试者出示正方形和圆形的组合图形，鼓励小儿临摹。",
-        "passCondition": "小儿能画出， 无转向"
+        "passCondition": "小儿能画出， 无转向",
+        "score": 3.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -1073,14 +1269,18 @@
         "name": "临摹六边形",
         "desc": "临摹六边形",
         "operation": "主试者出示六边形图形，鼓励小儿临摹",
-        "passCondition": "小儿可临摹出六边形，6个角\n均画得好，连接线平直"
+        "passCondition": "小儿可临摹出六边形，6个角\n均画得好，连接线平直",
+        "score": 3.0,
+        "area": "fineMotor"
       },
       {
         "id": 245,
         "name": "试打活结",
         "desc": "试打活结",
         "operation": "出示一双筷子和一根绳，主试者示范用绳将筷子以活结\n方式捆上，鼓励小儿照样做。小儿打结时主试者应辅助\n固定筷子",
-        "passCondition": "经示范后， 小儿能用活结将筷\n子捆上"
+        "passCondition": "经示范后， 小儿能用活结将筷\n子捆上",
+        "score": 3.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -1094,14 +1294,18 @@
         "name": "学翻绳",
         "desc": "学翻绳",
         "operation": "主试者示范将一根绳子做翻绳最初级模式，鼓励小儿跟\n着做",
-        "passCondition": "小儿能跟着主试者一步一步，\n或在主试者示范后自行做到\n中指挑绳"
+        "passCondition": "小儿能跟着主试者一步一步，\n或在主试者示范后自行做到\n中指挑绳",
+        "score": 3.0,
+        "area": "fineMotor"
       },
       {
         "id": 255,
         "name": "打活结",
         "desc": "打活结",
         "operation": "出示一双筷子和一根绳，鼓励其用绳将筷子以活结方式\n捆上，小儿打结时主试者应辅助固定筷子",
-        "passCondition": "无需示范， 小儿能用活结将筷\n子捆上"
+        "passCondition": "无需示范， 小儿能用活结将筷\n子捆上",
+        "score": 3.0,
+        "area": "fineMotor"
       }
     ]
   },
@@ -1115,14 +1319,18 @@
         "name": "看黑白靶*",
         "desc": "看黑白靶*",
         "operation": "婴儿仰卧，主试者将黑白靶拿在距婴儿脸部上方20cm处\n移动，吸引婴儿注意",
-        "passCondition": "婴儿眼睛可明确注视黑白靶"
+        "passCondition": "婴儿眼睛可明确注视黑白靶",
+        "score": 0.5,
+        "area": "adaptive"
       },
       {
         "id": 6,
         "name": "眼跟红球过中线",
         "desc": "眼跟红球过中线",
         "operation": "婴儿仰卧，主试者手提红球，在婴儿脸部上方20cm处轻\n轻晃动以引起婴儿注意，然后把红球慢慢移动，从头的\n一侧沿着弧形，移向中央，再移向头的另一侧，观察婴\n儿头部和眼睛的活动。",
-        "passCondition": "当主试者把红球移向中央时，\n婴儿用眼睛跟踪看着红球转\n过中线，三试一成"
+        "passCondition": "当主试者把红球移向中央时，\n婴儿用眼睛跟踪看着红球转\n过中线，三试一成",
+        "score": 0.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1136,14 +1344,18 @@
         "name": "即刻注意大玩具",
         "desc": "即刻注意大玩具",
         "operation": "婴儿仰卧，用娃娃在婴儿脸部上方20cm处晃动，观察其\n反应。",
-        "passCondition": "可立刻注意到娃娃，三试一成"
+        "passCondition": "可立刻注意到娃娃，三试一成",
+        "score": 0.5,
+        "area": "adaptive"
       },
       {
         "id": 16,
         "name": "眼跟红球上下移动*",
         "desc": "眼跟红球上下移动*",
         "operation": "婴儿仰卧，主试者提起红球，在婴儿脸部上方20cm处轻\n轻晃动以引起婴儿注意，先慢慢向上移动，然后再从头\n顶向下颏处移动",
-        "passCondition": "婴儿眼睛能上或下跟随红球"
+        "passCondition": "婴儿眼睛能上或下跟随红球",
+        "score": 0.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1157,14 +1369,18 @@
         "name": "即刻注意胸前玩具",
         "desc": "即刻注意胸前玩具",
         "operation": "婴儿仰卧，主试者将娃娃在婴儿身体上方20cm处沿中线\n自下向上移动。当玩具到婴儿乳头连线至下颏之间时，\n观察婴儿反应",
-        "passCondition": "当娃娃移动至婴儿乳头连线\n至下颌之间时， 立即注意即可\n通过"
+        "passCondition": "当娃娃移动至婴儿乳头连线\n至下颌之间时， 立即注意即可\n通过",
+        "score": 0.5,
+        "area": "adaptive"
       },
       {
         "id": 26,
         "name": "眼跟红球 180°",
         "desc": "眼跟红球 180°",
         "operation": "婴儿仰卧，主试者手提红球，在婴儿脸部上方20cm处轻轻晃\n动以引起婴儿注意，然后把红球慢慢移动，从头的一侧沿着\n弧形，移向中央，再移向头的另一侧，观察婴儿头部和眼睛\n的活动",
-        "passCondition": "婴儿用眼及头跟随红球转动\n180 ° , 三试一成"
+        "passCondition": "婴儿用眼及头跟随红球转动\n180 ° , 三试一成",
+        "score": 0.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1178,14 +1394,18 @@
         "name": "目光对视*",
         "desc": "目光对视*",
         "operation": "主试者或母亲对婴儿说话，观察婴儿是否与人对视",
-        "passCondition": "婴儿能与成人对视， 并保持5s\n或以上"
+        "passCondition": "婴儿能与成人对视， 并保持5s\n或以上",
+        "score": 0.5,
+        "area": "adaptive"
       },
       {
         "id": 35,
         "name": "高声叫 R",
         "desc": "高声叫 R",
         "operation": "观察或询问婴儿在高兴或不满时的发音",
-        "passCondition": "会高声叫（非高调尖叫）"
+        "passCondition": "会高声叫（非高调尖叫）",
+        "score": 0.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1199,14 +1419,18 @@
         "name": "注意小丸",
         "desc": "注意小丸",
         "operation": "桌面上放一小丸，主试者指点小丸或把小丸动来动去，\n以引起婴儿注意",
-        "passCondition": "婴儿明确地注意到小丸"
+        "passCondition": "婴儿明确地注意到小丸",
+        "score": 0.5,
+        "area": "adaptive"
       },
       {
         "id": 45,
         "name": "拿住一积木注视另一积木",
         "desc": "拿住一积木注视另一积木",
         "operation": "抱坐，婴儿手置于桌上，主试者先放一块积木在婴儿手\n中， 再放另一块积木于桌上婴儿可及范围内，适当逗引，\n观察婴儿对第二块积木的反应",
-        "passCondition": "婴儿拿着放在手中的第一块\n积木，当第二块积木靠近时，\n目光明确地注视第二块积木"
+        "passCondition": "婴儿拿着放在手中的第一块\n积木，当第二块积木靠近时，\n目光明确地注视第二块积木",
+        "score": 0.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1220,14 +1444,18 @@
         "name": "两手拿住积木",
         "desc": "两手拿住积木",
         "operation": "抱坐，先后递给婴儿两块积木，婴儿自己拿或被动放在\n手中均可",
-        "passCondition": "婴儿一手拿一块积木，保持在\n手里10s或以上"
+        "passCondition": "婴儿一手拿一块积木，保持在\n手里10s或以上",
+        "score": 0.5,
+        "area": "adaptive"
       },
       {
         "id": 54,
         "name": "寻找失落的玩具",
         "desc": "寻找失落的玩具",
         "operation": "以红球逗引婴儿注意，红球位置应与婴儿双眼在同一水\n平线上。主试者手提红球，当婴儿注意到红球后，立即\n松手使红球落地，此时主试者的手保持原姿势，观察婴\n儿反应",
-        "passCondition": "红球落地后， 婴儿立即低下头\n寻找红球"
+        "passCondition": "红球落地后， 婴儿立即低下头\n寻找红球",
+        "score": 0.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1241,14 +1469,18 @@
         "name": "积木换手",
         "desc": "积木换手",
         "operation": "抱坐，出示一积木给婴儿，婴儿拿住后，再向拿积木的\n手前出示另一块积木，观察其反应",
-        "passCondition": "婴儿将第一块积木传到另一\n只手后，再去拿第二块积木"
+        "passCondition": "婴儿将第一块积木传到另一\n只手后，再去拿第二块积木",
+        "score": 0.5,
+        "area": "adaptive"
       },
       {
         "id": 64,
         "name": "伸手够远处玩具",
         "desc": "伸手够远处玩具",
         "operation": "抱坐，将一玩具放于婴儿手恰好够不到的桌面上，观察\n其反应",
-        "passCondition": "欠身取，并能拿到玩具"
+        "passCondition": "欠身取，并能拿到玩具",
+        "score": 0.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1262,14 +1494,18 @@
         "name": "有意识地摇铃",
         "desc": "有意识地摇铃",
         "operation": "主试者示范摇铃，鼓励婴儿照样做",
-        "passCondition": "婴儿能够有意识地摇铃"
+        "passCondition": "婴儿能够有意识地摇铃",
+        "score": 0.5,
+        "area": "adaptive"
       },
       {
         "id": 73,
         "name": "持续用手追逐玩具",
         "desc": "持续用手追逐玩具",
         "operation": "以玩具逗引婴儿来取，将要取到时，主试者将玩具移动\n到稍远的地方，观察其反应",
-        "passCondition": "婴儿持续追逐玩具，力图拿\n到，但不一定取到"
+        "passCondition": "婴儿持续追逐玩具，力图拿\n到，但不一定取到",
+        "score": 0.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1283,14 +1519,18 @@
         "name": "积木对敲",
         "desc": "积木对敲",
         "operation": "主试者出示两块积木，示范积木对敲后，让婴儿一手拿\n一块，鼓励其照样做",
-        "passCondition": "婴儿能把双手合到中线， 互敲\n积木，对击可不十分准确"
+        "passCondition": "婴儿能把双手合到中线， 互敲\n积木，对击可不十分准确",
+        "score": 0.5,
+        "area": "adaptive"
       },
       {
         "id": 82,
         "name": "拨弄铃舌",
         "desc": "拨弄铃舌",
         "operation": "主试者轻摇铜铃以引起婴儿注意， 然后将铜铃递给婴儿，\n观察其对铜铃的反应",
-        "passCondition": "婴儿有意识寻找并拨弄或拿\n捏铃舌"
+        "passCondition": "婴儿有意识寻找并拨弄或拿\n捏铃舌",
+        "score": 0.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1304,14 +1544,18 @@
         "name": "拿掉扣积木杯玩积木",
         "desc": "拿掉扣积木杯玩积木",
         "operation": "积木放在桌上，在婴儿注视下用杯子盖住积木，杯子的\n把手对着婴儿，鼓励婴儿取积木",
-        "passCondition": "婴儿能主动拿掉杯子， 取出藏\n在杯子里面的积木"
+        "passCondition": "婴儿能主动拿掉杯子， 取出藏\n在杯子里面的积木",
+        "score": 0.5,
+        "area": "adaptive"
       },
       {
         "id": 90,
         "name": "寻找盒内东西",
         "desc": "寻找盒内东西",
         "operation": "在婴儿面前摇响装有硬币的盒，然后避开婴儿将硬币取\n出，给婴儿空盒，观察其反应",
-        "passCondition": "婴儿能明确地寻找盒内的硬\n币"
+        "passCondition": "婴儿能明确地寻找盒内的硬\n币",
+        "score": 0.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1325,14 +1569,18 @@
         "name": "打开包积木的方巾",
         "desc": "打开包积木的方巾",
         "operation": "在婴儿注视下用方巾包起一积木，然后打开，再包上，\n鼓励婴儿找",
-        "passCondition": "婴儿有意识地打开包积木的\n方巾， 寻找积木，成功将积木\n拿到手"
+        "passCondition": "婴儿有意识地打开包积木的\n方巾， 寻找积木，成功将积木\n拿到手",
+        "score": 0.5,
+        "area": "adaptive"
       },
       {
         "id": 98,
         "name": "模仿拍娃娃",
         "desc": "模仿拍娃娃",
         "operation": "主试者示范拍娃娃，鼓励婴儿照样做",
-        "passCondition": "婴儿学大人样子轻拍娃娃"
+        "passCondition": "婴儿学大人样子轻拍娃娃",
+        "score": 0.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1346,7 +1594,9 @@
         "name": "盖瓶盖",
         "desc": "盖瓶盖",
         "operation": "瓶盖翻放在桌上，主试者示范将瓶盖盖在瓶上，鼓励小\n儿照样做",
-        "passCondition": "小儿会将瓶盖翻正后盖在瓶\n上"
+        "passCondition": "小儿会将瓶盖翻正后盖在瓶\n上",
+        "score": 1.0,
+        "area": "adaptive"
       }
     ]
   },
@@ -1360,14 +1610,18 @@
         "name": "翻书两次",
         "desc": "翻书两次",
         "operation": "主试者示范翻书，鼓励小儿照样做",
-        "passCondition": "做出翻书动作两次或以上"
+        "passCondition": "做出翻书动作两次或以上",
+        "score": 1.5,
+        "area": "adaptive"
       },
       {
         "id": 116,
         "name": "盖上圆盒",
         "desc": "盖上圆盒",
         "operation": "主试者示范将圆盒盖好，鼓励小儿照样做",
-        "passCondition": "小儿会将圆盒盖上，并盖严"
+        "passCondition": "小儿会将圆盒盖上，并盖严",
+        "score": 1.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1381,14 +1635,18 @@
         "name": "积木搭高四块",
         "desc": "积木搭高四块",
         "operation": "示范搭高两块积木，推倒后一块一块出示积木，鼓励小\n儿搭高",
-        "passCondition": "小儿搭高四块积木或以上， 三\n试一成"
+        "passCondition": "小儿搭高四块积木或以上， 三\n试一成",
+        "score": 1.5,
+        "area": "adaptive"
       },
       {
         "id": 123,
         "name": "正放圆积木入型板",
         "desc": "正放圆积木入型板",
         "operation": "在型板圆孔下方放一圆积木，圆孔靠近小儿身体。主试\n者对小儿说“这是小朋友的家（指型板面而不是圆孔），\n请帮这个小朋友（指圆积木）找到自己的家”，不示范",
-        "passCondition": "不经指点， 能正确将圆积木一\n次性放入孔内"
+        "passCondition": "不经指点， 能正确将圆积木一\n次性放入孔内",
+        "score": 1.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1402,14 +1660,18 @@
         "name": "积木搭高 7~8 块",
         "desc": "积木搭高 7~8 块",
         "operation": "示范搭高两块积木，推倒后一块一块出示积木，鼓励小\n儿搭高",
-        "passCondition": "小儿搭高7～8块积木，三试一\n成"
+        "passCondition": "小儿搭高7～8块积木，三试一\n成",
+        "score": 1.5,
+        "area": "adaptive"
       },
       {
         "id": 133,
         "name": "知道红色",
         "desc": "知道红色",
         "operation": "出示红、黄、蓝、绿四色图片， 问小儿“哪个是红色？”",
-        "passCondition": "小儿能在四色图片中正确指\n出红色"
+        "passCondition": "小儿能在四色图片中正确指\n出红色",
+        "score": 1.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1423,14 +1685,18 @@
         "name": "一页页翻书",
         "desc": "一页页翻书",
         "operation": "主试者示范一页页翻书，鼓励小儿照样做",
-        "passCondition": "小儿会用手捻书页，每次一\n页，连续翻书三页或以上"
+        "passCondition": "小儿会用手捻书页，每次一\n页，连续翻书三页或以上",
+        "score": 1.5,
+        "area": "adaptive"
       },
       {
         "id": 141,
         "name": "倒放圆积木入型板",
         "desc": "倒放圆积木入型板",
         "operation": "在小儿能正放圆积木入型板的基础上， 将型板倒转\n180°。圆积木仍在原处， 主试者对小儿说“这是小朋友\n的家（指型板），请帮这个小朋友（指圆积木）找到自\n己的家”，不示范",
-        "passCondition": "型板倒转后， 小儿能正确将圆\n积木一次性放入圆孔内"
+        "passCondition": "型板倒转后， 小儿能正确将圆\n积木一次性放入圆孔内",
+        "score": 1.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1444,14 +1710,18 @@
         "name": "认识大小",
         "desc": "认识大小",
         "operation": "主试者向小儿出示大小圆片，请小儿把大的给妈妈或阿\n姨",
-        "passCondition": "小儿会正确把大的给妈妈或\n阿姨，三试二成"
+        "passCondition": "小儿会正确把大的给妈妈或\n阿姨，三试二成",
+        "score": 1.5,
+        "area": "adaptive"
       },
       {
         "id": 151,
         "name": "正放型板",
         "desc": "正放型板",
         "operation": "将圆、方、三角形三块积木放在与型板相应的孔旁，主\n试者对小儿说“这是小朋友的家（指型板），请帮这些\n小朋友（指三块积木）找到自己的家”，不示范。放置\n三角型积木方向要与型板一致",
-        "passCondition": "小儿能一次性正确放入相应\n孔内，仅等腰三角形可提示"
+        "passCondition": "小儿能一次性正确放入相应\n孔内，仅等腰三角形可提示",
+        "score": 1.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1465,14 +1735,18 @@
         "name": "知道 1 与许多",
         "desc": "知道 1 与许多",
         "operation": "一块和数块积木分放两边，请小儿指出哪边是多的，再\n指另一边问“这是几个？”",
-        "passCondition": "小儿先正确指出哪一边多，后\n回答“是1个”"
+        "passCondition": "小儿先正确指出哪一边多，后\n回答“是1个”",
+        "score": 1.5,
+        "area": "adaptive"
       },
       {
         "id": 160,
         "name": "倒放型板",
         "desc": "倒放型板",
         "operation": "在小儿正放三块积木入型板的基础上， 将型板倒转\n180°，三块积木仍在原处，主试者对小儿说“这是小朋\n友的家（指型板），请帮这些小朋友（指三块积木）找\n到自己的家”，不示范",
-        "passCondition": "小儿能一次性正确放入翻转\n后型板的相应孔内， 仅等腰三\n角形可提示"
+        "passCondition": "小儿能一次性正确放入翻转\n后型板的相应孔内， 仅等腰三\n角形可提示",
+        "score": 1.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1486,14 +1760,18 @@
         "name": "积木搭高 10 块",
         "desc": "积木搭高 10 块",
         "operation": "示范搭高二块积木，推倒后一块一块出示积木，鼓励小\n儿搭高。允许试三次",
-        "passCondition": "小儿能搭高积木10块。三试一\n成"
+        "passCondition": "小儿能搭高积木10块。三试一\n成",
+        "score": 1.5,
+        "area": "adaptive"
       },
       {
         "id": 169,
         "name": "连续执行三个命令",
         "desc": "连续执行三个命令",
         "operation": "嘱小儿做三件事擦桌子、摇铃、把门打开，可再重复命\n令一遍。小儿开始做后，不能再提醒或给予暗示",
-        "passCondition": "小儿会做每件事情， 没有遗忘\n任何一项，但顺序可颠倒"
+        "passCondition": "小儿会做每件事情， 没有遗忘\n任何一项，但顺序可颠倒",
+        "score": 1.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1507,14 +1785,18 @@
         "name": "懂得“3”",
         "desc": "懂得“3”",
         "operation": "主试者出示三块积木，问小儿“这是几块？”",
-        "passCondition": "小儿能正确说出“三块”"
+        "passCondition": "小儿能正确说出“三块”",
+        "score": 1.5,
+        "area": "adaptive"
       },
       {
         "id": 178,
         "name": "认识两种颜色",
         "desc": "认识两种颜色",
         "operation": "出示红、黄、蓝、绿四色图片，先从非红色开始问，避\n免顺口溜出，请小儿说出各为何种颜色",
-        "passCondition": "能正确说出两种或以上颜色"
+        "passCondition": "能正确说出两种或以上颜色",
+        "score": 1.5,
+        "area": "adaptive"
       }
     ]
   },
@@ -1528,14 +1810,18 @@
         "name": "懂得“5”",
         "desc": "懂得“5”",
         "operation": "主试者出示五块积木，问小儿“这是几块？”",
-        "passCondition": "小儿能正确说出“五块”"
+        "passCondition": "小儿能正确说出“五块”",
+        "score": 3.0,
+        "area": "adaptive"
       },
       {
         "id": 188,
         "name": "认识四种颜色",
         "desc": "认识四种颜色",
         "operation": "主试者出示红、黄、蓝、绿四色图片，先从非红色开始\n问，避免顺口溜出，请小儿说出各为何种颜色",
-        "passCondition": "四种颜色全部答对"
+        "passCondition": "四种颜色全部答对",
+        "score": 3.0,
+        "area": "adaptive"
       }
     ]
   },
@@ -1549,14 +1835,18 @@
         "name": "找不同（3 个）",
         "desc": "找不同（3 个）",
         "operation": "出示找不同图画，主试者问小儿两张图画有什么不同之\n处？小熊示教，限时2min",
-        "passCondition": "能找到包括示教内容的3处不\n同或以上"
+        "passCondition": "能找到包括示教内容的3处不\n同或以上",
+        "score": 3.0,
+        "area": "adaptive"
       },
       {
         "id": 198,
         "name": "图画补缺（3/6）",
         "desc": "图画补缺（3/6）",
         "operation": "出示补缺图片，主试者问小儿各图中缺什么？第一幅图\n示教",
-        "passCondition": "要求说对包括示教内容的三\n幅图或以上"
+        "passCondition": "要求说对包括示教内容的三\n幅图或以上",
+        "score": 3.0,
+        "area": "adaptive"
       }
     ]
   },
@@ -1570,14 +1860,18 @@
         "name": "类同",
         "desc": "类同",
         "operation": "主试者给小儿一个圆形扣子，然后出示第一组模板（包\n括圆型、方型、三角型），问“你手里的东西和我这些\n东西哪些是一类的？为什么？ ”然后收起，再出示第二\n组模版（包括方型钮扣、三角型、方型），提问同上",
-        "passCondition": "两问均答对"
+        "passCondition": "两问均答对",
+        "score": 3.0,
+        "area": "adaptive"
       },
       {
         "id": 208,
         "name": "图画补缺（4/6）",
         "desc": "图画补缺（4/6）",
         "operation": "出示补缺图片，主试者问小儿各图中缺什么？第一幅图\n示教",
-        "passCondition": "要求说对包括示教内容的四\n幅图或以上"
+        "passCondition": "要求说对包括示教内容的四\n幅图或以上",
+        "score": 3.0,
+        "area": "adaptive"
       }
     ]
   },
@@ -1591,14 +1885,18 @@
         "name": "找不同（5 个）",
         "desc": "找不同（5 个）",
         "operation": "出示找不同图画，主试者问小儿两张图画有什么不同之\n处？小熊示教。限时2min",
-        "passCondition": "能找到包括示教内容的5处不\n同或以上"
+        "passCondition": "能找到包括示教内容的5处不\n同或以上",
+        "score": 3.0,
+        "area": "adaptive"
       },
       {
         "id": 218,
         "name": "图画补缺（5/6）",
         "desc": "图画补缺（5/6）",
         "operation": "出示补缺图片，主试者问小儿各图中缺什么？第一幅图\n示教",
-        "passCondition": "要求说对包括示教内容的五\n幅图或以上"
+        "passCondition": "要求说对包括示教内容的五\n幅图或以上",
+        "score": 3.0,
+        "area": "adaptive"
       }
     ]
   },
@@ -1612,14 +1910,18 @@
         "name": "树间站人",
         "desc": "树间站人",
         "operation": "主试者问小儿“两棵树之间站一个人，一排三棵树之间\n站几个人？”",
-        "passCondition": "小儿回答“两个人。”"
+        "passCondition": "小儿回答“两个人。”",
+        "score": 3.0,
+        "area": "adaptive"
       },
       {
         "id": 227,
         "name": "十字切苹果",
         "desc": "十字切苹果",
         "operation": "主试者问小儿“将一个苹果十字切开是几块？ ”如小儿\n不理解，主试者可用手势比划提示",
-        "passCondition": "不经提示或仅在主试者手势\n比划提示后答“四块”"
+        "passCondition": "不经提示或仅在主试者手势\n比划提示后答“四块”",
+        "score": 3.0,
+        "area": "adaptive"
       }
     ]
   },
@@ -1633,14 +1935,18 @@
         "name": "找不同（7 个）",
         "desc": "找不同（7 个）",
         "operation": "出示找不同图画，主试者问小儿两张图画有什么不同之\n处？小熊示教。限时2min",
-        "passCondition": "能找到包括示教内容的7处不\n同或以上"
+        "passCondition": "能找到包括示教内容的7处不\n同或以上",
+        "score": 3.0,
+        "area": "adaptive"
       },
       {
         "id": 237,
         "name": "知道左右",
         "desc": "知道左右",
         "operation": "主试者让小儿用左手摸右耳朵，右手摸左耳朵，右手摸\n右腿",
-        "passCondition": "小儿全部做对"
+        "passCondition": "小儿全部做对",
+        "score": 3.0,
+        "area": "adaptive"
       }
     ]
   },
@@ -1654,14 +1960,18 @@
         "name": "图形类比",
         "desc": "图形类比",
         "operation": "主试者出示图形， 问右边的4幅图中哪一幅放在左边空白\n处合适。第一题示教",
-        "passCondition": "小儿能指对包括第一题在内\n的三道题或以上"
+        "passCondition": "小儿能指对包括第一题在内\n的三道题或以上",
+        "score": 3.0,
+        "area": "adaptive"
       },
       {
         "id": 247,
         "name": "面粉的用途",
         "desc": "面粉的用途",
         "operation": "主试者问小儿“面粉能做哪些东西？”",
-        "passCondition": "小儿能回答两种或以上"
+        "passCondition": "小儿能回答两种或以上",
+        "score": 3.0,
+        "area": "adaptive"
       }
     ]
   },
@@ -1675,14 +1985,18 @@
         "name": "数字类比",
         "desc": "数字类比",
         "operation": "主试者出示图形， 问下边的4幅图中哪一幅放在上边空白\n处合适。第一题示教",
-        "passCondition": "小儿能指对包括第一题在内\n的三道题或以上"
+        "passCondition": "小儿能指对包括第一题在内\n的三道题或以上",
+        "score": 3.0,
+        "area": "adaptive"
       },
       {
         "id": 257,
         "name": "什么动物没有脚？",
         "desc": "什么动物没有脚？",
         "operation": "主试者问小儿“什么动物没有脚？ ”（脚定义为走路用\n的）",
-        "passCondition": "小儿回答蛇、鱼等两类或以上\n没有脚的动物"
+        "passCondition": "小儿回答蛇、鱼等两类或以上\n没有脚的动物",
+        "score": 3.0,
+        "area": "adaptive"
       }
     ]
   },
@@ -1696,14 +2010,18 @@
         "name": "自发细小喉音 R",
         "desc": "自发细小喉音 R",
         "operation": "婴儿仰卧、清醒。注意其发音",
-        "passCondition": "观察或询问， 小儿能发出任何\n一种细小柔和的喉音"
+        "passCondition": "观察或询问， 小儿能发出任何\n一种细小柔和的喉音",
+        "score": 0.5,
+        "area": "language"
       },
       {
         "id": 8,
         "name": "听声音有反应*",
         "desc": "听声音有反应*",
         "operation": "婴儿仰卧，在其一侧耳上方10cm～15cm处轻摇铜铃，观\n察婴儿的反应。（双侧均做， 一侧通过即可）",
-        "passCondition": "婴儿听到铃声有一种或多种\n反应"
+        "passCondition": "婴儿听到铃声有一种或多种\n反应",
+        "score": 0.5,
+        "area": "language"
       }
     ]
   },
@@ -1717,14 +2035,18 @@
         "name": "发 a、o、e 等母音 R",
         "desc": "发 a、o、e 等母音 R",
         "operation": "询问或逗引婴儿发音",
-        "passCondition": "能从喉部发出a、o、e等元音\n来"
+        "passCondition": "能从喉部发出a、o、e等元音\n来",
+        "score": 0.5,
+        "area": "language"
       },
       {
         "id": 18,
         "name": "听声音有复杂反应",
         "desc": "听声音有复杂反应",
         "operation": "婴儿仰卧，在其一侧耳上方10cm～15cm处轻摇铜铃，观\n察婴儿的反应。（双侧均做， 一侧通过即可）",
-        "passCondition": "婴儿听到声音有表情和肢体\n动作的变化"
+        "passCondition": "婴儿听到声音有表情和肢体\n动作的变化",
+        "score": 0.5,
+        "area": "language"
       }
     ]
   },
@@ -1738,7 +2060,9 @@
         "name": "笑出声 R",
         "desc": "笑出声 R",
         "operation": "逗引婴儿笑，但不得接触身体",
-        "passCondition": "观察或询问， 婴儿能发出“咯\n咯”笑声"
+        "passCondition": "观察或询问， 婴儿能发出“咯\n咯”笑声",
+        "score": 1.0,
+        "area": "language"
       }
     ]
   },
@@ -1752,14 +2076,18 @@
         "name": "伊语作声 R",
         "desc": "伊语作声 R",
         "operation": "观察婴儿安静时的发音",
-        "passCondition": "观察或询问， 婴儿会类似自言\n自语，无音节、无意义"
+        "passCondition": "观察或询问， 婴儿会类似自言\n自语，无音节、无意义",
+        "score": 0.5,
+        "area": "language"
       },
       {
         "id": 37,
         "name": "找到声源",
         "desc": "找到声源",
         "operation": "抱坐，主试者在婴儿耳后上方15cm处轻摇铜铃，观察其\n反应",
-        "passCondition": "可回头找到声源， 一侧耳通过\n即可"
+        "passCondition": "可回头找到声源， 一侧耳通过\n即可",
+        "score": 0.5,
+        "area": "language"
       }
     ]
   },
@@ -1773,7 +2101,9 @@
         "name": "对人及物发声 R",
         "desc": "对人及物发声 R",
         "operation": "观察或询问婴儿看到熟悉的人或玩具时的发音",
-        "passCondition": "观察或询问， 婴儿会发出象说\n话般的声音，如伊伊呀呀、ma、\npa、ba等辅元结合音"
+        "passCondition": "观察或询问， 婴儿会发出象说\n话般的声音，如伊伊呀呀、ma、\npa、ba等辅元结合音",
+        "score": 1.0,
+        "area": "language"
       }
     ]
   },
@@ -1787,14 +2117,18 @@
         "name": "叫名字转头",
         "desc": "叫名字转头",
         "operation": "主试者或家长在婴儿背后呼唤其名字，观察其反应",
-        "passCondition": "婴儿会转头寻找呼唤的人"
+        "passCondition": "婴儿会转头寻找呼唤的人",
+        "score": 0.5,
+        "area": "language"
       },
       {
         "id": 56,
         "name": "理解手势",
         "desc": "理解手势",
         "operation": "主试者或妈妈（带养人）伸手表示要抱，不得出声提示，\n观察婴儿反应",
-        "passCondition": "婴儿理解并将手伸向主试者\n或妈妈（带养人），二试一成"
+        "passCondition": "婴儿理解并将手伸向主试者\n或妈妈（带养人），二试一成",
+        "score": 0.5,
+        "area": "language"
       }
     ]
   },
@@ -1808,7 +2142,9 @@
         "name": "发 da-da、ma-ma 等无所指 R",
         "desc": "发 da-da、ma-ma 等无所指 R",
         "operation": "观察婴儿在清醒状态时的发声情况",
-        "passCondition": "观 察 或 询 问 ，  婴 儿 会 发\nda-da 、ma-ma的双唇音，但\n无所指"
+        "passCondition": "观 察 或 询 问 ，  婴 儿 会 发\nda-da 、ma-ma的双唇音，但\n无所指",
+        "score": 1.0,
+        "area": "language"
       }
     ]
   },
@@ -1822,14 +2158,18 @@
         "name": "模仿声音 R",
         "desc": "模仿声音 R",
         "operation": "观察或询问婴儿是否会模仿咳嗽、弄舌的声音",
-        "passCondition": "观察或询问， 婴儿能模仿发出\n类似声音"
+        "passCondition": "观察或询问， 婴儿能模仿发出\n类似声音",
+        "score": 0.5,
+        "area": "language"
       },
       {
         "id": 75,
         "name": "可用动作手势表达（2/3）R",
         "desc": "可用动作手势表达（2/3）R",
         "operation": "主试者询问家长，婴儿是否常有主动伸手表示要抱；摊\n开手表示没有；咂咂嘴表示好吃等动作手势",
-        "passCondition": "三问中， 有两项表现即可通过"
+        "passCondition": "三问中， 有两项表现即可通过",
+        "score": 0.5,
+        "area": "language"
       }
     ]
   },
@@ -1843,14 +2183,18 @@
         "name": "会欢迎 R",
         "desc": "会欢迎 R",
         "operation": "主试者只说欢迎，不做手势示范，鼓励婴儿以手势表示",
-        "passCondition": "观察或询问， 婴儿能够做出欢\n迎的手势"
+        "passCondition": "观察或询问， 婴儿能够做出欢\n迎的手势",
+        "score": 0.5,
+        "area": "language"
       },
       {
         "id": 84,
         "name": "会再见 R",
         "desc": "会再见 R",
         "operation": "主试者只说再见，不做手势示范，鼓励婴儿以手势表示",
-        "passCondition": "观察或询问， 婴儿能够做出再\n见的手势"
+        "passCondition": "观察或询问， 婴儿能够做出再\n见的手势",
+        "score": 0.5,
+        "area": "language"
       }
     ]
   },
@@ -1864,7 +2208,9 @@
         "name": "模仿发语声 R",
         "desc": "模仿发语声 R",
         "operation": "观察或询问婴儿是否会模仿“妈妈”、“爸爸”、“拿 ”、\n“走”等语音",
-        "passCondition": "观察或询问， 婴儿能模仿发语\n声"
+        "passCondition": "观察或询问， 婴儿能模仿发语\n声",
+        "score": 1.0,
+        "area": "language"
       }
     ]
   },
@@ -1878,14 +2224,18 @@
         "name": "有意识地发一个字音 R",
         "desc": "有意识地发一个字音 R",
         "operation": "观察或询问婴儿有意识的发音情况",
-        "passCondition": "观察或询问， 有意识并正确地\n发出相应的字音，如爸、妈、\n拿、走、姨、奶、汪汪等"
+        "passCondition": "观察或询问， 有意识并正确地\n发出相应的字音，如爸、妈、\n拿、走、姨、奶、汪汪等",
+        "score": 0.5,
+        "area": "language"
       },
       {
         "id": 100,
         "name": "懂得“不 ”R",
         "desc": "懂得“不 ”R",
         "operation": "婴儿取一玩具玩时，主试者说“不动” 、“不拿”，不\n要做手势，观察或询问其反应",
-        "passCondition": "观察或询问， 婴儿会停止拿取\n玩具的动作"
+        "passCondition": "观察或询问， 婴儿会停止拿取\n玩具的动作",
+        "score": 0.5,
+        "area": "language"
       }
     ]
   },
@@ -1899,14 +2249,18 @@
         "name": "叫爸爸妈妈有所指 R",
         "desc": "叫爸爸妈妈有所指 R",
         "operation": "观察或询问小儿见到妈妈、爸爸时，是否会有意识并准\n确地叫出",
-        "passCondition": "小儿会主动地称呼爸爸或妈\n妈"
+        "passCondition": "小儿会主动地称呼爸爸或妈\n妈",
+        "score": 0.5,
+        "area": "language"
       },
       {
         "id": 109,
         "name": "向他/她要东西知道给",
         "desc": "向他/她要东西知道给",
         "operation": "将一玩具放入小儿手中，然后主试者或家长对小儿说“把\n某某东西给我”，不要伸手去拿，观察小儿反应",
-        "passCondition": "经要求， 小儿把玩具主动递给\n主试者或家长，并主动松手"
+        "passCondition": "经要求， 小儿把玩具主动递给\n主试者或家长，并主动松手",
+        "score": 0.5,
+        "area": "language"
       }
     ]
   },
@@ -1920,14 +2274,18 @@
         "name": "会指眼耳鼻口手",
         "desc": "会指眼耳鼻口手",
         "operation": "主试者问小儿“眼在哪儿？ ”“耳在哪儿？ ”“鼻子在\n哪儿？”等，观察其反应",
-        "passCondition": "能正确指出3个或3个以上身\n体部位"
+        "passCondition": "能正确指出3个或3个以上身\n体部位",
+        "score": 1.5,
+        "area": "language"
       },
       {
         "id": 118,
         "name": "说 3～5 个字 R",
         "desc": "说 3～5 个字 R",
         "operation": "观察或询问小儿有意识讲话的情况",
-        "passCondition": "有意识地说3～5个字（妈、爸\n除外）"
+        "passCondition": "有意识地说3～5个字（妈、爸\n除外）",
+        "score": 1.5,
+        "area": "language"
       }
     ]
   },
@@ -1941,14 +2299,18 @@
         "name": "懂得三个投向",
         "desc": "懂得三个投向",
         "operation": "请小儿把三块积木分别递给妈妈、阿姨、放在桌子上，\n妈妈阿姨不能伸手要",
-        "passCondition": "小儿会正确地将积木送到要\n求的地方"
+        "passCondition": "小儿会正确地将积木送到要\n求的地方",
+        "score": 1.5,
+        "area": "language"
       },
       {
         "id": 125,
         "name": "说十个字词 R",
         "desc": "说十个字词 R",
         "operation": "观察或询问小儿有意识讲话的情况并记录",
-        "passCondition": "有意识说10个或以上单字或\n词（爸、妈除外）"
+        "passCondition": "有意识说10个或以上单字或\n词（爸、妈除外）",
+        "score": 1.5,
+        "area": "language"
       }
     ]
   },
@@ -1962,14 +2324,18 @@
         "name": "回答简单问题",
         "desc": "回答简单问题",
         "operation": "主试者问“这是什么（球）？”“那是谁（带小儿者）？”\n“爸爸干什么去了（上班）？”",
-        "passCondition": "小儿均能正确回答"
+        "passCondition": "小儿均能正确回答",
+        "score": 1.5,
+        "area": "language"
       },
       {
         "id": 135,
         "name": "说 3～5 个字的句子 R",
         "desc": "说 3～5 个字的句子 R",
         "operation": "观察或询问小儿有意识说话的情况",
-        "passCondition": "小儿能有意识地说出3～5个\n字的句子，有主谓语"
+        "passCondition": "小儿能有意识地说出3～5个\n字的句子，有主谓语",
+        "score": 1.5,
+        "area": "language"
       }
     ]
   },
@@ -1983,14 +2349,18 @@
         "name": "说两句以上诗或儿歌",
         "desc": "说两句以上诗或儿歌",
         "operation": "鼓励小儿说唐诗或儿歌",
-        "passCondition": "小儿能自发或稍经提示开头\n后完整说出两句或以上唐诗\n或儿歌"
+        "passCondition": "小儿能自发或稍经提示开头\n后完整说出两句或以上唐诗\n或儿歌",
+        "score": 1.5,
+        "area": "language"
       },
       {
         "id": 143,
         "name": "说常见物用途（碗笔凳球）",
         "desc": "说常见物用途（碗笔凳球）",
         "operation": "主试者分别提问小儿碗、笔、板凳、球的用途",
-        "passCondition": "小儿会说出三种或以上物品\n的用途"
+        "passCondition": "小儿会说出三种或以上物品\n的用途",
+        "score": 1.5,
+        "area": "language"
       }
     ]
   },
@@ -2004,14 +2374,18 @@
         "name": "说 7~10 个字的句子",
         "desc": "说 7~10 个字的句子",
         "operation": "主试者说一句话“星期天妈妈带我去公园”，可重复一\n遍，鼓励小儿复述",
-        "passCondition": "小儿能复述出7个字及以上，\n不影响句意表达"
+        "passCondition": "小儿能复述出7个字及以上，\n不影响句意表达",
+        "score": 1.5,
+        "area": "language"
       },
       {
         "id": 153,
         "name": "理解指令",
         "desc": "理解指令",
         "operation": "主试者对小儿说“请举举你的手”和“请抬抬你的脚”，\n可重复指令一遍，但不能有示范的动作，观察小儿反应",
-        "passCondition": "小儿能按指令做出举手或抬\n脚动作"
+        "passCondition": "小儿能按指令做出举手或抬\n脚动作",
+        "score": 1.5,
+        "area": "language"
       }
     ]
   },
@@ -2025,14 +2399,18 @@
         "name": "说出图片 10 样",
         "desc": "说出图片 10 样",
         "operation": "出示图片，依次指给小儿看，鼓励其说出图片名称",
-        "passCondition": "小儿能正确说出10样及以上。\n记录1.北极熊2.树叶3.小鸡\n4.青蛙5.螳螂6.猕猴桃7.树\n8.房子9.雨伞10.壶11.铅笔\n12.钥匙13.打印机14.刀15.\n电脑16.管钳17.轮船18.毛笔\n和砚台19.国旗20.脚21.嘴唇\n22.步枪23.雪花24中国结"
+        "passCondition": "小儿能正确说出10样及以上。\n记录1.北极熊2.树叶3.小鸡\n4.青蛙5.螳螂6.猕猴桃7.树\n8.房子9.雨伞10.壶11.铅笔\n12.钥匙13.打印机14.刀15.\n电脑16.管钳17.轮船18.毛笔\n和砚台19.国旗20.脚21.嘴唇\n22.步枪23.雪花24中国结",
+        "score": 1.5,
+        "area": "language"
       },
       {
         "id": 162,
         "name": "说自己名字",
         "desc": "说自己名字",
         "operation": "主试者问小儿“你叫什么名字？”",
-        "passCondition": "小儿能正确回答自己的大名"
+        "passCondition": "小儿能正确回答自己的大名",
+        "score": 1.5,
+        "area": "language"
       }
     ]
   },
@@ -2046,14 +2424,18 @@
         "name": "说出性别",
         "desc": "说出性别",
         "operation": "主试者问小儿性别， 若是女孩问“你是女孩还是男孩？”；\n若是男孩问“你是男孩还是女孩？”",
-        "passCondition": "小儿能正确说出自己的性别"
+        "passCondition": "小儿能正确说出自己的性别",
+        "score": 1.5,
+        "area": "language"
       },
       {
         "id": 171,
         "name": "分清“里 ”“外 ”",
         "desc": "分清“里 ”“外 ”",
         "operation": "主试者将一小丸放入30毫升广口试剂瓶内问“小丸是在\n瓶里？还是在瓶外？”",
-        "passCondition": "小儿会正确说出是在里边"
+        "passCondition": "小儿会正确说出是在里边",
+        "score": 1.5,
+        "area": "language"
       }
     ]
   },
@@ -2067,14 +2449,18 @@
         "name": "说出图片 14 样",
         "desc": "说出图片 14 样",
         "operation": "出示图片，依次指给小儿看，鼓励其说出图片名称",
-        "passCondition": "小儿能正确说出14样及以上。\n记录1.北极熊2.树叶3.小鸡\n4.青蛙5.螳螂6.猕猴桃7.树\n8.房子9.雨伞10.壶11.铅笔\n12.钥匙13.打印机14.刀15.\n电脑16.管钳17.轮船18.毛笔\n和砚台19.国旗20.脚21.嘴唇\n22.步枪23.雪花24中国结"
+        "passCondition": "小儿能正确说出14样及以上。\n记录1.北极熊2.树叶3.小鸡\n4.青蛙5.螳螂6.猕猴桃7.树\n8.房子9.雨伞10.壶11.铅笔\n12.钥匙13.打印机14.刀15.\n电脑16.管钳17.轮船18.毛笔\n和砚台19.国旗20.脚21.嘴唇\n22.步枪23.雪花24中国结",
+        "score": 1.5,
+        "area": "language"
       },
       {
         "id": 180,
         "name": "发音基本清楚",
         "desc": "发音基本清楚",
         "operation": "观察小儿在说话时的发音情况",
-        "passCondition": "小儿会发清楚大多数语音， 不\n影响交流"
+        "passCondition": "小儿会发清楚大多数语音， 不\n影响交流",
+        "score": 1.5,
+        "area": "language"
       }
     ]
   },
@@ -2088,14 +2474,18 @@
         "name": "会说反义词",
         "desc": "会说反义词",
         "operation": "主试者分别问（1）火是热的，冰呢？（2）大象的鼻子\n是长的， 小兔的尾巴呢？（3）头发是黑的，牙齿呢？（4）\n木头是硬的，棉花呢？",
-        "passCondition": "四题中答对两个或以上"
+        "passCondition": "四题中答对两个或以上",
+        "score": 3.0,
+        "area": "language"
       },
       {
         "id": 190,
         "name": "说出图形(△○□)",
         "desc": "说出图形(△○□)",
         "operation": "主试者依次出示积木△〇□， 问小儿“这是什么形状？”",
-        "passCondition": "小儿能正确回答三个图形的\n名称"
+        "passCondition": "小儿能正确回答三个图形的\n名称",
+        "score": 3.0,
+        "area": "language"
       }
     ]
   },
@@ -2109,14 +2499,18 @@
         "name": "模仿说复合句",
         "desc": "模仿说复合句",
         "operation": "主试者说一句话“妈妈叫我一定不要和小朋友打架”，\n可重复一遍，鼓励小儿复述",
-        "passCondition": "小儿能够复述较完整的复合\n句，偶尔漏字/错字"
+        "passCondition": "小儿能够复述较完整的复合\n句，偶尔漏字/错字",
+        "score": 3.0,
+        "area": "language"
       },
       {
         "id": 200,
         "name": "锅、手机、眼睛的用途",
         "desc": "锅、手机、眼睛的用途",
         "operation": "主试者问（1）锅是做什么用的？（2）手机是干什么用\n的？（3）眼睛有什么作用？",
-        "passCondition": "三问均正确。"
+        "passCondition": "三问均正确。",
+        "score": 3.0,
+        "area": "language"
       }
     ]
   },
@@ -2130,14 +2524,18 @@
         "name": "会漱口",
         "desc": "会漱口",
         "operation": "观察小儿是否会漱口",
-        "passCondition": "小儿能灵活左右漱口并将水\n吐出"
+        "passCondition": "小儿能灵活左右漱口并将水\n吐出",
+        "score": 3.0,
+        "area": "language"
       },
       {
         "id": 210,
         "name": "会认识数字",
         "desc": "会认识数字",
         "operation": "主试者出示图片，随意指出10以内数字，让小儿认",
-        "passCondition": "小儿全部正确答出"
+        "passCondition": "小儿全部正确答出",
+        "score": 3.0,
+        "area": "language"
       }
     ]
   },
@@ -2151,14 +2549,18 @@
         "name": "你姓什么？",
         "desc": "你姓什么？",
         "operation": "主试者问小儿“你姓什么？”",
-        "passCondition": "小儿正确回答出姓， 连名带姓\n不能通过"
+        "passCondition": "小儿正确回答出姓， 连名带姓\n不能通过",
+        "score": 3.0,
+        "area": "language"
       },
       {
         "id": 220,
         "name": "说出两种圆形的东西",
         "desc": "说出两种圆形的东西",
         "operation": "主试者让小儿说出两种圆形的东西",
-        "passCondition": "小儿能说出两种或以上圆形\n的东西"
+        "passCondition": "小儿能说出两种或以上圆形\n的东西",
+        "score": 3.0,
+        "area": "language"
       }
     ]
   },
@@ -2172,14 +2574,18 @@
         "name": "知道自己属相",
         "desc": "知道自己属相",
         "operation": "主试者问小儿“你是属什么的？”",
-        "passCondition": "小儿能正确说出自己的属相"
+        "passCondition": "小儿能正确说出自己的属相",
+        "score": 3.0,
+        "area": "language"
       },
       {
         "id": 229,
         "name": "倒数数字",
         "desc": "倒数数字",
         "operation": "主试者先示教“你会倒着数数吗?1、2、3倒数就是„„3、\n2、1，现在请你从24开始倒数，24、23、22、21„„”，\n鼓励小儿完成倒数",
-        "passCondition": "小 儿 能 较 流 利 地 正 确 数 出\n13～1"
+        "passCondition": "小 儿 能 较 流 利 地 正 确 数 出\n13～1",
+        "score": 3.0,
+        "area": "language"
       }
     ]
   },
@@ -2193,14 +2599,18 @@
         "name": "描述图画内容",
         "desc": "描述图画内容",
         "operation": "主试者出示三幅连环画，然后对小儿说“这三幅图连起\n来讲了一个故事，请你给我讲一讲故事的内容是什么？\n小猴子为什么哭了？ ”若小儿回答第一问后不再答，可\n再追问“小猴子为什么哭了？”",
-        "passCondition": "能分别描述每张图画的基本\n内容"
+        "passCondition": "能分别描述每张图画的基本\n内容",
+        "score": 3.0,
+        "area": "language"
       },
       {
         "id": 239,
         "name": "上班、窗、苹果、香蕉（2/3）",
         "desc": "上班、窗、苹果、香蕉（2/3）",
         "operation": "主试者问（1）人为什么要上班？—挣钱或建设国家（2）\n房子为什么要有窗户？ —透光或通风（3）苹果和香蕉有\n什么共同点？ —水果",
-        "passCondition": "答对两题或以上。\n（1）挣钱或建设国家；（2）\n透光或通风；（3）水果"
+        "passCondition": "答对两题或以上。\n（1）挣钱或建设国家；（2）\n透光或通风；（3）水果",
+        "score": 3.0,
+        "area": "language"
       }
     ]
   },
@@ -2214,14 +2624,18 @@
         "name": "归纳图画主题",
         "desc": "归纳图画主题",
         "operation": "主试者出示三幅连环画，然后对小儿说“这三幅图连起\n来讲了一个故事，请你给我讲一讲故事的内容是什么？\n小猴子为什么哭了？ ”若小儿回答第一问后不再答，可\n再追问“小猴子为什么哭了？”",
-        "passCondition": "能明确理解故事的主题"
+        "passCondition": "能明确理解故事的主题",
+        "score": 3.0,
+        "area": "language"
       },
       {
         "id": 249,
         "name": "认识钟表",
         "desc": "认识钟表",
         "operation": "主试者请小儿看钟表图辨认时间",
-        "passCondition": "小儿能辨认两张图或以上所\n表示的时间"
+        "passCondition": "小儿能辨认两张图或以上所\n表示的时间",
+        "score": 3.0,
+        "area": "language"
       }
     ]
   },
@@ -2235,14 +2649,18 @@
         "name": "为什么要进行预防接种？",
         "desc": "为什么要进行预防接种？",
         "operation": "主试者问小儿“小朋友为什么要打预防针？”",
-        "passCondition": "小儿能表达出预防生病/感冒\n或打预防针可以不生病等"
+        "passCondition": "小儿能表达出预防生病/感冒\n或打预防针可以不生病等",
+        "score": 3.0,
+        "area": "language"
       },
       {
         "id": 259,
         "name": "毛衣、裤、鞋共同点",
         "desc": "毛衣、裤、鞋共同点",
         "operation": "主试者问小儿“毛衣、长裤和鞋有什么共同之处？”",
-        "passCondition": "小儿回答都是穿的、能保暖"
+        "passCondition": "小儿回答都是穿的、能保暖",
+        "score": 3.0,
+        "area": "language"
       }
     ]
   },
@@ -2256,14 +2674,18 @@
         "name": "对发声的人有注视",
         "desc": "对发声的人有注视",
         "operation": "主试者面对婴儿的脸微笑并对其说话。但不能触碰婴儿\n的面孔或身体",
-        "passCondition": "婴儿能注视主试者的脸"
+        "passCondition": "婴儿能注视主试者的脸",
+        "score": 0.5,
+        "area": "social"
       },
       {
         "id": 10,
         "name": "眼跟踪走动的人",
         "desc": "眼跟踪走动的人",
         "operation": "婴儿横放在床上或斜躺在家长臂弯里，主试者站立（直\n立位，勿弯腰）逗引婴儿引起其注意后左右走动，观察\n婴儿眼睛是否追随主试者",
-        "passCondition": "眼睛随走动的人转动"
+        "passCondition": "眼睛随走动的人转动",
+        "score": 0.5,
+        "area": "social"
       }
     ]
   },
@@ -2277,14 +2699,18 @@
         "name": "自发微笑 R",
         "desc": "自发微笑 R",
         "operation": "观察或询问婴儿在无外界逗引时是否有自发微笑的情况",
-        "passCondition": "婴儿能自发出现微笑， 但不一\n定出声。睡眠时微笑不通过"
+        "passCondition": "婴儿能自发出现微笑， 但不一\n定出声。睡眠时微笑不通过",
+        "score": 0.5,
+        "area": "social"
       },
       {
         "id": 20,
         "name": "逗引时有反应",
         "desc": "逗引时有反应",
         "operation": "婴儿仰卧，主试者弯腰，对婴儿点头微笑或说话进行逗\n引，观察其反应。但不能触碰婴儿的面孔或身体",
-        "passCondition": "经逗引， 婴儿会出现微笑、发\n声、手脚乱动等一种或多种表\n现"
+        "passCondition": "经逗引， 婴儿会出现微笑、发\n声、手脚乱动等一种或多种表\n现",
+        "score": 0.5,
+        "area": "social"
       }
     ]
   },
@@ -2298,14 +2724,18 @@
         "name": "见人会笑",
         "desc": "见人会笑",
         "operation": "主试者面对婴儿，不做出接近性的社交行为或动作，观\n察婴儿在无人逗引时的表情",
-        "passCondition": "婴儿见到人自行笑起来"
+        "passCondition": "婴儿见到人自行笑起来",
+        "score": 0.5,
+        "area": "social"
       },
       {
         "id": 29,
         "name": "灵敏模样",
         "desc": "灵敏模样",
         "operation": "主试者观察婴儿在不经逗引的情况下，对周围人和环境\n的反应",
-        "passCondition": "婴儿不经逗引可观察周围环\n境，眼会东张西望"
+        "passCondition": "婴儿不经逗引可观察周围环\n境，眼会东张西望",
+        "score": 0.5,
+        "area": "social"
       }
     ]
   },
@@ -2319,14 +2749,18 @@
         "name": "注视镜中人像",
         "desc": "注视镜中人像",
         "operation": "将无边镜子横放在婴儿面前约20cm处，主试者或母亲可\n在镜中逗引婴儿，观察婴儿反应",
-        "passCondition": "婴儿可经逗引或自发注视镜\n中人像"
+        "passCondition": "婴儿可经逗引或自发注视镜\n中人像",
+        "score": 0.5,
+        "area": "social"
       },
       {
         "id": 39,
         "name": "认亲人 R",
         "desc": "认亲人 R",
         "operation": "观察婴儿在看到母亲或其他亲人或听到亲人声音后的表\n情变化",
-        "passCondition": "观察或询问， 在见到母亲或其\n他亲人时， 婴儿会变得高兴起\n来"
+        "passCondition": "观察或询问， 在见到母亲或其\n他亲人时， 婴儿会变得高兴起\n来",
+        "score": 0.5,
+        "area": "social"
       }
     ]
   },
@@ -2340,14 +2774,18 @@
         "name": "对镜有游戏反应",
         "desc": "对镜有游戏反应",
         "operation": "将无边镜子竖放在婴儿面前约20cm处，主试者及家长影\n像不能在镜内出现，观察婴儿反应",
-        "passCondition": "对镜中自己的影像有面部表\n情变化或伴有肢体动作。"
+        "passCondition": "对镜中自己的影像有面部表\n情变化或伴有肢体动作。",
+        "score": 0.5,
+        "area": "social"
       },
       {
         "id": 48,
         "name": "见食物兴奋 R",
         "desc": "见食物兴奋 R",
         "operation": "观察婴儿看到奶瓶、饼干、水等食物时的反应",
-        "passCondition": "观察或询问， 当婴儿看到奶瓶\n或母亲乳房时， 表现出高兴要\n吃的样子"
+        "passCondition": "观察或询问， 当婴儿看到奶瓶\n或母亲乳房时， 表现出高兴要\n吃的样子",
+        "score": 0.5,
+        "area": "social"
       }
     ]
   },
@@ -2361,14 +2799,18 @@
         "name": "自喂食物 R",
         "desc": "自喂食物 R",
         "operation": "观察或询问婴儿拿到一块饼干或其他能拿住的食物时，\n能否送至口中并咀嚼",
-        "passCondition": "能将饼干送入口中并咀嚼， 有\n张嘴咬的动作而不是吸吮"
+        "passCondition": "能将饼干送入口中并咀嚼， 有\n张嘴咬的动作而不是吸吮",
+        "score": 0.5,
+        "area": "social"
       },
       {
         "id": 58,
         "name": "会躲猫猫",
         "desc": "会躲猫猫",
         "operation": "主试者把自己的脸藏在一张中心有孔的A4纸后面（孔直\n径0.5cm），呼唤婴儿名字，婴儿听到声音，观望时，主\n试者沿纸边在纸的同一侧反复出现两次并逗引说“喵、\n喵”，第三次呼唤婴儿名字后从纸孔观察婴儿表情",
-        "passCondition": "第三次呼唤婴儿时， 婴儿视线\n再次转向主试者刚才露脸的\n方向"
+        "passCondition": "第三次呼唤婴儿时， 婴儿视线\n再次转向主试者刚才露脸的\n方向",
+        "score": 0.5,
+        "area": "social"
       }
     ]
   },
@@ -2382,14 +2824,18 @@
         "name": "抱脚玩",
         "desc": "抱脚玩",
         "operation": "婴儿仰卧，观察其是否会自发或在主试者协助下将脚放\n入手中后玩脚",
-        "passCondition": "婴儿能抱住脚玩或吸吮"
+        "passCondition": "婴儿能抱住脚玩或吸吮",
+        "score": 0.5,
+        "area": "social"
       },
       {
         "id": 67,
         "name": "能认生人 R",
         "desc": "能认生人 R",
         "operation": "观察或询问婴儿对陌生人的反应",
-        "passCondition": "婴儿有拒抱、哭、不高兴或惊\n奇等表现"
+        "passCondition": "婴儿有拒抱、哭、不高兴或惊\n奇等表现",
+        "score": 0.5,
+        "area": "social"
       }
     ]
   },
@@ -2403,7 +2849,9 @@
         "name": "懂得成人面部表情",
         "desc": "懂得成人面部表情",
         "operation": "主试者或家长对婴儿训斥或赞许，观察其反应",
-        "passCondition": "婴儿表现出委屈或兴奋等反\n应"
+        "passCondition": "婴儿表现出委屈或兴奋等反\n应",
+        "score": 1.0,
+        "area": "social"
       }
     ]
   },
@@ -2417,7 +2865,9 @@
         "name": "表示不要 R",
         "desc": "表示不要 R",
         "operation": "观察或询问婴儿对不感兴趣的物品的反应",
-        "passCondition": "观察或询问， 婴儿对不要之物\n有摇头或推开的动作"
+        "passCondition": "观察或询问， 婴儿对不要之物\n有摇头或推开的动作",
+        "score": 1.0,
+        "area": "social"
       }
     ]
   },
@@ -2431,14 +2881,18 @@
         "name": "懂得常见物及人名称",
         "desc": "懂得常见物及人名称",
         "operation": "主试者问婴儿 “妈妈在哪里？”“灯在哪里？”“阿姨\n在哪里？”等人或物的名称，观察其反应",
-        "passCondition": "婴儿会用眼睛注视或指出2种\n或以上的人或物"
+        "passCondition": "婴儿会用眼睛注视或指出2种\n或以上的人或物",
+        "score": 0.5,
+        "area": "social"
       },
       {
         "id": 93,
         "name": "按指令取东西",
         "desc": "按指令取东西",
         "operation": "将娃娃、球和杯子并排放在婴儿双手可及的桌面上，鼓\n励婴儿按指令取其中的一件。（每样东西交替问两次，\n不能连续问）",
-        "passCondition": "婴儿能理解指令并成功拿对\n其中一种或一种以上物品"
+        "passCondition": "婴儿能理解指令并成功拿对\n其中一种或一种以上物品",
+        "score": 0.5,
+        "area": "social"
       }
     ]
   },
@@ -2452,14 +2906,18 @@
         "name": "会从杯中喝水 R",
         "desc": "会从杯中喝水 R",
         "operation": "观察或询问婴儿能否从成人拿的杯子里喝到水",
-        "passCondition": "观察或询问， 婴儿能从杯中喝\n到水"
+        "passCondition": "观察或询问， 婴儿能从杯中喝\n到水",
+        "score": 0.5,
+        "area": "social"
       },
       {
         "id": 102,
         "name": "会摘帽子",
         "desc": "会摘帽子",
         "operation": "主试者将帽子戴在婴儿头上，观察其能否摘下帽子",
-        "passCondition": "婴儿能用单手或双手摘下帽\n子"
+        "passCondition": "婴儿能用单手或双手摘下帽\n子",
+        "score": 0.5,
+        "area": "social"
       }
     ]
   },
@@ -2473,14 +2931,18 @@
         "name": "穿衣知配合 R",
         "desc": "穿衣知配合 R",
         "operation": "观察或询问成人给小儿穿衣时的配合情况",
-        "passCondition": "穿衣时小儿合作，会有伸手、\n伸腿等配合动作， 不一定穿进\n去"
+        "passCondition": "穿衣时小儿合作，会有伸手、\n伸腿等配合动作， 不一定穿进\n去",
+        "score": 0.5,
+        "area": "social"
       },
       {
         "id": 111,
         "name": "共同注意 R",
         "desc": "共同注意 R",
         "operation": "观察或询问，对家长指示的某一场景或过程，小儿能否\n与家长一起关注",
-        "passCondition": "小儿有共同注意过程"
+        "passCondition": "小儿有共同注意过程",
+        "score": 0.5,
+        "area": "social"
       }
     ]
   },
@@ -2494,7 +2956,9 @@
         "name": "会脱袜子 R",
         "desc": "会脱袜子 R",
         "operation": "观察或询问小儿脱袜子的方法",
-        "passCondition": "观察或询问， 小儿能正确且有\n意识地脱下袜子"
+        "passCondition": "观察或询问， 小儿能正确且有\n意识地脱下袜子",
+        "score": 3.0,
+        "area": "social"
       }
     ]
   },
@@ -2508,14 +2972,18 @@
         "name": "白天能控制大小便 R",
         "desc": "白天能控制大小便 R",
         "operation": "观察或询问小儿大小便控制情况，或询问白天是否尿湿\n裤子",
-        "passCondition": "经人提醒或主动示意大小便，\n白天基本不尿湿裤子"
+        "passCondition": "经人提醒或主动示意大小便，\n白天基本不尿湿裤子",
+        "score": 1.5,
+        "area": "social"
       },
       {
         "id": 127,
         "name": "会用匙 R",
         "desc": "会用匙 R",
         "operation": "观察或询问小儿是否会自己用匙",
-        "passCondition": "小儿能自己用匙吃饭， 允许少\n量遗洒"
+        "passCondition": "小儿能自己用匙吃饭， 允许少\n量遗洒",
+        "score": 1.5,
+        "area": "social"
       }
     ]
   },
@@ -2529,14 +2997,18 @@
         "name": "能表示个人需要 R",
         "desc": "能表示个人需要 R",
         "operation": "观察或询问小儿是否会明确表示自己的需要",
-        "passCondition": "小儿会说出三种或以上的需\n要， 如“吃饭、喝水、玩汽车、\n上街”等，可伴手势"
+        "passCondition": "小儿会说出三种或以上的需\n要， 如“吃饭、喝水、玩汽车、\n上街”等，可伴手势",
+        "score": 1.5,
+        "area": "social"
       },
       {
         "id": 137,
         "name": "想象性游戏 R",
         "desc": "想象性游戏 R",
         "operation": "观察或询问小儿是否有想象性游戏，如假装给娃娃或动\n物玩具喂饭、盖被子、打针等",
-        "passCondition": "小儿有想象性游戏"
+        "passCondition": "小儿有想象性游戏",
+        "score": 1.5,
+        "area": "social"
       }
     ]
   },
@@ -2550,14 +3022,18 @@
         "name": "会打招呼",
         "desc": "会打招呼",
         "operation": "示范或不示范小儿见人打招呼",
-        "passCondition": "小儿会自发或模仿说“你好”、\n“再见”等"
+        "passCondition": "小儿会自发或模仿说“你好”、\n“再见”等",
+        "score": 1.5,
+        "area": "social"
       },
       {
         "id": 145,
         "name": "问“这是什么？ ”R",
         "desc": "问“这是什么？ ”R",
         "operation": "观察或询问，小儿在见到某物时，是否能自发提问“这\n是什么？”",
-        "passCondition": "小儿会自发提出问题， 主动问\n“这是什么？”"
+        "passCondition": "小儿会自发提出问题， 主动问\n“这是什么？”",
+        "score": 1.5,
+        "area": "social"
       }
     ]
   },
@@ -2571,14 +3047,18 @@
         "name": "脱单衣或裤 R",
         "desc": "脱单衣或裤 R",
         "operation": "观察或询问小儿是否会自己脱上衣或裤子",
-        "passCondition": "小儿不用帮忙， 自己脱掉单衣\n或单裤"
+        "passCondition": "小儿不用帮忙， 自己脱掉单衣\n或单裤",
+        "score": 1.5,
+        "area": "social"
       },
       {
         "id": 155,
         "name": "开始有是非观念",
         "desc": "开始有是非观念",
         "operation": "主试者问小儿“打人对不对？ ”，观察小儿的反应或回\n答",
-        "passCondition": "小儿摇头或说出不对"
+        "passCondition": "小儿摇头或说出不对",
+        "score": 1.5,
+        "area": "social"
       }
     ]
   },
@@ -2592,14 +3072,18 @@
         "name": "来回倒水不洒",
         "desc": "来回倒水不洒",
         "operation": "在一个无把儿的杯中注入1/3杯水，主试者示范将水倒入\n另一杯中，来回各倒一次，鼓励小儿照样做",
-        "passCondition": "小儿会将水来回倒两次，不洒\n水"
+        "passCondition": "小儿会将水来回倒两次，不洒\n水",
+        "score": 1.5,
+        "area": "social"
       },
       {
         "id": 164,
         "name": "女孩扔果皮",
         "desc": "女孩扔果皮",
         "operation": "出示图片， 问小儿 “乱扔垃圾是不对的，你看这个小女\n孩吃完的果皮应该扔哪儿？”，鼓励小儿回答",
-        "passCondition": "小儿能正确回答或指出应该\n扔垃圾筐"
+        "passCondition": "小儿能正确回答或指出应该\n扔垃圾筐",
+        "score": 1.5,
+        "area": "social"
       }
     ]
   },
@@ -2613,14 +3097,18 @@
         "name": "会穿鞋",
         "desc": "会穿鞋",
         "operation": "主试者将小儿鞋脱下，鞋尖对着小儿，鼓励其穿上",
-        "passCondition": "小儿会穿进鞋并将鞋提上， 不\n要求分左右"
+        "passCondition": "小儿会穿进鞋并将鞋提上， 不\n要求分左右",
+        "score": 1.5,
+        "area": "social"
       },
       {
         "id": 173,
         "name": "解扣子",
         "desc": "解扣子",
         "operation": "出示娃娃，鼓励小儿解扣子，主试者应辅助小儿固定娃\n娃衣服",
-        "passCondition": "小儿会自己解开某一个扣子"
+        "passCondition": "小儿会自己解开某一个扣子",
+        "score": 1.5,
+        "area": "social"
       }
     ]
   },
@@ -2634,14 +3122,18 @@
         "name": "懂得“饿了、冷了、累了 ”",
         "desc": "懂得“饿了、冷了、累了 ”",
         "operation": "主试者依次问“饿了怎么办？冷了怎么办？累了怎么\n办？”",
-        "passCondition": "小儿能正确回答两问或以上\n吃饭、穿衣、休息等"
+        "passCondition": "小儿能正确回答两问或以上\n吃饭、穿衣、休息等",
+        "score": 1.5,
+        "area": "social"
       },
       {
         "id": 182,
         "name": "扣扣子",
         "desc": "扣扣子",
         "operation": "出示娃娃，鼓励小儿扣扣子，主试者应辅助小儿固定娃\n娃衣服",
-        "passCondition": "小儿能自己扣上娃娃的某一\n个扣子"
+        "passCondition": "小儿能自己扣上娃娃的某一\n个扣子",
+        "score": 1.5,
+        "area": "social"
       }
     ]
   },
@@ -2655,14 +3147,18 @@
         "name": "会穿上衣 R",
         "desc": "会穿上衣 R",
         "operation": "观察小儿是否会穿上衣",
-        "passCondition": "小儿无需大人帮忙， 会穿上衣\n并将扣子扣好或拉锁拉好"
+        "passCondition": "小儿无需大人帮忙， 会穿上衣\n并将扣子扣好或拉锁拉好",
+        "score": 3.0,
+        "area": "social"
       },
       {
         "id": 192,
         "name": "吃饭之前为什么要洗手？",
         "desc": "吃饭之前为什么要洗手？",
         "operation": "主试者问小儿“吃饭之前为什么要洗手”？",
-        "passCondition": "小儿能回答出原因“为避免生\n病”等"
+        "passCondition": "小儿能回答出原因“为避免生\n病”等",
+        "score": 3.0,
+        "area": "social"
       }
     ]
   },
@@ -2676,14 +3172,18 @@
         "name": "会做集体游戏 R",
         "desc": "会做集体游戏 R",
         "operation": "观察或询问小儿能否做集体游戏",
-        "passCondition": "小儿能主动参加集体游戏， 并\n能遵守游戏规则"
+        "passCondition": "小儿能主动参加集体游戏， 并\n能遵守游戏规则",
+        "score": 3.0,
+        "area": "social"
       },
       {
         "id": 202,
         "name": "分辨男女厕所",
         "desc": "分辨男女厕所",
         "operation": "出示男女厕所标识图片，问小儿应该进哪个厕所，并提\n问“为什么”",
-        "passCondition": "小儿能正确识别标志并用语\n言表达出性别意义"
+        "passCondition": "小儿能正确识别标志并用语\n言表达出性别意义",
+        "score": 3.0,
+        "area": "social"
       }
     ]
   },
@@ -2697,14 +3197,18 @@
         "name": "懂得上午、下午",
         "desc": "懂得上午、下午",
         "operation": "如在上午测试， 主试者问（1）现在是上午还是下午？（2）\n太阳落山是在下午还是上午？   如在下午测试，则主试\n者问（1）现在是下午还是上午？（2）太阳升起是在上\n午还是下午？",
-        "passCondition": "两问均回答正确"
+        "passCondition": "两问均回答正确",
+        "score": 3.0,
+        "area": "social"
       },
       {
         "id": 212,
         "name": "数手指",
         "desc": "数手指",
         "operation": "主试者问小儿一只手有几个手指，如答对，再问两只手\n有几个手指",
-        "passCondition": "小儿会心算出两手有十个手\n指"
+        "passCondition": "小儿会心算出两手有十个手\n指",
+        "score": 3.0,
+        "area": "social"
       }
     ]
   },
@@ -2718,7 +3222,9 @@
         "name": "你家住哪里？",
         "desc": "你家住哪里？",
         "operation": "主试者问小儿“你家住在哪里？ ”，或追问“你再说详\n细些，我怎么送你回家呢？”",
-        "passCondition": "小儿说出的住址可使他人较\n容易找到"
+        "passCondition": "小儿说出的住址可使他人较\n容易找到",
+        "score": 6.0,
+        "area": "social"
       }
     ]
   },
@@ -2732,14 +3238,18 @@
         "name": "为什么要走人行横道？",
         "desc": "为什么要走人行横道？",
         "operation": "主试者问小儿:“过马路为什么要走人行横道? ”",
-        "passCondition": "小儿能正确回答。为了安全，\n如怕被汽车撞了等"
+        "passCondition": "小儿能正确回答。为了安全，\n如怕被汽车撞了等",
+        "score": 3.0,
+        "area": "social"
       },
       {
         "id": 231,
         "name": "鸡在水中游",
         "desc": "鸡在水中游",
         "operation": "出示鸡在水中游图画，主试者问小儿画的对不对，如回\n答“不对”，问哪里画错了",
-        "passCondition": "小儿能正确回答鸡不能在水\n里游泳"
+        "passCondition": "小儿能正确回答鸡不能在水\n里游泳",
+        "score": 3.0,
+        "area": "social"
       }
     ]
   },
@@ -2753,14 +3263,18 @@
         "name": "一年有哪四个季节？",
         "desc": "一年有哪四个季节？",
         "operation": "主试者问小儿一年有哪四个季节",
-        "passCondition": "春、夏、秋、冬， 顺序可以颠\n倒"
+        "passCondition": "春、夏、秋、冬， 顺序可以颠\n倒",
+        "score": 3.0,
+        "area": "social"
       },
       {
         "id": 241,
         "name": "认识标识",
         "desc": "认识标识",
         "operation": "依次出示两组标识图片， 问“哪一个是代表危险的标志？\n为什么？”",
-        "passCondition": "两组图均正确指出危险的标\n志，并说对理由"
+        "passCondition": "两组图均正确指出危险的标\n志，并说对理由",
+        "score": 3.0,
+        "area": "social"
       }
     ]
   },
@@ -2774,14 +3288,18 @@
         "name": "懂得星期几",
         "desc": "懂得星期几",
         "operation": "主试者先告诉小儿今天是星期几，然后提问“请告诉我\n后天是星期几？明天是星期几？”",
-        "passCondition": "小儿均能正确说出"
+        "passCondition": "小儿均能正确说出",
+        "score": 3.0,
+        "area": "social"
       },
       {
         "id": 251,
         "name": "雨中看书",
         "desc": "雨中看书",
         "operation": "出示雨中看书图片，主试者问小儿画的对不对，如回答\n“不对”，问哪里画错了",
-        "passCondition": "小儿能正确回答下雨了， 不能\n在雨里看书，会淋湿、生病、\n书湿了"
+        "passCondition": "小儿能正确回答下雨了， 不能\n在雨里看书，会淋湿、生病、\n书湿了",
+        "score": 3.0,
+        "area": "social"
       }
     ]
   },
@@ -2795,14 +3313,18 @@
         "name": "紧急电话",
         "desc": "紧急电话",
         "operation": "主试者分别问小儿火警、匪警（找警察帮助）、急救电\n话是多少？",
-        "passCondition": "小儿能正确回答出两种或以\n上电话号码"
+        "passCondition": "小儿能正确回答出两种或以\n上电话号码",
+        "score": 3.0,
+        "area": "social"
       },
       {
         "id": 261,
         "name": "猫头鹰抓老鼠",
         "desc": "猫头鹰抓老鼠",
         "operation": "出示猫头鹰抓老鼠图片，主试者问小儿画的对不对，如\n回答“不对”，问哪里画错了",
-        "passCondition": "小儿能正确回答猫头鹰白天\n睡觉， 不会在白天出来抓老鼠"
+        "passCondition": "小儿能正确回答猫头鹰白天\n睡觉， 不会在白天出来抓老鼠",
+        "score": 3.0,
+        "area": "social"
       }
     ]
   }

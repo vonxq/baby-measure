@@ -301,6 +301,13 @@ class AssessmentService {
     return 1.0; // 默认
   }
 
+  // 计算单个项目的分值
+  double getItemScore(int age, int itemCount) {
+    double totalScore = getAreaScoreForAge('', age); // area参数在这里不重要
+    if (itemCount == 0) return 0.0;
+    return totalScore / itemCount;
+  }
+
   // 计算发育商
   double calculateDevelopmentQuotient(double mentalAge, double actualAge) {
     if (actualAge == 0) return 0;

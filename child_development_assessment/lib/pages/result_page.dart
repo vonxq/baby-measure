@@ -568,7 +568,11 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                   Row(
                     children: [
                       Expanded(
-                        child: _buildResultItem('得分', '${score.toStringAsFixed(1)}分'),
+                        child: _buildResultItem('智龄', '${score.toStringAsFixed(1)}月'),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildResultItem('发育商', '${_calculateAreaDQ(score).toStringAsFixed(1)}'),
                       ),
                     ],
                   ),
@@ -579,6 +583,15 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  // 计算能区发育商
+  double _calculateAreaDQ(double mentalAge) {
+    // 从provider获取实际年龄
+    final provider = Provider.of<AssessmentProvider>(context, listen: false);
+    double actualAge = provider.actualAge;
+    if (actualAge == 0) return 0;
+    return (mentalAge / actualAge) * 100;
   }
 
   String _getAreaDisplayName(String areaName) {

@@ -67,6 +67,24 @@ def get_score(age_month: int) -> float:
     else:
         return 0.0
 
+def get_item_score(age_month: int, item_count: int) -> float:
+    """根据月龄和项目数量计算单个项目的分值"""
+    total_score = get_score(age_month)
+    if item_count == 0:
+        return 0.0
+    return total_score / item_count
+
+def get_area_display_name(area: str) -> str:
+    """获取能区的中文显示名称"""
+    area_mapping = {
+        'motor': '大运动',
+        'fineMotor': '精细动作', 
+        'language': '语言',
+        'adaptive': '适应能力',
+        'social': '社会行为'
+    }
+    return area_mapping.get(area, area)
+
 def find_operation_info(item_id: int, operation_df: pd.DataFrame) -> Dict[str, str]:
     """在操作方法表中查找对应的操作方法和通过要求"""
     for _, row in operation_df.iterrows():
@@ -115,7 +133,9 @@ def generate_assessment_data():
                     'name': item_info['name'],
                     'desc': item_info['name'],  # 描述暂时使用名称
                     'operation': operation_info['operation'],
-                    'passCondition': operation_info['passCondition']
+                    'passCondition': operation_info['passCondition'],
+                    'score': 0.0,  # 临时分值，稍后计算
+                    'area': area  # 添加能区字段
                 }
                 
                 # 检查是否已存在该月龄和能区的数据
@@ -136,6 +156,14 @@ def generate_assessment_data():
                         'score': get_score(age_month),
                         'testItems': [test_item]
                     })
+    
+    # 计算每个项目的分值
+    for item in assessment_data:
+        item_count = len(item['testItems'])
+        if item_count > 0:
+            item_score = get_item_score(item['ageMonth'], item_count)
+            for test_item in item['testItems']:
+                test_item['score'] = item_score
     
     return assessment_data
 
