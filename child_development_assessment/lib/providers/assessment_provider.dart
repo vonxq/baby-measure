@@ -444,35 +444,57 @@ class AssessmentProvider with ChangeNotifier {
 
   // 检查指定能区是否连续通过指定月龄数
   bool _hasConsecutivePassForArea(String area, int consecutiveCount) {
-    List<int> forwardAges = _getForwardTestAges(_mainTestAge);
+    // 获取所有已测试的向前月龄（从主测月龄开始向前）
+    List<int> testedForwardAges = _getAllTestedForwardAges();
     int consecutivePassCount = 0;
     
-    for (int age in forwardAges) {
+    for (int age in testedForwardAges) {
       bool allPassed = true;
+      bool hasTestedItems = false;
       
       // 检查该月龄下该能区的所有项目是否都通过
       for (var data in _allData) {
         if (data.ageMonth == age && data.area == area) {
           for (var item in data.testItems) {
-            if (_testResults.containsKey(item.id) && !_testResults[item.id]!) {
-              allPassed = false;
-              break;
+            if (_testResults.containsKey(item.id)) {
+              hasTestedItems = true;
+              if (!_testResults[item.id]!) {
+                allPassed = false;
+                break;
+              }
             }
           }
         }
       }
       
-      if (allPassed) {
-        consecutivePassCount++;
-        if (consecutivePassCount >= consecutiveCount) {
-          return true;
+      // 只有当该月龄有测试项目时才计数
+      if (hasTestedItems) {
+        if (allPassed) {
+          consecutivePassCount++;
+          if (consecutivePassCount >= consecutiveCount) {
+            return true;
+          }
+        } else {
+          consecutivePassCount = 0; // 重置连续计数
         }
-      } else {
-        consecutivePassCount = 0; // 重置连续计数
       }
     }
     
     return false;
+  }
+
+  // 获取所有已测试的向前月龄
+  List<int> _getAllTestedForwardAges() {
+    List<int> ageGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
+    int mainIndex = ageGroups.indexOf(_mainTestAge);
+    if (mainIndex == -1) return [];
+    
+    List<int> testedAges = [];
+    for (int i = mainIndex - 1; i >= 0; i--) {
+      testedAges.add(ageGroups[i]);
+    }
+    
+    return testedAges;
   }
 
   // 获取下一个向前测试月龄
@@ -516,35 +538,57 @@ class AssessmentProvider with ChangeNotifier {
 
   // 检查指定能区是否连续不通过指定月龄数
   bool _hasConsecutiveFailForArea(String area, int consecutiveCount) {
-    List<int> backwardAges = _getBackwardTestAges(_mainTestAge);
+    // 获取所有已测试的向后月龄（从主测月龄开始向后）
+    List<int> testedBackwardAges = _getAllTestedBackwardAges();
     int consecutiveFailCount = 0;
     
-    for (int age in backwardAges) {
+    for (int age in testedBackwardAges) {
       bool allFailed = true;
+      bool hasTestedItems = false;
       
       // 检查该月龄下该能区的所有项目是否都不通过
       for (var data in _allData) {
         if (data.ageMonth == age && data.area == area) {
           for (var item in data.testItems) {
-            if (_testResults.containsKey(item.id) && _testResults[item.id]!) {
-              allFailed = false;
-              break;
+            if (_testResults.containsKey(item.id)) {
+              hasTestedItems = true;
+              if (_testResults[item.id]!) {
+                allFailed = false;
+                break;
+              }
             }
           }
         }
       }
       
-      if (allFailed) {
-        consecutiveFailCount++;
-        if (consecutiveFailCount >= consecutiveCount) {
-          return true;
+      // 只有当该月龄有测试项目时才计数
+      if (hasTestedItems) {
+        if (allFailed) {
+          consecutiveFailCount++;
+          if (consecutiveFailCount >= consecutiveCount) {
+            return true;
+          }
+        } else {
+          consecutiveFailCount = 0; // 重置连续计数
         }
-      } else {
-        consecutiveFailCount = 0; // 重置连续计数
       }
     }
     
     return false;
+  }
+
+  // 获取所有已测试的向后月龄
+  List<int> _getAllTestedBackwardAges() {
+    List<int> ageGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
+    int mainIndex = ageGroups.indexOf(_mainTestAge);
+    if (mainIndex == -1) return [];
+    
+    List<int> testedAges = [];
+    for (int i = mainIndex + 1; i < ageGroups.length; i++) {
+      testedAges.add(ageGroups[i]);
+    }
+    
+    return testedAges;
   }
 
   // 获取下一个向后测试月龄
