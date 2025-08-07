@@ -430,12 +430,23 @@ class AssessmentProvider with ChangeNotifier {
   int getCurrentAreaTotalCount() {
     int baseCount = _currentStageItems.length;
     
-    // 如果当前阶段是向前或向后测查，估算额外项目
+    // 如果当前阶段是向前或向后测查，计算实际需要测试的项目数
     if (_currentStage == TestStage.forward || _currentStage == TestStage.backward) {
-      // 根据已测试的月龄数估算额外项目
+      // 获取当前能区所有已测试月龄的项目总数
       List<int> testedAges = _areaTestedAges[_currentArea] ?? [];
-      int additionalAges = testedAges.length - 1; // 减去主测月龄
-      baseCount += additionalAges * 3; // 假设每个额外月龄3个项目
+      int totalItemsForAllAges = 0;
+      
+      for (int age in testedAges) {
+        String areaString = _getAreaString(_currentArea);
+        for (var data in _allData) {
+          if (data.ageMonth == age && data.area == areaString) {
+            totalItemsForAllAges += data.testItems.length;
+          }
+        }
+      }
+      
+      // 返回所有相关月龄的项目总数
+      return totalItemsForAllAges;
     }
     
     return baseCount;
