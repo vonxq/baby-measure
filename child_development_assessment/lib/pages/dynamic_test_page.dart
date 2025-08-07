@@ -145,16 +145,6 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                             ],
                           ),
                         ),
-                        IconButton(
-                          onPressed: () => _showExitDialog(context),
-                          icon: const Icon(Icons.exit_to_app),
-                          style: IconButton.styleFrom(
-                            backgroundColor: Colors.red[50],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ),

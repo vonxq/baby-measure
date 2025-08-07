@@ -378,21 +378,23 @@ class AssessmentProvider with ChangeNotifier {
         }
         break;
       case TestStage.forward:
-        // 当前向前月龄测试完成，检查是否还有更多向前月龄需要测试
+        // 当前向前月龄测试完成，检查是否需要继续向前测试
         _currentForwardIndex++;
-        if (_currentForwardIndex < _forwardTestAges.length) {
-          // 还有更多向前月龄需要测试，继续测试下一个
-          _loadCurrentStageItems();
-        } else {
-          // 向前测试完成，检查是否需要向后测试
-          if (_backwardTestAges.isNotEmpty) {
-            _currentStage = TestStage.backward;
-            _currentBackwardIndex = 0;
+        
+        // 检查当前能区是否已经连续通过2个月龄
+        if (_shouldContinueForwardTest()) {
+          // 需要继续向前测试，获取下一个向前月龄
+          int nextAge = _getNextForwardAge();
+          if (nextAge > 0) {
+            _currentTestAge = nextAge;
             _loadCurrentStageItems();
           } else {
-            _currentStage = TestStage.completed;
-            _generateFinalResult();
+            // 无法继续向前，检查是否需要向后测试
+            _moveToBackwardStage();
           }
+        } else {
+          // 当前能区向前测试完成，检查是否需要向后测试
+          _moveToBackwardStage();
         }
         break;
       case TestStage.backward:
@@ -414,6 +416,78 @@ class AssessmentProvider with ChangeNotifier {
     }
     
     notifyListeners();
+  }
+
+  // 检查是否应该继续向前测试
+  bool _shouldContinueForwardTest() {
+    // 检查每个能区是否已经连续通过2个月龄
+    final areas = ['motor', 'fineMotor', 'language', 'adaptive', 'social'];
+    
+    for (String area in areas) {
+      if (!_hasConsecutivePassForArea(area, 2)) {
+        return true; // 如果有任何能区未连续通过2个月龄，继续向前测试
+      }
+    }
+    
+    return false; // 所有能区都已连续通过2个月龄，停止向前测试
+  }
+
+  // 检查指定能区是否连续通过指定月龄数
+  bool _hasConsecutivePassForArea(String area, int consecutiveCount) {
+    List<int> forwardAges = _getForwardTestAges(_mainTestAge);
+    int consecutivePassCount = 0;
+    
+    for (int age in forwardAges) {
+      bool allPassed = true;
+      
+      // 检查该月龄下该能区的所有项目是否都通过
+      for (var data in _allData) {
+        if (data.ageMonth == age && data.area == area) {
+          for (var item in data.testItems) {
+            if (_testResults.containsKey(item.id) && !_testResults[item.id]!) {
+              allPassed = false;
+              break;
+            }
+          }
+        }
+      }
+      
+      if (allPassed) {
+        consecutivePassCount++;
+        if (consecutivePassCount >= consecutiveCount) {
+          return true;
+        }
+      } else {
+        consecutivePassCount = 0; // 重置连续计数
+      }
+    }
+    
+    return false;
+  }
+
+  // 获取下一个向前测试月龄
+  int _getNextForwardAge() {
+    List<int> ageGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
+    
+    // 找到当前测试月龄在列表中的位置
+    int currentIndex = ageGroups.indexOf(_currentTestAge);
+    if (currentIndex <= 0) {
+      return 0; // 无法继续向前
+    }
+    
+    return ageGroups[currentIndex - 1];
+  }
+
+  // 移动到向后测试阶段
+  void _moveToBackwardStage() {
+    if (_backwardTestAges.isNotEmpty) {
+      _currentStage = TestStage.backward;
+      _currentBackwardIndex = 0;
+      _loadCurrentStageItems();
+    } else {
+      _currentStage = TestStage.completed;
+      _generateFinalResult();
+    }
   }
 
   // 获取总进度
