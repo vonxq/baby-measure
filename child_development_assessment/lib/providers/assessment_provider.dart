@@ -224,9 +224,15 @@ class AssessmentProvider with ChangeNotifier {
   void _checkAndMoveToNextStage() {
     switch (_currentStage) {
       case TestStage.current:
-        // 主测月龄测试完成，开始向前测试
-        _currentStage = TestStage.forward;
-        _startForwardTest();
+        // 主测月龄测试完成，检查是否所有能区都已完成主测月龄测试
+        if (_isAllAreasCompletedForMainAge()) {
+          // 所有能区主测月龄测试完成，开始向前测试
+          _currentStage = TestStage.forward;
+          _startForwardTest();
+        } else {
+          // 移动到下一个能区继续主测月龄测试
+          _moveToNextAreaForMainAge();
+        }
         break;
       case TestStage.forward:
         // 向前测试完成，检查是否需要继续向前或开始向后
@@ -258,10 +264,69 @@ class AssessmentProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // 检查是否所有能区都已完成主测月龄测试
+  bool _isAllAreasCompletedForMainAge() {
+    for (TestArea area in TestArea.values) {
+      if (!_hasCompletedMainAgeForArea(area)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // 检查指定能区是否已完成主测月龄测试
+  bool _hasCompletedMainAgeForArea(TestArea area) {
+    String areaString = _getAreaString(area);
+    bool hasTestedItems = false;
+    
+    for (var data in _allData) {
+      if (data.ageMonth == _mainTestAge && data.area == areaString) {
+        for (var item in data.testItems) {
+          if (_testResults.containsKey(item.id)) {
+            hasTestedItems = true;
+          }
+        }
+      }
+    }
+    
+    return hasTestedItems;
+  }
+
+  // 移动到下一个能区继续主测月龄测试
+  void _moveToNextAreaForMainAge() {
+    // 按顺序移动到下一个能区
+    switch (_currentArea) {
+      case TestArea.motor:
+        _currentArea = TestArea.fineMotor;
+        break;
+      case TestArea.fineMotor:
+        _currentArea = TestArea.language;
+        break;
+      case TestArea.language:
+        _currentArea = TestArea.adaptive;
+        break;
+      case TestArea.adaptive:
+        _currentArea = TestArea.social;
+        break;
+      case TestArea.social:
+        // 所有能区主测月龄测试完成，开始向前测试
+        _currentStage = TestStage.forward;
+        _currentArea = TestArea.motor; // 重新从大运动开始
+        _startForwardTest();
+        return;
+    }
+    
+    // 重置该能区的测试状态，确保从主测月龄开始
+    _areaCurrentAge[_currentArea] = _mainTestAge;
+    _areaTestedAges[_currentArea] = [_mainTestAge];
+    
+    _loadCurrentAreaItems();
+  }
+
   // 开始向前测试
   void _startForwardTest() {
-    // 获取向前测试月龄
-    int forwardAge = _getPreviousAge(_areaCurrentAge[_currentArea] ?? _mainTestAge);
+    // 获取向前测试月龄（从主测月龄向前2个月龄）
+    int forwardAge = _getPreviousAge(_mainTestAge);
     if (forwardAge >= 1) {
       _areaCurrentAge[_currentArea] = forwardAge;
       _areaTestedAges[_currentArea]!.add(forwardAge);
@@ -290,7 +355,7 @@ class AssessmentProvider with ChangeNotifier {
 
   // 开始向后测试
   void _startBackwardTest() {
-    // 获取向后测试月龄
+    // 获取向后测试月龄（从主测月龄向后2个月龄）
     int backwardAge = _getNextAge(_mainTestAge);
     if (backwardAge <= 84) {
       _areaCurrentAge[_currentArea] = backwardAge;
@@ -389,87 +454,98 @@ class AssessmentProvider with ChangeNotifier {
   // 检查指定能区是否连续通过指定月龄数
   bool _hasConsecutivePassForArea(TestArea area, int consecutiveCount) {
     List<int> testedAges = _areaTestedAges[area] ?? [];
-    int consecutivePassCount = 0;
+    if (testedAges.length < consecutiveCount) {
+      return false; // 测试的月龄数不足
+    }
     
-    print('检查能区 $area 的连续通过情况');
-    print('已测试的月龄: $testedAges');
+    // 按时间顺序排序月龄（从大到小，因为向前测试是从大月龄到小月龄）
+    testedAges.sort((a, b) => b.compareTo(a));
     
-    for (int age in testedAges) {
-      bool allPassed = true;
-      bool hasTestedItems = false;
+    // 检查是否有连续的consecutiveCount个月龄都通过
+    for (int i = 0; i <= testedAges.length - consecutiveCount; i++) {
+      bool consecutivePassed = true;
       
-      // 检查该月龄下该能区的所有项目是否都通过
-      String areaString = _getAreaString(area);
-      for (var data in _allData) {
-        if (data.ageMonth == age && data.area == areaString) {
-          for (var item in data.testItems) {
-            if (_testResults.containsKey(item.id)) {
-              hasTestedItems = true;
-              if (!_testResults[item.id]!) {
-                allPassed = false;
-                break;
-              }
-            }
-          }
+      // 检查连续的consecutiveCount个月龄
+      for (int j = 0; j < consecutiveCount; j++) {
+        int age = testedAges[i + j];
+        if (!_hasAllItemsPassedForAgeAndArea(age, area)) {
+          consecutivePassed = false;
+          break;
         }
       }
       
-      print('月龄 $age: hasTestedItems=$hasTestedItems, allPassed=$allPassed');
-      
-      // 只有当该月龄有测试项目时才计数
-      if (hasTestedItems) {
-        if (allPassed) {
-          consecutivePassCount++;
-          print('连续通过计数: $consecutivePassCount');
-          if (consecutivePassCount >= consecutiveCount) {
-            print('达到连续通过要求: $consecutiveCount');
-            return true;
-          }
-        } else {
-          consecutivePassCount = 0; // 重置连续计数
-          print('重置连续通过计数');
-        }
+      if (consecutivePassed) {
+        return true;
       }
     }
     
-    print('未达到连续通过要求，最终计数: $consecutivePassCount');
     return false;
   }
 
   // 检查指定能区是否连续不通过指定月龄数
   bool _hasConsecutiveFailForArea(TestArea area, int consecutiveCount) {
     List<int> testedAges = _areaTestedAges[area] ?? [];
-    int consecutiveFailCount = 0;
+    if (testedAges.length < consecutiveCount) {
+      return false; // 测试的月龄数不足
+    }
     
-    for (int age in testedAges) {
-      bool allFailed = true;
-      bool hasTestedItems = false;
+    // 按时间顺序排序月龄（从小到大，因为向后测试是从小月龄到大月龄）
+    testedAges.sort((a, b) => a.compareTo(b));
+    
+    // 检查是否有连续的consecutiveCount个月龄都不通过
+    for (int i = 0; i <= testedAges.length - consecutiveCount; i++) {
+      bool consecutiveFailed = true;
       
-      // 检查该月龄下该能区的所有项目是否都不通过
-      String areaString = _getAreaString(area);
-      for (var data in _allData) {
-        if (data.ageMonth == age && data.area == areaString) {
-          for (var item in data.testItems) {
-            if (_testResults.containsKey(item.id)) {
-              hasTestedItems = true;
-              if (_testResults[item.id]!) {
-                allFailed = false;
-                break;
-              }
+      // 检查连续的consecutiveCount个月龄
+      for (int j = 0; j < consecutiveCount; j++) {
+        int age = testedAges[i + j];
+        if (_hasAnyItemPassedForAgeAndArea(age, area)) {
+          consecutiveFailed = false;
+          break;
+        }
+      }
+      
+      if (consecutiveFailed) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  // 检查指定月龄和能区的所有项目是否都通过
+  bool _hasAllItemsPassedForAgeAndArea(int age, TestArea area) {
+    String areaString = _getAreaString(area);
+    bool hasTestedItems = false;
+    bool allPassed = true;
+    
+    for (var data in _allData) {
+      if (data.ageMonth == age && data.area == areaString) {
+        for (var item in data.testItems) {
+          if (_testResults.containsKey(item.id)) {
+            hasTestedItems = true;
+            if (!_testResults[item.id]!) {
+              allPassed = false;
+              break;
             }
           }
         }
       }
-      
-      // 只有当该月龄有测试项目时才计数
-      if (hasTestedItems) {
-        if (allFailed) {
-          consecutiveFailCount++;
-          if (consecutiveFailCount >= consecutiveCount) {
+    }
+    
+    return hasTestedItems && allPassed;
+  }
+
+  // 检查指定月龄和能区是否有任何项目通过
+  bool _hasAnyItemPassedForAgeAndArea(int age, TestArea area) {
+    String areaString = _getAreaString(area);
+    
+    for (var data in _allData) {
+      if (data.ageMonth == age && data.area == areaString) {
+        for (var item in data.testItems) {
+          if (_testResults.containsKey(item.id) && _testResults[item.id]!) {
             return true;
           }
-        } else {
-          consecutiveFailCount = 0; // 重置连续计数
         }
       }
     }
@@ -509,8 +585,9 @@ class AssessmentProvider with ChangeNotifier {
       totalScore += areaScore;
     }
     
-    double averageScore = totalScore / 5.0; // 5个能区
-    double dq = (averageScore / _actualAge) * 100;
+    // 将五个能区所得分数相加，再除以5就是总的智龄
+    double mentalAge = totalScore / 5.0; // 5个能区
+    double dq = (mentalAge / _actualAge) * 100;
     
     _finalResult = TestResult(
       userName: _userName,
@@ -518,7 +595,7 @@ class AssessmentProvider with ChangeNotifier {
       mainTestAge: _mainTestAge,
       areaScores: areaScores,
       totalScore: totalScore,
-      averageScore: averageScore,
+      averageScore: mentalAge, // 平均分就是智龄
       dq: dq,
       testResults: Map.from(_testResults),
     );
@@ -529,13 +606,38 @@ class AssessmentProvider with ChangeNotifier {
   // 计算指定能区的得分
   double _calculateAreaScore(TestArea area) {
     List<int> testedAges = _areaTestedAges[area] ?? [];
-    double score = 0.0;
+    if (testedAges.isEmpty) return 0.0;
     
-    // 按月龄段计算得分
+    // 按时间顺序排序月龄（从大到小）
+    testedAges.sort((a, b) => b.compareTo(a));
+    
+    double score = 0.0;
     String areaString = _getAreaString(area);
+    
+    // 找到连续通过的最高月龄
+    int highestConsecutivePassAge = 0;
+    int consecutivePassCount = 0;
+    
     for (int age in testedAges) {
-      for (var data in _allData) {
-        if (data.ageMonth == age && data.area == areaString) {
+      if (_hasAllItemsPassedForAgeAndArea(age, area)) {
+        consecutivePassCount++;
+        if (consecutivePassCount >= 2) {
+          // 连续2个月龄都通过，找到最高月龄
+          highestConsecutivePassAge = age;
+          break;
+        }
+      } else {
+        consecutivePassCount = 0;
+      }
+    }
+    
+    // 如果找到了连续通过的最高月龄，计算该能区的智龄
+    if (highestConsecutivePassAge > 0) {
+      // 计算从1月龄到最高通过月龄的所有月龄的分数
+      List<int> allAgeGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
+      
+      for (int age in allAgeGroups) {
+        if (age <= highestConsecutivePassAge) {
           // 计算该月龄该能区的总分
           double ageAreaScore = 0.0;
           if (age >= 1 && age <= 12) {
@@ -546,18 +648,24 @@ class AssessmentProvider with ChangeNotifier {
             ageAreaScore = 6.0; // 42月龄～84月龄每个能区6.0分
           }
           
-          // 计算通过的项目数量
+          // 计算该月龄该能区通过的项目数量
           int passedItems = 0;
-          for (var item in data.testItems) {
-            if (_testResults.containsKey(item.id) && _testResults[item.id]!) {
-              passedItems++;
+          int totalItems = 0;
+          for (var data in _allData) {
+            if (data.ageMonth == age && data.area == areaString) {
+              totalItems += data.testItems.length;
+              for (var item in data.testItems) {
+                if (_testResults.containsKey(item.id) && _testResults[item.id]!) {
+                  passedItems++;
+                }
+              }
             }
           }
           
           // 如果该月龄该能区有测试项目，计算得分
-          if (data.testItems.isNotEmpty) {
+          if (totalItems > 0) {
             // 每个通过的项目得分 = 该月龄该能区总分 / 该月龄该能区项目总数
-            double itemScore = ageAreaScore / data.testItems.length;
+            double itemScore = ageAreaScore / totalItems;
             score += itemScore * passedItems;
           }
         }
