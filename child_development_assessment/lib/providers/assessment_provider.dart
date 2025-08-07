@@ -353,7 +353,7 @@ class AssessmentProvider with ChangeNotifier {
     
     for (TestArea area in TestArea.values) {
       double areaScore = _areaScores[area] ?? 0.0;
-      areaScores[area.toString()] = areaScore;
+      areaScores[_getAreaString(area)] = areaScore;
       totalScore += areaScore;
     }
     
