@@ -3,7 +3,6 @@ import '../models/assessment_data.dart';
 import '../models/assessment_item.dart';
 import '../models/test_result.dart';
 import '../services/assessment_service.dart';
-import '../services/dynamic_assessment_service.dart';
 import '../services/data_service.dart';
 
 enum TestStage {
@@ -23,7 +22,6 @@ enum TestArea {
 
 class AssessmentProvider with ChangeNotifier {
   final AssessmentService _assessmentService = AssessmentService();
-  final DynamicAssessmentService _dynamicAssessmentService = DynamicAssessmentService();
   final DataService _dataService = DataService();
 
   List<AssessmentData> _allData = [];
@@ -603,22 +601,12 @@ class AssessmentProvider with ChangeNotifier {
 
   // 获取前一个月龄
   int _getPreviousAge(int currentAge) {
-    List<int> ageGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
-    int currentIndex = ageGroups.indexOf(currentAge);
-    if (currentIndex <= 0) {
-      return 0; // 无法继续向前
-    }
-    return ageGroups[currentIndex - 1];
+    return _assessmentService.getPreviousAge(currentAge);
   }
 
   // 获取后一个月龄
   int _getNextAge(int currentAge) {
-    List<int> ageGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
-    int currentIndex = ageGroups.indexOf(currentAge);
-    if (currentIndex >= ageGroups.length - 1) {
-      return 0; // 无法继续向后
-    }
-    return ageGroups[currentIndex + 1];
+    return _assessmentService.getNextAge(currentAge);
   }
 
   // 生成最终结果
@@ -653,74 +641,10 @@ class AssessmentProvider with ChangeNotifier {
 
   // 计算指定能区的得分
   double _calculateAreaScore(TestArea area) {
-    List<int> testedAges = _areaTestedAges[area] ?? [];
-    if (testedAges.isEmpty) return 0.0;
-    
-    // 按时间顺序排序月龄（从大到小）
-    testedAges.sort((a, b) => b.compareTo(a));
-    
-    double score = 0.0;
     String areaString = _getAreaString(area);
     
-    // 找到连续通过的最高月龄
-    int highestConsecutivePassAge = 0;
-    int consecutivePassCount = 0;
-    
-    for (int age in testedAges) {
-      if (_hasAllItemsPassedForAgeAndArea(age, area)) {
-        consecutivePassCount++;
-        if (consecutivePassCount >= 2) {
-          // 连续2个月龄都通过，找到最高月龄
-          highestConsecutivePassAge = age;
-          break;
-        }
-      } else {
-        consecutivePassCount = 0;
-      }
-    }
-    
-    // 如果找到了连续通过的最高月龄，计算该能区的智龄
-    if (highestConsecutivePassAge > 0) {
-      // 计算从1月龄到最高通过月龄的所有月龄的分数
-      List<int> allAgeGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
-      
-      for (int age in allAgeGroups) {
-        if (age <= highestConsecutivePassAge) {
-          // 计算该月龄该能区的总分
-          double ageAreaScore = 0.0;
-          if (age >= 1 && age <= 12) {
-            ageAreaScore = 1.0; // 1月龄～12月龄每个能区1.0分
-          } else if (age >= 15 && age <= 36) {
-            ageAreaScore = 3.0; // 15月龄～36月龄每个能区3.0分
-          } else if (age >= 42 && age <= 84) {
-            ageAreaScore = 6.0; // 42月龄～84月龄每个能区6.0分
-          }
-          
-          // 计算该月龄该能区通过的项目数量
-          int passedItems = 0;
-          int totalItems = 0;
-          for (var data in _allData) {
-            if (data.ageMonth == age && data.area == areaString) {
-              totalItems += data.testItems.length;
-              for (var item in data.testItems) {
-                if (_testResults.containsKey(item.id) && _testResults[item.id]!) {
-                  passedItems++;
-                }
-              }
-            }
-          }
-          
-          // 如果该月龄该能区有测试项目，计算得分
-          if (totalItems > 0) {
-            // 每个通过的项目得分 = 该月龄该能区总分 / 该月龄该能区项目总数
-            double itemScore = ageAreaScore / totalItems;
-            score += itemScore * passedItems;
-          }
-        }
-      }
-    }
-    
-    return score;
+    // 使用 assessment_service 中的方法计算能区智龄
+    return _assessmentService.calculateAreaMentalAge(areaString, _testResults, _allData);
   }
 
   // 获取总进度
@@ -768,18 +692,8 @@ class AssessmentProvider with ChangeNotifier {
 
   // 获取能区名称
   String _getAreaName(TestArea area) {
-    switch (area) {
-      case TestArea.motor:
-        return '大运动';
-      case TestArea.fineMotor:
-        return '精细动作';
-      case TestArea.language:
-        return '语言';
-      case TestArea.adaptive:
-        return '适应能力';
-      case TestArea.social:
-        return '社会行为';
-    }
+    String areaString = _getAreaString(area);
+    return _assessmentService.getAreaName(areaString);
   }
 
   // 重置
