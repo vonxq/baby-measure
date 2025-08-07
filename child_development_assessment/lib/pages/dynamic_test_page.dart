@@ -64,7 +64,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                     children: [
                       CircularProgressIndicator(color: Colors.blue[600]),
                       const SizedBox(height: 16),
-                      const Text('正在准备动态测评...', style: TextStyle(fontSize: 16)),
+                      const Text('正在准备动态测评...', style: TextStyle(fontSize: 14)),
                     ],
                   ),
                 );
@@ -99,11 +99,11 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                     children: [
                       const Icon(Icons.check_circle, size: 64, color: Colors.green),
                       const SizedBox(height: 16),
-                      const Text('动态测评完成！', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                      const Text('动态测评完成！', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 16),
                       const CircularProgressIndicator(),
                       const SizedBox(height: 16),
-                      const Text('正在生成结果...', style: TextStyle(fontSize: 16)),
+                      const Text('正在生成结果...', style: TextStyle(fontSize: 14)),
                     ],
                   ),
                 );
@@ -116,7 +116,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                     children: [
                       CircularProgressIndicator(color: Colors.blue[600]),
                       const SizedBox(height: 16),
-                      const Text('正在加载题目...', style: TextStyle(fontSize: 16)),
+                      const Text('正在加载题目...', style: TextStyle(fontSize: 14)),
                     ],
                   ),
                 );
@@ -124,63 +124,30 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
 
               return Column(
                 children: [
-                  // 顶部导航栏
-                  Container(
-                    padding: const EdgeInsets.all(20),
+                  // 顶部退出按钮
+                  Padding(
+                    padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
                         IconButton(
                           onPressed: () => _showExitDialog(context),
-                          icon: const Icon(Icons.close),
+                          icon: const Icon(Icons.close, size: 20),
                           style: IconButton.styleFrom(
                             backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(8),
                             ),
+                            padding: const EdgeInsets.all(8),
                           ),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '动态发育评估',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue[700],
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                _getCurrentAreaName(provider.currentArea),
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.orange[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () => _showExitDialog(context),
-                          icon: const Icon(Icons.exit_to_app),
-                          style: IconButton.styleFrom(
-                            backgroundColor: Colors.red[50],
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
+                        const Spacer(),
                       ],
                     ),
                   ),
                   
                   // 紧凑的进度区域
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     child: Column(
                       children: [
                         // 整体能区进度
@@ -206,7 +173,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                 children: [
                                   CircularProgressIndicator(color: Colors.blue[600]),
                                   const SizedBox(height: 16),
-                                  const Text('正在加载题目...', style: TextStyle(fontSize: 16)),
+                                  const Text('正在加载题目...', style: TextStyle(fontSize: 14)),
                                 ],
                               ),
                             );
@@ -218,44 +185,44 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withValues(alpha: 0.1),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
                               child: SingleChildScrollView(
-                                padding: const EdgeInsets.all(24),
+                                padding: const EdgeInsets.all(20),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // 当前阶段标注
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                       decoration: BoxDecoration(
                                         color: _getStageColor(provider.currentStage),
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Text(
                                         _getStageText(provider.currentStage),
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 10,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
                                       ),
                                     ),
-                                    const SizedBox(height: 16),
+                                    const SizedBox(height: 12),
                                     
                                     // 题目标题
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                       decoration: BoxDecoration(
                                         color: Colors.blue[50],
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(6),
                                         border: Border.all(color: Colors.blue[200]!),
                                       ),
                                       child: Row(
@@ -264,23 +231,23 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                             child: Text(
                                               provider.currentItem!.name,
                                               style: TextStyle(
-                                                fontSize: 20,
+                                                fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.blue[700],
                                               ),
                                             ),
                                           ),
                                           Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                             decoration: BoxDecoration(
                                               color: Colors.orange[100],
-                                              borderRadius: BorderRadius.circular(12),
+                                              borderRadius: BorderRadius.circular(8),
                                               border: Border.all(color: Colors.orange[300]!),
                                             ),
                                             child: Text(
                                               '${provider.currentItem!.score.toStringAsFixed(1)}分',
                                               style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 12,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.orange[700],
                                               ),
@@ -289,17 +256,17 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(height: 16),
+                                    const SizedBox(height: 12),
                                     
                                     // 题目描述
                                     if (provider.currentItem!.desc.isNotEmpty) ...[
                                       _buildInfoSection('题目描述', provider.currentItem!.desc, Colors.orange),
-                                      const SizedBox(height: 16),
+                                      const SizedBox(height: 12),
                                     ],
                                     
                                     // 操作方法
                                     _buildInfoSection('操作方法', provider.currentItem!.operation, Colors.purple),
-                                    const SizedBox(height: 16),
+                                    const SizedBox(height: 12),
                                     
                                     // 通过标准
                                     _buildInfoSection('通过标准', provider.currentItem!.passCondition, Colors.teal),
@@ -313,7 +280,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                     ),
                   ),
                   
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   
                   // 操作按钮
                   Padding(
@@ -329,44 +296,44 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                     _cardController.forward();
                                   }
                                 : null,
-                            icon: const Icon(Icons.arrow_back),
-                            label: const Text('上一题'),
+                            icon: const Icon(Icons.arrow_back, size: 16),
+                            label: const Text('上一题', style: TextStyle(fontSize: 12)),
                             style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: ElevatedButton.icon(
                             onPressed: () => _handleAnswer(true, provider),
-                            icon: const Icon(Icons.check),
-                            label: const Text('通过'),
+                            icon: const Icon(Icons.check, size: 16),
+                            label: const Text('通过', style: TextStyle(fontSize: 12)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green[600],
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: ElevatedButton.icon(
                             onPressed: () => _handleAnswer(false, provider),
-                            icon: const Icon(Icons.close),
-                            label: const Text('不通过'),
+                            icon: const Icon(Icons.close, size: 16),
+                            label: const Text('不通过', style: TextStyle(fontSize: 12)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red[600],
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(8),
                               ),
                             ),
                           ),
@@ -374,7 +341,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                 ],
               );
             },
@@ -389,14 +356,14 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
     int totalAreas = 5;
     
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 3,
+            blurRadius: 2,
             offset: const Offset(0, 1),
           ),
         ],
@@ -409,7 +376,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
               Text(
                 '整体进度',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey[700],
                 ),
@@ -417,19 +384,19 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
               Text(
                 '$completedAreas / $totalAreas',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: Colors.blue[600],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           // 带节点的进度条
           _buildStepperProgress(TestArea.values, provider),
           // 已完成的能区结果
           if (completedAreas > 0) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             _buildCompletedAreasInfo(provider),
           ],
         ],
@@ -438,40 +405,60 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
   }
 
   Widget _buildStepperProgress(List<TestArea> areas, AssessmentProvider provider) {
-    return Row(
-      children: areas.asMap().entries.map((entry) {
-        int index = entry.key;
-        TestArea area = entry.value;
-        bool isCompleted = provider.areaCompleted[area] ?? false;
-        bool isCurrent = area == provider.currentArea;
-        
-        return Expanded(
-          child: Row(
-            children: [
-              // 节点
-              Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isCompleted ? Colors.green[600] : (isCurrent ? Colors.blue[600] : Colors.grey[300]),
-                ),
-                child: isCompleted 
-                  ? const Icon(Icons.check, size: 14, color: Colors.white)
-                  : null,
-              ),
-              // 连接线
-              if (index < areas.length - 1)
-                Expanded(
-                  child: Container(
-                    height: 2,
-                    color: isCompleted ? Colors.green[600] : Colors.grey[300],
+    return Column(
+      children: [
+        // 进度节点
+        Row(
+          children: areas.asMap().entries.map((entry) {
+            int index = entry.key;
+            TestArea area = entry.value;
+            bool isCompleted = provider.areaCompleted[area] ?? false;
+            bool isCurrent = area == provider.currentArea;
+            
+            return Expanded(
+              child: Row(
+                children: [
+                  // 节点
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isCompleted ? Colors.green[600] : (isCurrent ? Colors.blue[600] : Colors.grey[300]),
+                    ),
+                    child: isCompleted 
+                      ? const Icon(Icons.check, size: 10, color: Colors.white)
+                      : null,
                   ),
-                ),
-            ],
-          ),
-        );
-      }).toList(),
+                  // 连接线
+                  if (index < areas.length - 1)
+                    Expanded(
+                      child: Container(
+                        height: 1,
+                        color: isCompleted ? Colors.green[600] : Colors.grey[300],
+                      ),
+                    ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 4),
+        // 能区名称
+        Row(
+          children: areas.map((area) => Expanded(
+            child: Text(
+              _getAreaShortName(area),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
+            ),
+          )).toList(),
+        ),
+      ],
     );
   }
 
@@ -485,11 +472,11 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
         
         areaInfoWidgets.add(
           Container(
-            margin: const EdgeInsets.only(right: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            margin: const EdgeInsets.only(right: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
             decoration: BoxDecoration(
               color: Colors.green[50],
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(4),
               border: Border.all(color: Colors.green[200]!),
             ),
             child: Column(
@@ -497,7 +484,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                 Text(
                   _getAreaShortName(area),
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 8,
                     fontWeight: FontWeight.bold,
                     color: Colors.green[700],
                   ),
@@ -505,14 +492,14 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                 Text(
                   '智龄: ${mentalAge.toStringAsFixed(1)}',
                   style: TextStyle(
-                    fontSize: 8,
+                    fontSize: 7,
                     color: Colors.green[600],
                   ),
                 ),
                 Text(
                   'DQ: ${dq.toStringAsFixed(0)}',
                   style: TextStyle(
-                    fontSize: 8,
+                    fontSize: 7,
                     color: Colors.green[600],
                   ),
                 ),
@@ -531,25 +518,20 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
     );
   }
 
-  double _calculateDevelopmentQuotient(double mentalAge, double actualAge) {
-    if (actualAge == 0) return 0;
-    return (mentalAge / actualAge) * 100;
-  }
-
   Widget _buildCompactAgeProgress(AssessmentProvider provider) {
     List<int> testedAges = provider.areaTestedAges[provider.currentArea] ?? [];
     testedAges.sort();
     int currentAge = provider.getCurrentAreaAge();
     
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 3,
+            blurRadius: 2,
             offset: const Offset(0, 1),
           ),
         ],
@@ -562,7 +544,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
               Text(
                 '月龄进度',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: Colors.grey[700],
                 ),
@@ -570,68 +552,94 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
               Text(
                 '当前: ${currentAge}个月',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: Colors.orange[600],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          // 月龄节点进度
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: testedAges.map((age) => _buildAgeNode(age, provider, currentAge)).toList(),
-            ),
-          ),
+          const SizedBox(height: 6),
+          // 月龄节点进度 - 使用和整体进度一样的样式
+          _buildAgeStepperProgress(testedAges, provider, currentAge),
         ],
       ),
     );
   }
 
-  Widget _buildAgeNode(int age, AssessmentProvider provider, int currentAge) {
-    Color nodeColor = Colors.grey[400]!;
-    bool isCurrent = age == currentAge;
+  Widget _buildAgeStepperProgress(List<int> ages, AssessmentProvider provider, int currentAge) {
+    if (ages.isEmpty) return const SizedBox.shrink();
     
-    // 检查该月龄的测试状态
-    bool hasPassed = _hasAgePassed(age, provider);
-    bool hasFailed = _hasAgeFailed(age, provider);
-    
-    if (isCurrent) {
-      nodeColor = Colors.grey[600]!; // 当前测试中显示灰色
-    } else if (hasPassed && !hasFailed) {
-      nodeColor = Colors.green[600]!;
-    } else if (hasPassed && hasFailed) {
-      nodeColor = Colors.orange[600]!;
-    } else if (hasFailed && !hasPassed) {
-      nodeColor = Colors.red[600]!;
-    }
-    
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      child: Column(
-        children: [
-          Container(
-            width: 16,
-            height: 16,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: nodeColor,
+    return Column(
+      children: [
+        // 进度节点
+        Row(
+          children: ages.asMap().entries.map((entry) {
+            int index = entry.key;
+            int age = entry.value;
+            bool isCurrent = age == currentAge;
+            bool hasPassed = _hasAgePassed(age, provider);
+            bool hasFailed = _hasAgeFailed(age, provider);
+            
+            Color nodeColor = Colors.grey[300]!;
+            if (isCurrent) {
+              nodeColor = Colors.blue[600]!; // 进行中是蓝色
+            } else if (hasPassed && !hasFailed) {
+              nodeColor = Colors.green[600]!; // 全过是绿色
+            } else if (hasPassed && hasFailed) {
+              nodeColor = Colors.orange[600]!; // 部分过是橙色
+            }
+            
+            return Expanded(
+              child: Row(
+                children: [
+                  // 节点
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: nodeColor,
+                    ),
+                    child: (hasPassed && !hasFailed) 
+                      ? const Icon(Icons.check, size: 10, color: Colors.white)
+                      : null,
+                  ),
+                  // 连接线
+                  if (index < ages.length - 1)
+                    Expanded(
+                      child: Container(
+                        height: 1,
+                        color: (hasPassed && !hasFailed) ? Colors.green[600] : Colors.grey[300],
+                      ),
+                    ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 4),
+        // 月龄名称
+        Row(
+          children: ages.map((age) => Expanded(
+            child: Text(
+              '${age}月龄',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: Colors.grey[600],
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '$age',
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              color: nodeColor,
-            ),
-          ),
-        ],
-      ),
+          )).toList(),
+        ),
+      ],
     );
+  }
+
+  double _calculateDevelopmentQuotient(double mentalAge, double actualAge) {
+    if (actualAge == 0) return 0;
+    return (mentalAge / actualAge) * 100;
   }
 
   Widget _buildInfoSection(String title, String content, Color color) {
@@ -640,30 +648,30 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
       children: [
         Row(
           children: [
-            Icon(Icons.info_outline, color: color, size: 20),
-            const SizedBox(width: 8),
+            Icon(Icons.info_outline, color: color, size: 16),
+            const SizedBox(width: 6),
             Text(
               '$title：',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: color,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(6),
             border: Border.all(color: color.withValues(alpha: 0.3)),
           ),
           child: Text(
             content,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 12,
               color: color.withValues(alpha: 0.8),
             ),
           ),
