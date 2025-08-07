@@ -30,6 +30,16 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 确保动画控制器在依赖变化时重新启动
+    if (_cardController.status == AnimationStatus.completed) {
+      _cardController.reset();
+      _cardController.forward();
+    }
+  }
+
+  @override
   void dispose() {
     _cardController.dispose();
     super.dispose();
@@ -105,6 +115,13 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
               }
 
               if (provider.currentItem == null) {
+                // 添加调试信息
+                print('UI: currentItem is null');
+                print('UI: currentStageItems.length = ${provider.currentStageItems.length}');
+                print('UI: currentStageItemIndex = ${provider.currentStageItemIndex}');
+                print('UI: currentStage = ${provider.currentStage}');
+                print('UI: currentArea = ${provider.currentArea}');
+                
                 // 当前阶段完成，显示能区结果页
                 return _buildAreaResultPage(provider);
               }
@@ -181,6 +198,10 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                             child: AnimatedBuilder(
                               animation: _cardAnimation,
                               builder: (context, child) {
+                                // 添加调试信息
+                                print('UI Builder: currentItem = ${provider.currentItem?.name}');
+                                print('UI Builder: currentItem is null = ${provider.currentItem == null}');
+                                
                                 return Transform.scale(
                                   scale: _cardAnimation.value,
                                   child: Container(
@@ -212,7 +233,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                               children: [
                                                 Expanded(
                                                   child: Text(
-                                                    provider.currentItem!.name,
+                                                    provider.currentItem?.name ?? '题目加载中...',
                                                     style: TextStyle(
                                                       fontSize: 20,
                                                       fontWeight: FontWeight.bold,
@@ -228,7 +249,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                                     border: Border.all(color: Colors.orange[300]!),
                                                   ),
                                                   child: Text(
-                                                    '${provider.currentItem!.score.toStringAsFixed(1)}分',
+                                                    '${(provider.currentItem?.score ?? 0.0).toStringAsFixed(1)}分',
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       fontWeight: FontWeight.bold,
@@ -242,7 +263,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                           const SizedBox(height: 16),
                                           
                                           // 题目描述
-                                          if (provider.currentItem!.desc.isNotEmpty) ...[
+                                          if (provider.currentItem?.desc.isNotEmpty == true) ...[
                                             Row(
                                               children: [
                                                 Icon(Icons.info_outline, color: Colors.orange[600], size: 20),
@@ -266,7 +287,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                                 border: Border.all(color: Colors.orange[200]!),
                                               ),
                                               child: Text(
-                                                provider.currentItem!.desc,
+                                                provider.currentItem?.desc ?? '',
                                                 style: TextStyle(
                                                   fontSize: 16,
                                                   color: Colors.orange[800],
@@ -300,7 +321,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                               border: Border.all(color: Colors.purple[200]!),
                                             ),
                                             child: Text(
-                                              provider.currentItem!.operation,
+                                              provider.currentItem?.operation ?? '',
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.purple[800],
@@ -333,7 +354,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                               border: Border.all(color: Colors.teal[200]!),
                                             ),
                                             child: Text(
-                                              provider.currentItem!.passCondition,
+                                              provider.currentItem?.passCondition ?? '',
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.teal[700],
@@ -538,6 +559,11 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
   }
 
   void _handleAnswer(bool passed, AssessmentProvider provider) {
+    if (provider.currentItem == null) {
+      print('警告：_handleAnswer中currentItem为null');
+      return;
+    }
+    
     provider.recordResult(provider.currentItem!.id, passed);
     
     if (provider.currentStageItemIndex < provider.currentStageItems.length - 1) {
