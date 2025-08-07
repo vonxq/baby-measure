@@ -218,7 +218,9 @@ class _StageTransitionPageState extends State<StageTransitionPage> with TickerPr
         return Icons.arrow_back;
       case TestStage.backward:
         return Icons.arrow_forward;
-      case TestStage.completed:
+      case TestStage.areaCompleted:
+        return Icons.check_circle;
+      case TestStage.allCompleted:
         return Icons.check_circle;
     }
   }
@@ -231,7 +233,9 @@ class _StageTransitionPageState extends State<StageTransitionPage> with TickerPr
         return Colors.orange[600]!;
       case TestStage.backward:
         return Colors.purple[600]!;
-      case TestStage.completed:
+      case TestStage.areaCompleted:
+        return Colors.green[600]!;
+      case TestStage.allCompleted:
         return Colors.green[600]!;
     }
   }

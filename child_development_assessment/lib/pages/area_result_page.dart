@@ -5,12 +5,14 @@ class AreaResultPage extends StatelessWidget {
   final TestArea area;
   final double mentalAge;
   final double developmentQuotient;
+  final VoidCallback? onContinue;
 
   const AreaResultPage({
     super.key,
     required this.area,
     required this.mentalAge,
     required this.developmentQuotient,
+    this.onContinue,
   });
 
   @override
@@ -155,7 +157,7 @@ class AreaResultPage extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: () {
+                    onPressed: onContinue ?? () {
                       Navigator.of(context).pop();
                     },
                     icon: const Icon(Icons.arrow_forward),

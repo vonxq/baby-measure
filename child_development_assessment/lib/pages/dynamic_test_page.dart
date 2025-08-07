@@ -62,8 +62,13 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                 );
               }
 
-              // 检查是否需要显示过渡页
-              if (provider.currentStage == TestStage.completed) {
+              // 检查是否需要显示能区结果页
+              if (provider.currentStage == TestStage.areaCompleted) {
+                return _buildAreaResultPage(provider);
+              }
+
+              // 检查是否需要显示最终结果页
+              if (provider.currentStage == TestStage.allCompleted) {
                 // 直接跳转到结果页
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   Navigator.pushReplacement(
@@ -395,7 +400,6 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
   }
 
   Widget _buildProgressSection(AssessmentProvider provider) {
-    // 使用provider的方法获取进度信息
     int testedCount = provider.getCurrentAreaTestedCount();
     int totalCount = provider.getCurrentAreaTotalCount();
 
@@ -481,7 +485,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
   }
 
   Widget _buildAreaResultPage(AssessmentProvider provider) {
-    // 使用provider的方法获取智龄和发育商
+    // 获取当前能区的智龄和发育商
     double mentalAge = provider.getCurrentAreaMentalAge();
     double developmentQuotient = provider.getCurrentAreaDevelopmentQuotient();
     
@@ -489,6 +493,10 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
       area: provider.currentArea,
       mentalAge: mentalAge,
       developmentQuotient: developmentQuotient,
+      onContinue: () {
+        // 继续下一个能区
+        provider.nextItem();
+      },
     );
   }
 
@@ -504,10 +512,13 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
       _cardController.reset();
       provider.nextItem(); // 这会触发阶段切换
       
-      // 如果阶段已经切换到完成状态，直接跳转到结果页面
-      if (provider.currentStage == TestStage.completed) {
+      // 如果阶段已经切换到能区完成状态，显示能区结果页
+      if (provider.currentStage == TestStage.areaCompleted) {
+        // 显示能区结果页
+        setState(() {});
+      } else if (provider.currentStage == TestStage.allCompleted) {
+        // 跳转到最终结果页面
         try {
-          // 跳转到结果页面
           if (mounted) {
             Navigator.pushReplacement(
               context,
@@ -526,7 +537,6 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
             );
           }
         } catch (e) {
-          // 显示错误信息
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -573,8 +583,6 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
       }
     });
   }
-
-
 
   String _getCurrentAreaName(TestArea area) {
     switch (area) {

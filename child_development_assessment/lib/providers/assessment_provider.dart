@@ -9,7 +9,8 @@ enum TestStage {
   current,    // 当前月龄
   forward,    // 向前测查
   backward,   // 向后测查
-  completed   // 测试完成
+  areaCompleted, // 能区测试完成
+  allCompleted   // 所有能区测试完成
 }
 
 enum TestArea {
@@ -25,10 +26,8 @@ class AssessmentProvider with ChangeNotifier {
   final DataService _dataService = DataService();
 
   List<AssessmentData> _allData = [];
-  List<AssessmentItem> _currentTestItems = [];
   final Map<int, bool> _testResults = {};
   final Map<int, String> _itemAreaMap = {}; // id到area的映射
-  int _currentItemIndex = 0;
   bool _isLoading = false;
   String _error = '';
   TestResult? _finalResult;
@@ -36,24 +35,21 @@ class AssessmentProvider with ChangeNotifier {
   double _actualAge = 0.0;
   int _mainTestAge = 0;
   
-  // 动态测评相关 - 按能区测试
+  // 当前测试状态
   TestStage _currentStage = TestStage.current;
   TestArea _currentArea = TestArea.motor; // 当前测试的能区
   List<AssessmentItem> _currentStageItems = [];
   int _currentStageItemIndex = 0;
   
-
-  
   // 能区测试状态跟踪
   Map<TestArea, bool> _areaCompleted = {}; // 能区是否完成测试
   Map<TestArea, int> _areaCurrentAge = {}; // 每个能区当前测试的月龄
   Map<TestArea, List<int>> _areaTestedAges = {}; // 每个能区已测试的月龄
+  Map<TestArea, double> _areaScores = {}; // 每个能区的智龄
 
   // Getters
   List<AssessmentData> get allData => _allData;
-  List<AssessmentItem> get currentTestItems => _currentTestItems;
   Map<int, bool> get testResults => _testResults;
-  int get currentItemIndex => _currentItemIndex;
   bool get isLoading => _isLoading;
   String get error => _error;
   TestResult? get finalResult => _finalResult;
@@ -61,7 +57,7 @@ class AssessmentProvider with ChangeNotifier {
   double get actualAge => _actualAge;
   int get mainTestAge => _mainTestAge;
   
-  // 动态测评相关 getters
+  // 当前测试状态 getters
   TestStage get currentStage => _currentStage;
   TestArea get currentArea => _currentArea;
   List<AssessmentItem> get currentStageItems => _currentStageItems;
@@ -74,6 +70,7 @@ class AssessmentProvider with ChangeNotifier {
   Map<TestArea, bool> get areaCompleted => _areaCompleted;
   Map<TestArea, int> get areaCurrentAge => _areaCurrentAge;
   Map<TestArea, List<int>> get areaTestedAges => _areaTestedAges;
+  Map<TestArea, double> get areaScores => _areaScores;
 
   // 初始化
   AssessmentProvider() {
@@ -85,6 +82,7 @@ class AssessmentProvider with ChangeNotifier {
       _areaCompleted[area] = false;
       _areaCurrentAge[area] = 0;
       _areaTestedAges[area] = [];
+      _areaScores[area] = 0.0;
     }
   }
 
@@ -113,23 +111,6 @@ class AssessmentProvider with ChangeNotifier {
         _itemAreaMap[item.id] = data.area;
       }
     }
-  }
-
-  // 获取项目所属能区
-  String getItemArea(int itemId) {
-    return _itemAreaMap[itemId] ?? '';
-  }
-
-  // 获取项目所属月龄
-  int getItemMonthAge(int itemId) {
-    for (var data in _allData) {
-      for (var item in data.testItems) {
-        if (item.id == itemId) {
-          return data.ageMonth;
-        }
-      }
-    }
-    return 0;
   }
 
   // 开始动态测评
@@ -162,18 +143,9 @@ class AssessmentProvider with ChangeNotifier {
     int testAge = _areaCurrentAge[_currentArea] ?? _mainTestAge;
     String currentAreaString = _getAreaString(_currentArea);
     
-    print('加载当前能区项目: $_currentArea ($currentAreaString), 月龄: $testAge');
-    print('数据总数: ${_allData.length}');
+    // 使用 assessment_service 获取项目
+    _currentStageItems = _assessmentService.getCurrentAgeAreaItems(_allData, testAge, currentAreaString);
     
-    for (var data in _allData) {
-      print('检查数据: 月龄=${data.ageMonth}, 能区=${data.area}');
-      if (data.ageMonth == testAge && data.area == currentAreaString) {
-        print('找到匹配数据，添加 ${data.testItems.length} 个项目');
-        _currentStageItems.addAll(data.testItems);
-      }
-    }
-    
-    print('最终加载项目数: ${_currentStageItems.length}');
     notifyListeners();
   }
 
@@ -205,7 +177,7 @@ class AssessmentProvider with ChangeNotifier {
       _currentStageItemIndex++;
       notifyListeners();
     } else {
-      // 当前能区当前月龄测试完成，检查是否需要进入下一阶段
+      // 当前阶段完成，检查是否需要进入下一阶段
       _checkAndMoveToNextStage();
     }
   }
@@ -222,15 +194,9 @@ class AssessmentProvider with ChangeNotifier {
   void _checkAndMoveToNextStage() {
     switch (_currentStage) {
       case TestStage.current:
-        // 主测月龄测试完成，检查是否所有能区都已完成主测月龄测试
-        if (_isAllAreasCompletedForMainAge()) {
-          // 所有能区主测月龄测试完成，开始向前测试
-          _currentStage = TestStage.forward;
-          _startForwardTest();
-        } else {
-          // 移动到下一个能区继续主测月龄测试
-          _moveToNextAreaForMainAge();
-        }
+        // 主测月龄测试完成，开始向前测试
+        _currentStage = TestStage.forward;
+        _startForwardTest();
         break;
       case TestStage.forward:
         // 向前测试完成，检查是否需要继续向前或开始向后
@@ -253,7 +219,11 @@ class AssessmentProvider with ChangeNotifier {
           _completeCurrentArea();
         }
         break;
-      case TestStage.completed:
+      case TestStage.areaCompleted:
+        // 能区测试完成，移动到下一个能区
+        _moveToNextArea();
+        break;
+      case TestStage.allCompleted:
         // 所有能区测试完成
         _generateFinalResult();
         break;
@@ -262,69 +232,10 @@ class AssessmentProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // 检查是否所有能区都已完成主测月龄测试
-  bool _isAllAreasCompletedForMainAge() {
-    for (TestArea area in TestArea.values) {
-      if (!_hasCompletedMainAgeForArea(area)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  // 检查指定能区是否已完成主测月龄测试
-  bool _hasCompletedMainAgeForArea(TestArea area) {
-    String areaString = _getAreaString(area);
-    bool hasTestedItems = false;
-    
-    for (var data in _allData) {
-      if (data.ageMonth == _mainTestAge && data.area == areaString) {
-        for (var item in data.testItems) {
-          if (_testResults.containsKey(item.id)) {
-            hasTestedItems = true;
-          }
-        }
-      }
-    }
-    
-    return hasTestedItems;
-  }
-
-  // 移动到下一个能区继续主测月龄测试
-  void _moveToNextAreaForMainAge() {
-    // 按顺序移动到下一个能区
-    switch (_currentArea) {
-      case TestArea.motor:
-        _currentArea = TestArea.fineMotor;
-        break;
-      case TestArea.fineMotor:
-        _currentArea = TestArea.language;
-        break;
-      case TestArea.language:
-        _currentArea = TestArea.adaptive;
-        break;
-      case TestArea.adaptive:
-        _currentArea = TestArea.social;
-        break;
-      case TestArea.social:
-        // 所有能区主测月龄测试完成，开始向前测试
-        _currentStage = TestStage.forward;
-        _currentArea = TestArea.motor; // 重新从大运动开始
-        _startForwardTest();
-        return;
-    }
-    
-    // 重置该能区的测试状态，确保从主测月龄开始
-    _areaCurrentAge[_currentArea] = _mainTestAge;
-    _areaTestedAges[_currentArea] = [_mainTestAge];
-    
-    _loadCurrentAreaItems();
-  }
-
   // 开始向前测试
   void _startForwardTest() {
     // 获取向前测试月龄（从主测月龄向前2个月龄）
-    int forwardAge = _getPreviousAge(_mainTestAge);
+    int forwardAge = _assessmentService.getPreviousAge(_mainTestAge);
     if (forwardAge >= 1) {
       _areaCurrentAge[_currentArea] = forwardAge;
       _areaTestedAges[_currentArea]!.add(forwardAge);
@@ -339,7 +250,7 @@ class AssessmentProvider with ChangeNotifier {
   // 继续向前测试
   void _continueForwardTest() {
     int currentAge = _areaCurrentAge[_currentArea] ?? _mainTestAge;
-    int nextAge = _getPreviousAge(currentAge);
+    int nextAge = _assessmentService.getPreviousAge(currentAge);
     if (nextAge >= 1) {
       _areaCurrentAge[_currentArea] = nextAge;
       _areaTestedAges[_currentArea]!.add(nextAge);
@@ -354,7 +265,7 @@ class AssessmentProvider with ChangeNotifier {
   // 开始向后测试
   void _startBackwardTest() {
     // 获取向后测试月龄（从主测月龄向后2个月龄）
-    int backwardAge = _getNextAge(_mainTestAge);
+    int backwardAge = _assessmentService.getNextAge(_mainTestAge);
     if (backwardAge <= 84) {
       _areaCurrentAge[_currentArea] = backwardAge;
       _areaTestedAges[_currentArea]!.add(backwardAge);
@@ -368,7 +279,7 @@ class AssessmentProvider with ChangeNotifier {
   // 继续向后测试
   void _continueBackwardTest() {
     int currentAge = _areaCurrentAge[_currentArea] ?? _mainTestAge;
-    int nextAge = _getNextAge(currentAge);
+    int nextAge = _assessmentService.getNextAge(currentAge);
     if (nextAge <= 84) {
       _areaCurrentAge[_currentArea] = nextAge;
       _areaTestedAges[_currentArea]!.add(nextAge);
@@ -383,71 +294,15 @@ class AssessmentProvider with ChangeNotifier {
   void _completeCurrentArea() {
     _areaCompleted[_currentArea] = true;
     
-    // 检查是否所有能区都已完成
-    bool allAreasCompleted = true;
-    for (TestArea area in TestArea.values) {
-      if (!(_areaCompleted[area] ?? false)) {
-        allAreasCompleted = false;
-        break;
-      }
-    }
+    // 计算当前能区的智龄
+    String areaString = _getAreaString(_currentArea);
+    double areaScore = _assessmentService.calculateAreaMentalAge(areaString, _testResults, _allData);
+    _areaScores[_currentArea] = areaScore;
     
-    if (allAreasCompleted) {
-      // 所有能区测试完成
-      _currentStage = TestStage.completed;
-      _generateFinalResult();
-    } else {
-      // 移动到下一个能区
-      _moveToNextArea();
-    }
-  }
-
-  // 获取当前能区的智龄
-  double getCurrentAreaMentalAge() {
-    return _calculateAreaScore(_currentArea);
-  }
-
-  // 获取当前能区的发育商
-  double getCurrentAreaDevelopmentQuotient() {
-    double mentalAge = getCurrentAreaMentalAge();
-    return (mentalAge / _actualAge) * 100;
-  }
-
-  // 获取当前能区已测试的项目数
-  int getCurrentAreaTestedCount() {
-    int count = 0;
-    for (var item in _currentStageItems) {
-      if (_testResults.containsKey(item.id)) {
-        count++;
-      }
-    }
-    return count;
-  }
-
-  // 获取当前能区总项目数（包括预估的额外项目）
-  int getCurrentAreaTotalCount() {
-    int baseCount = _currentStageItems.length;
+    // 标记为能区完成状态
+    _currentStage = TestStage.areaCompleted;
     
-    // 如果当前阶段是向前或向后测查，计算实际需要测试的项目数
-    if (_currentStage == TestStage.forward || _currentStage == TestStage.backward) {
-      // 获取当前能区所有已测试月龄的项目总数
-      List<int> testedAges = _areaTestedAges[_currentArea] ?? [];
-      int totalItemsForAllAges = 0;
-      
-      for (int age in testedAges) {
-        String areaString = _getAreaString(_currentArea);
-        for (var data in _allData) {
-          if (data.ageMonth == age && data.area == areaString) {
-            totalItemsForAllAges += data.testItems.length;
-          }
-        }
-      }
-      
-      // 返回所有相关月龄的项目总数
-      return totalItemsForAllAges;
-    }
-    
-    return baseCount;
+    notifyListeners();
   }
 
   // 移动到下一个能区
@@ -468,7 +323,7 @@ class AssessmentProvider with ChangeNotifier {
         break;
       case TestArea.social:
         // 所有能区测试完成
-        _currentStage = TestStage.completed;
+        _currentStage = TestStage.allCompleted;
         _generateFinalResult();
         return;
     }
@@ -483,130 +338,49 @@ class AssessmentProvider with ChangeNotifier {
 
   // 检查是否应该继续向前测试
   bool _shouldContinueForwardTest() {
-    TestArea area = _currentArea;
+    // 使用 assessment_service 的向前测试逻辑
+    String areaString = _getAreaString(_currentArea);
+    List<int> forwardAges = _assessmentService.getForwardTestAgesForArea(_mainTestAge, areaString, _testResults, _allData);
     
-    // 检查该能区是否已经连续通过2个月龄
-    return !_hasConsecutivePassForArea(area, 2);
+    // 如果向前测试月龄数量少于2个，说明还需要继续向前
+    return forwardAges.length < 2;
   }
 
   // 检查是否应该继续向后测试
   bool _shouldContinueBackwardTest() {
-    TestArea area = _currentArea;
+    // 使用 assessment_service 的向后测试逻辑
+    String areaString = _getAreaString(_currentArea);
+    List<int> backwardAges = _assessmentService.getBackwardTestAgesForArea(_mainTestAge, areaString, _testResults, _allData);
     
-    // 检查该能区是否已经连续不通过2个月龄
-    return !_hasConsecutiveFailForArea(area, 2);
+    // 如果向后测试月龄数量少于2个，说明还需要继续向后
+    return backwardAges.length < 2;
   }
 
-  // 检查指定能区是否连续通过指定月龄数
-  bool _hasConsecutivePassForArea(TestArea area, int consecutiveCount) {
-    List<int> testedAges = _areaTestedAges[area] ?? [];
-    if (testedAges.length < consecutiveCount) {
-      return false; // 测试的月龄数不足
-    }
-    
-    // 按时间顺序排序月龄（从大到小，因为向前测试是从大月龄到小月龄）
-    testedAges.sort((a, b) => b.compareTo(a));
-    
-    // 检查是否有连续的consecutiveCount个月龄都通过
-    for (int i = 0; i <= testedAges.length - consecutiveCount; i++) {
-      bool consecutivePassed = true;
-      
-      // 检查连续的consecutiveCount个月龄
-      for (int j = 0; j < consecutiveCount; j++) {
-        int age = testedAges[i + j];
-        if (!_hasAllItemsPassedForAgeAndArea(age, area)) {
-          consecutivePassed = false;
-          break;
-        }
-      }
-      
-      if (consecutivePassed) {
-        return true;
-      }
-    }
-    
-    return false;
+  // 获取当前能区的智龄
+  double getCurrentAreaMentalAge() {
+    return _areaScores[_currentArea] ?? 0.0;
   }
 
-  // 检查指定能区是否连续不通过指定月龄数
-  bool _hasConsecutiveFailForArea(TestArea area, int consecutiveCount) {
-    List<int> testedAges = _areaTestedAges[area] ?? [];
-    if (testedAges.length < consecutiveCount) {
-      return false; // 测试的月龄数不足
-    }
-    
-    // 按时间顺序排序月龄（从小到大，因为向后测试是从小月龄到大月龄）
-    testedAges.sort((a, b) => a.compareTo(b));
-    
-    // 检查是否有连续的consecutiveCount个月龄都不通过
-    for (int i = 0; i <= testedAges.length - consecutiveCount; i++) {
-      bool consecutiveFailed = true;
-      
-      // 检查连续的consecutiveCount个月龄
-      for (int j = 0; j < consecutiveCount; j++) {
-        int age = testedAges[i + j];
-        if (_hasAnyItemPassedForAgeAndArea(age, area)) {
-          consecutiveFailed = false;
-          break;
-        }
-      }
-      
-      if (consecutiveFailed) {
-        return true;
-      }
-    }
-    
-    return false;
+  // 获取当前能区的发育商
+  double getCurrentAreaDevelopmentQuotient() {
+    double mentalAge = getCurrentAreaMentalAge();
+    return _assessmentService.calculateDevelopmentQuotient(mentalAge, _actualAge);
   }
 
-  // 检查指定月龄和能区的所有项目是否都通过
-  bool _hasAllItemsPassedForAgeAndArea(int age, TestArea area) {
-    String areaString = _getAreaString(area);
-    bool hasTestedItems = false;
-    bool allPassed = true;
-    
-    for (var data in _allData) {
-      if (data.ageMonth == age && data.area == areaString) {
-        for (var item in data.testItems) {
-          if (_testResults.containsKey(item.id)) {
-            hasTestedItems = true;
-            if (!_testResults[item.id]!) {
-              allPassed = false;
-              break;
-            }
-          }
-        }
+  // 获取当前能区已测试的项目数
+  int getCurrentAreaTestedCount() {
+    int count = 0;
+    for (var item in _currentStageItems) {
+      if (_testResults.containsKey(item.id)) {
+        count++;
       }
     }
-    
-    return hasTestedItems && allPassed;
+    return count;
   }
 
-  // 检查指定月龄和能区是否有任何项目通过
-  bool _hasAnyItemPassedForAgeAndArea(int age, TestArea area) {
-    String areaString = _getAreaString(area);
-    
-    for (var data in _allData) {
-      if (data.ageMonth == age && data.area == areaString) {
-        for (var item in data.testItems) {
-          if (_testResults.containsKey(item.id) && _testResults[item.id]!) {
-            return true;
-          }
-        }
-      }
-    }
-    
-    return false;
-  }
-
-  // 获取前一个月龄
-  int _getPreviousAge(int currentAge) {
-    return _assessmentService.getPreviousAge(currentAge);
-  }
-
-  // 获取后一个月龄
-  int _getNextAge(int currentAge) {
-    return _assessmentService.getNextAge(currentAge);
+  // 获取当前能区总项目数
+  int getCurrentAreaTotalCount() {
+    return _currentStageItems.length;
   }
 
   // 生成最终结果
@@ -616,14 +390,14 @@ class AssessmentProvider with ChangeNotifier {
     double totalScore = 0.0;
     
     for (TestArea area in TestArea.values) {
-      double areaScore = _calculateAreaScore(area);
+      double areaScore = _areaScores[area] ?? 0.0;
       areaScores[area.toString()] = areaScore;
       totalScore += areaScore;
     }
     
     // 将五个能区所得分数相加，再除以5就是总的智龄
     double mentalAge = totalScore / 5.0; // 5个能区
-    double dq = (mentalAge / _actualAge) * 100;
+    double dq = _assessmentService.calculateDevelopmentQuotient(mentalAge, _actualAge);
     
     _finalResult = TestResult(
       userName: _userName,
@@ -639,17 +413,9 @@ class AssessmentProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // 计算指定能区的得分
-  double _calculateAreaScore(TestArea area) {
-    String areaString = _getAreaString(area);
-    
-    // 使用 assessment_service 中的方法计算能区智龄
-    return _assessmentService.calculateAreaMentalAge(areaString, _testResults, _allData);
-  }
-
   // 获取总进度
   double _getTotalProgress() {
-    if (_currentStage == TestStage.completed) return 1.0;
+    if (_currentStage == TestStage.allCompleted) return 1.0;
     
     int totalCompleted = 0;
     int totalItems = 0;
@@ -657,14 +423,12 @@ class AssessmentProvider with ChangeNotifier {
     for (TestArea area in TestArea.values) {
       List<int> testedAges = _areaTestedAges[area] ?? [];
       for (int age in testedAges) {
-        for (var data in _allData) {
-          if (data.ageMonth == age && data.area == area.toString()) {
-            totalItems += data.testItems.length;
-            for (var item in data.testItems) {
-              if (_testResults.containsKey(item.id)) {
-                totalCompleted++;
-              }
-            }
+        String areaString = _getAreaString(area);
+        var items = _assessmentService.getCurrentAgeAreaItems(_allData, age, areaString);
+        totalItems += items.length;
+        for (var item in items) {
+          if (_testResults.containsKey(item.id)) {
+            totalCompleted++;
           }
         }
       }
@@ -685,8 +449,10 @@ class AssessmentProvider with ChangeNotifier {
         return '测试${_getAreaName(_currentArea)}能区 - 向前测查';
       case TestStage.backward:
         return '测试${_getAreaName(_currentArea)}能区 - 向后测查';
-      case TestStage.completed:
-        return '测试完成';
+      case TestStage.areaCompleted:
+        return '${_getAreaName(_currentArea)}能区测试完成';
+      case TestStage.allCompleted:
+        return '所有能区测试完成';
     }
   }
 
@@ -698,9 +464,7 @@ class AssessmentProvider with ChangeNotifier {
 
   // 重置
   void reset() {
-    _currentTestItems.clear();
     _testResults.clear();
-    _currentItemIndex = 0;
     _isLoading = false;
     _error = '';
     _finalResult = null;
