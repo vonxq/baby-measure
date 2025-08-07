@@ -485,13 +485,36 @@ class AssessmentProvider with ChangeNotifier {
 
   // 获取所有已测试的向前月龄
   List<int> _getAllTestedForwardAges() {
+    // 只返回实际已经测试过的向前月龄
+    List<int> testedAges = [];
+    
+    // 从主测月龄开始，检查每个向前月龄是否已经测试过
     List<int> ageGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
     int mainIndex = ageGroups.indexOf(_mainTestAge);
     if (mainIndex == -1) return [];
     
-    List<int> testedAges = [];
     for (int i = mainIndex - 1; i >= 0; i--) {
-      testedAges.add(ageGroups[i]);
+      int age = ageGroups[i];
+      bool hasTestedItems = false;
+      
+      // 检查该月龄是否有测试过的项目
+      for (var data in _allData) {
+        if (data.ageMonth == age) {
+          for (var item in data.testItems) {
+            if (_testResults.containsKey(item.id)) {
+              hasTestedItems = true;
+              break;
+            }
+          }
+        }
+      }
+      
+      if (hasTestedItems) {
+        testedAges.add(age);
+      } else {
+        // 如果这个月龄没有测试过，停止检查更早的月龄
+        break;
+      }
     }
     
     return testedAges;
@@ -579,13 +602,36 @@ class AssessmentProvider with ChangeNotifier {
 
   // 获取所有已测试的向后月龄
   List<int> _getAllTestedBackwardAges() {
+    // 只返回实际已经测试过的向后月龄
+    List<int> testedAges = [];
+    
+    // 从主测月龄开始，检查每个向后月龄是否已经测试过
     List<int> ageGroups = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 18, 21, 24, 27, 30, 33, 36, 42, 48, 54, 60, 66, 72, 78, 84];
     int mainIndex = ageGroups.indexOf(_mainTestAge);
     if (mainIndex == -1) return [];
     
-    List<int> testedAges = [];
     for (int i = mainIndex + 1; i < ageGroups.length; i++) {
-      testedAges.add(ageGroups[i]);
+      int age = ageGroups[i];
+      bool hasTestedItems = false;
+      
+      // 检查该月龄是否有测试过的项目
+      for (var data in _allData) {
+        if (data.ageMonth == age) {
+          for (var item in data.testItems) {
+            if (_testResults.containsKey(item.id)) {
+              hasTestedItems = true;
+              break;
+            }
+          }
+        }
+      }
+      
+      if (hasTestedItems) {
+        testedAges.add(age);
+      } else {
+        // 如果这个月龄没有测试过，停止检查更晚的月龄
+        break;
+      }
     }
     
     return testedAges;
