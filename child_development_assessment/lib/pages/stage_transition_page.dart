@@ -107,7 +107,7 @@ class _StageTransitionPageState extends State<StageTransitionPage> with TickerPr
                           
                           // 阶段标题
                           Text(
-                            provider.getCurrentStageName(),
+                            provider.currentStageDescription,
                             style: TextStyle(
                               fontSize: 28,
                               fontWeight: FontWeight.bold,
@@ -119,7 +119,7 @@ class _StageTransitionPageState extends State<StageTransitionPage> with TickerPr
                           
                           // 阶段描述
                           Text(
-                            provider.getCurrentStageDescription(),
+                            provider.currentStageDescription,
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey[600],
@@ -129,80 +129,7 @@ class _StageTransitionPageState extends State<StageTransitionPage> with TickerPr
                           ),
                           const SizedBox(height: 32),
                           
-                          // 各能区项目数量
-                          if (provider.areaItemCounts.isNotEmpty) ...[
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.1),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(Icons.list_alt, color: _getStageColor(provider.currentStage), size: 20),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        '本阶段测试项目',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: _getStageColor(provider.currentStage),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  ...provider.areaItemCounts.entries.map((entry) {
-                                    if (entry.value > 0) {
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 4),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              _getAreaName(entry.key),
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.grey[700],
-                                              ),
-                                            ),
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                              decoration: BoxDecoration(
-                                                color: _getAreaColor(entry.key).withValues(alpha: 0.1),
-                                                borderRadius: BorderRadius.circular(12),
-                                                border: Border.all(
-                                                  color: _getAreaColor(entry.key).withValues(alpha: 0.3),
-                                                ),
-                                              ),
-                                              child: Text(
-                                                '${entry.value}题',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: _getAreaColor(entry.key),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  }).where((widget) => widget != const SizedBox.shrink()),
-                                ],
-                              ),
-                            ),
-                          ],
+
                           const SizedBox(height: 32),
                           
                           // 进度指示器

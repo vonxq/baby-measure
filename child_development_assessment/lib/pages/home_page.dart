@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     
     // 初始化数据
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AssessmentProvider>().initializeData();
+              context.read<AssessmentProvider>().loadData();
     });
   }
 
@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 Text(provider.error, style: const TextStyle(fontSize: 16)),
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
-                  onPressed: () => provider.initializeData(),
+                  onPressed: () => provider.loadData(),
                   icon: const Icon(Icons.refresh),
                   label: const Text('重试'),
                   style: ElevatedButton.styleFrom(

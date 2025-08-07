@@ -138,7 +138,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                provider.getCurrentStageDescription(),
+                                provider.currentStageDescription,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],
@@ -173,7 +173,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
                             currentIndex: provider.currentStageItemIndex + 1,
                             totalItems: provider.currentStageItems.length,
                             currentItem: provider.currentItem,
-                            areaProgress: provider.getAreaItemCountsWithData(),
+                            areaProgress: provider.areaCompleted,
                             provider: provider,
                           ),
                           const SizedBox(height: 16),
@@ -432,7 +432,7 @@ class _TestPageState extends State<TestPage> with TickerProviderStateMixin {
       // 如果阶段已经切换到完成状态，直接跳转到结果页面
       if (provider.currentStage == TestStage.completed) {
         try {
-          await provider.completeTest();
+                                      // 测试完成逻辑已集成到动态测评中
           // 跳转到结果页面
           if (mounted) {
             Navigator.pushReplacement(

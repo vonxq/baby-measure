@@ -46,22 +46,38 @@ class ExportService {
     buffer.writeln('姓名,测试日期,月龄,总体智龄,总体发育商,评级');
     
     // 总体结果
-    final overallLevel = _getDevelopmentLevel(result.allResult.developmentQuotient);
-    buffer.writeln('${result.userName},${result.date},${result.month},${result.allResult.mentalAge},${result.allResult.developmentQuotient},$overallLevel');
+    final overallLevel = _getDevelopmentLevel(result.dq);
+    buffer.writeln('${result.userName},${DateTime.now().toString().substring(0, 19)},${result.actualAge},${result.averageScore},${result.dq},$overallLevel');
     
     // 空行
     buffer.writeln();
     
     // 各能区结果标题
-    buffer.writeln('能区,智龄,发育商,评级');
+    buffer.writeln('能区,得分');
     
     // 各能区结果
-    for (var areaResult in result.testResults) {
-      final level = _getDevelopmentLevel(areaResult.developmentQuotient);
-      buffer.writeln('${areaResult.area},${areaResult.mentalAge},${areaResult.developmentQuotient},$level');
+    for (var entry in result.areaScores.entries) {
+      buffer.writeln('${_getAreaDisplayName(entry.key)},${entry.value}');
     }
     
     return buffer.toString();
+  }
+
+  static String _getAreaDisplayName(String areaName) {
+    switch (areaName) {
+      case 'motor':
+        return '大运动';
+      case 'fineMotor':
+        return '精细动作';
+      case 'language':
+        return '语言';
+      case 'adaptive':
+        return '适应能力';
+      case 'social':
+        return '社会行为';
+      default:
+        return areaName;
+    }
   }
 
   // 获取发育商评级
@@ -84,27 +100,24 @@ class ExportService {
     // 基本信息
     buffer.writeln('基本信息:');
     buffer.writeln('姓名: ${result.userName}');
-    buffer.writeln('测试日期: ${DateTime.parse(result.date).toString().substring(0, 19)}');
-    buffer.writeln('月龄: ${result.month}个月');
+    buffer.writeln('测试日期: ${DateTime.now().toString().substring(0, 19)}');
+    buffer.writeln('月龄: ${result.actualAge}个月');
     buffer.writeln();
     
     // 总体结果
     buffer.writeln('总体评估结果:');
-    buffer.writeln('总体智龄: ${result.allResult.mentalAge.toStringAsFixed(1)}个月');
-    buffer.writeln('总体发育商: ${result.allResult.developmentQuotient.toStringAsFixed(1)}');
-    buffer.writeln('评级: ${_getDevelopmentLevel(result.allResult.developmentQuotient)}');
+    buffer.writeln('总体智龄: ${result.averageScore.toStringAsFixed(1)}个月');
+    buffer.writeln('总体发育商: ${result.dq.toStringAsFixed(1)}');
+    buffer.writeln('评级: ${_getDevelopmentLevel(result.dq)}');
     buffer.writeln();
     
     // 各能区结果
     buffer.writeln('各能区详细结果:');
     buffer.writeln('-' * 30);
     
-    for (var areaResult in result.testResults) {
-      final level = _getDevelopmentLevel(areaResult.developmentQuotient);
-      buffer.writeln('${areaResult.area}:');
-      buffer.writeln('  智龄: ${areaResult.mentalAge.toStringAsFixed(1)}个月');
-      buffer.writeln('  发育商: ${areaResult.developmentQuotient.toStringAsFixed(1)}');
-      buffer.writeln('  评级: $level');
+    for (var entry in result.areaScores.entries) {
+      buffer.writeln('${_getAreaDisplayName(entry.key)}:');
+      buffer.writeln('  得分: ${entry.value.toStringAsFixed(1)}分');
       buffer.writeln();
     }
     

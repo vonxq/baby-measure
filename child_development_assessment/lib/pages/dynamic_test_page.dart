@@ -136,7 +136,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                provider.getCurrentStageDescription(),
+                                provider.currentStageDescription,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[600],
@@ -161,7 +161,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                             currentIndex: provider.currentStageItemIndex + 1,
                             totalItems: provider.currentStageItems.length,
                             currentItem: provider.currentItem,
-                            areaProgress: provider.getAreaItemCountsWithData(),
+                            areaProgress: provider.areaCompleted,
                             provider: provider,
                           ),
                           const SizedBox(height: 16),

@@ -1,42 +1,68 @@
+import 'package:flutter/material.dart';
+
 class TestResult {
   final String userName;
-  final String date;
-  final String birthDate;
-  final double month;
-  final List<AreaResult> testResults;
-  final AreaResult allResult;
+  final double actualAge;
+  final int mainTestAge;
+  final Map<String, double> areaScores;
+  final double totalScore;
+  final double averageScore;
+  final double dq;
+  final Map<int, bool> testResults;
 
   TestResult({
     required this.userName,
-    required this.date,
-    required this.birthDate,
-    required this.month,
+    required this.actualAge,
+    required this.mainTestAge,
+    required this.areaScores,
+    required this.totalScore,
+    required this.averageScore,
+    required this.dq,
     required this.testResults,
-    required this.allResult,
   });
 
   factory TestResult.fromJson(Map<String, dynamic> json) {
     return TestResult(
       userName: json['userName'],
-      date: json['date'],
-      birthDate: json['birthDate'],
-      month: json['month'].toDouble(),
-      testResults: (json['testResults'] as List)
-          .map((item) => AreaResult.fromJson(item))
-          .toList(),
-      allResult: AreaResult.fromJson(json['allResult']),
+      actualAge: json['actualAge'].toDouble(),
+      mainTestAge: json['mainTestAge'],
+      areaScores: Map<String, double>.from(json['areaScores']),
+      totalScore: json['totalScore'].toDouble(),
+      averageScore: json['averageScore'].toDouble(),
+      dq: json['dq'].toDouble(),
+      testResults: Map<int, bool>.from(json['testResults']),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'userName': userName,
-      'date': date,
-      'birthDate': birthDate,
-      'month': month,
-      'testResults': testResults.map((result) => result.toJson()).toList(),
-      'allResult': allResult.toJson(),
+      'actualAge': actualAge,
+      'mainTestAge': mainTestAge,
+      'areaScores': areaScores,
+      'totalScore': totalScore,
+      'averageScore': averageScore,
+      'dq': dq,
+      'testResults': testResults,
     };
+  }
+
+  // 获取发育商等级描述
+  String get dqLevel {
+    if (dq > 130) return '优秀';
+    if (dq >= 110) return '良好';
+    if (dq >= 80) return '中等';
+    if (dq >= 70) return '临界偏低';
+    return '智力发育障碍';
+  }
+
+  // 获取发育商等级颜色
+  Color get dqLevelColor {
+    if (dq > 130) return Colors.green;
+    if (dq >= 110) return Colors.blue;
+    if (dq >= 80) return Colors.orange;
+    if (dq >= 70) return Colors.red;
+    return Colors.red[900]!;
   }
 }
 

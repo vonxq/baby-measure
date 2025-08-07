@@ -161,15 +161,15 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    '测试时间: ${DateTime.parse(result.date).toString().substring(0, 19)}',
+                                    '测试时间: ${DateTime.now().toString().substring(0, 19)}',
                                     style: TextStyle(color: Colors.grey[600]),
                                   ),
                                   const SizedBox(height: 24),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                                     children: [
-                                      _buildResultItem('总体智龄', '${result.allResult.mentalAge.toStringAsFixed(1)}个月'),
-                                      _buildResultItem('发育商', result.allResult.developmentQuotient.toStringAsFixed(1)),
+                                      _buildResultItem('总体智龄', '${result.averageScore.toStringAsFixed(1)}个月'),
+                                      _buildResultItem('发育商', result.dq.toStringAsFixed(1)),
                                     ],
                                   ),
                                   const SizedBox(height: 16),
@@ -177,25 +177,25 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     decoration: BoxDecoration(
-                                      color: _getDevelopmentLevelColor(result.allResult.developmentQuotient).withValues(alpha: 0.1),
+                                      color: result.dqLevelColor.withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(20),
                                       border: Border.all(
-                                        color: _getDevelopmentLevelColor(result.allResult.developmentQuotient),
+                                        color: result.dqLevelColor,
                                         width: 1,
                                       ),
                                     ),
                                     child: Text(
-                                      _getDevelopmentLevel(result.allResult.developmentQuotient),
+                                      result.dqLevel,
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: _getDevelopmentLevelColor(result.allResult.developmentQuotient),
+                                        color: result.dqLevelColor,
                                       ),
                                     ),
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
-                                    _getDevelopmentLevelDescription(result.allResult.developmentQuotient),
+                                    _getDevelopmentLevelDescription(result.dq),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 14,
@@ -218,7 +218,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                             ),
                             const SizedBox(height: 16),
 
-                            ...result.testResults.map((areaResult) => _buildAreaResultCard(areaResult)),
+                            ...result.areaScores.entries.map((entry) => _buildAreaResultCard(entry.key, entry.value)),
                           ],
                         ),
                       ),
@@ -286,7 +286,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                             Expanded(
                               child: OutlinedButton.icon(
                                 onPressed: () {
-                                  provider.resetTest();
+                                  provider.reset();
                                   Navigator.popUntil(context, (route) => route.isFirst);
                                 },
                                 icon: const Icon(Icons.refresh),
@@ -505,17 +505,17 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildAreaResultCard(AreaResult areaResult) {
+  Widget _buildAreaResultCard(String areaName, double score) {
     Color cardColor;
     IconData iconData;
     Color iconColor;
     
-    // 根据发育商确定颜色和图标
-    if (areaResult.developmentQuotient >= 110) {
+    // 根据得分确定颜色和图标
+    if (score >= 3.0) {
       cardColor = Colors.green[50]!;
       iconData = Icons.trending_up;
       iconColor = Colors.green[600]!;
-    } else if (areaResult.developmentQuotient >= 80) {
+    } else if (score >= 1.0) {
       cardColor = Colors.blue[50]!;
       iconData = Icons.check_circle;
       iconColor = Colors.blue[600]!;
@@ -530,10 +530,10 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(color: iconColor.withValues(alpha: 0.3)),
+        border: Border.all(color: iconColor.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -546,7 +546,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                                            color: iconColor.withValues(alpha: 0.2),
+                color: iconColor.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(iconData, color: iconColor, size: 28),
@@ -557,7 +557,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    areaResult.area,
+                    _getAreaDisplayName(areaName),
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -568,33 +568,9 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                   Row(
                     children: [
                       Expanded(
-                        child: _buildResultItem('智龄', '${areaResult.mentalAge.toStringAsFixed(1)}个月'),
-                      ),
-                      Expanded(
-                        child: _buildResultItem('发育商', areaResult.developmentQuotient.toStringAsFixed(1)),
+                        child: _buildResultItem('得分', '${score.toStringAsFixed(1)}分'),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 8),
-                  // 各能区发育商评级
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    decoration: BoxDecoration(
-                                                  color: _getDevelopmentLevelColor(areaResult.developmentQuotient).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: _getDevelopmentLevelColor(areaResult.developmentQuotient),
-                        width: 1,
-                      ),
-                    ),
-                    child: Text(
-                      _getDevelopmentLevel(areaResult.developmentQuotient),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: _getDevelopmentLevelColor(areaResult.developmentQuotient),
-                      ),
-                    ),
                   ),
                 ],
               ),
@@ -603,5 +579,22 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  String _getAreaDisplayName(String areaName) {
+    switch (areaName) {
+      case 'motor':
+        return '大运动';
+      case 'fineMotor':
+        return '精细动作';
+      case 'language':
+        return '语言';
+      case 'adaptive':
+        return '适应能力';
+      case 'social':
+        return '社会行为';
+      default:
+        return areaName;
+    }
   }
 } 

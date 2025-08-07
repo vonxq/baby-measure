@@ -6,7 +6,7 @@ class TestProgressIndicator extends StatelessWidget {
   final int currentIndex;
   final int totalItems;
   final AssessmentItem? currentItem;
-  final Map<String, int> areaProgress;
+  final Map<TestArea, bool> areaProgress;
   final TestStage? currentStage;
   final AssessmentProvider? provider;
 
@@ -88,7 +88,7 @@ class TestProgressIndicator extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '当前测试：${_getAreaName(_getAreaFromItem(currentItem!))} - ${_getMonthAgeFromItem(currentItem!)}月龄',
+                      '当前测试：${provider?.currentStageDescription ?? "未知"}',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -102,9 +102,9 @@ class TestProgressIndicator extends StatelessWidget {
             const SizedBox(height: 12),
           ],
           
-          // 各能区项目数量 - 改为一行显示
+          // 各能区完成状态
           Text(
-            '本阶段各能区项目',
+            '各能区测试状态',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -113,13 +113,12 @@ class TestProgressIndicator extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           
-          // 能区项目数量 - 一行显示
+          // 能区完成状态 - 一行显示
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: areaProgress.entries
-                .where((entry) => entry.value > 0)
-                .map((entry) => _buildAreaItemChip(entry.key, entry.value))
+                .map((entry) => _buildAreaStatusChip(entry.key, entry.value))
                 .toList(),
           ),
         ],
@@ -127,27 +126,24 @@ class TestProgressIndicator extends StatelessWidget {
     );
   }
 
-  Widget _buildAreaItemChip(String area, int count) {
-    Color areaColor = _getAreaColor(area);
-    String areaName = _getAreaName(area);
+  Widget _buildAreaStatusChip(TestArea area, bool completed) {
+    Color areaColor = _getAreaColor(area.toString());
+    String areaName = _getAreaName(area.toString());
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: areaColor.withValues(alpha: 0.1),
+        color: completed ? Colors.green[50] : Colors.orange[50],
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: areaColor.withValues(alpha: 0.3)),
+        border: Border.all(color: completed ? Colors.green[300]! : Colors.orange[300]!),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(
-              color: areaColor,
-              shape: BoxShape.circle,
-            ),
+          Icon(
+            completed ? Icons.check_circle : Icons.pending,
+            size: 16,
+            color: completed ? Colors.green[600] : Colors.orange[600],
           ),
           const SizedBox(width: 6),
           Text(
@@ -155,18 +151,18 @@ class TestProgressIndicator extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: Colors.grey[700],
+              color: completed ? Colors.green[700] : Colors.orange[700],
             ),
           ),
           const SizedBox(width: 4),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: areaColor,
+              color: completed ? Colors.green[600] : Colors.orange[600],
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              '$count',
+              completed ? '完成' : '进行中',
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
@@ -213,42 +209,5 @@ class TestProgressIndicator extends StatelessWidget {
     }
   }
 
-  String _getAreaFromItem(AssessmentItem item) {
-    // 从AssessmentProvider获取能区信息
-    if (provider != null) {
-      return provider!.getItemArea(item.id);
-    }
-    
-    // 如果provider不可用，使用简化的推断逻辑
-    int monthAge = (item.id / 100).floor();
-    int itemIndex = item.id % 100;
-    
-    // 根据实际数据结构调整
-    if (monthAge <= 12) {
-      // 1-12月龄：每个能区2个项目
-      if (itemIndex <= 2) return 'motor';
-      if (itemIndex <= 4) return 'fineMotor';
-      if (itemIndex <= 6) return 'adaptive';
-      if (itemIndex <= 8) return 'language';
-      return 'social';
-    } else {
-      // 其他月龄：每个能区1个项目
-      if (itemIndex <= 1) return 'motor';
-      if (itemIndex <= 2) return 'fineMotor';
-      if (itemIndex <= 3) return 'adaptive';
-      if (itemIndex <= 4) return 'language';
-      return 'social';
-    }
-  }
 
-  int _getMonthAgeFromItem(AssessmentItem item) {
-    // 从AssessmentProvider获取月龄信息
-    if (provider != null) {
-      return provider!.getItemMonthAge(item.id);
-    }
-    
-    // 如果provider不可用，使用简化的推断逻辑
-    int monthAge = (item.id / 100).floor();
-    return monthAge;
-  }
 }
