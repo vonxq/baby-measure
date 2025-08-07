@@ -404,6 +404,43 @@ class AssessmentProvider with ChangeNotifier {
     }
   }
 
+  // 获取当前能区的智龄
+  double getCurrentAreaMentalAge() {
+    return _calculateAreaScore(_currentArea);
+  }
+
+  // 获取当前能区的发育商
+  double getCurrentAreaDevelopmentQuotient() {
+    double mentalAge = getCurrentAreaMentalAge();
+    return (mentalAge / _actualAge) * 100;
+  }
+
+  // 获取当前能区已测试的项目数
+  int getCurrentAreaTestedCount() {
+    int count = 0;
+    for (var item in _currentStageItems) {
+      if (_testResults.containsKey(item.id)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  // 获取当前能区总项目数（包括预估的额外项目）
+  int getCurrentAreaTotalCount() {
+    int baseCount = _currentStageItems.length;
+    
+    // 如果当前阶段是向前或向后测查，估算额外项目
+    if (_currentStage == TestStage.forward || _currentStage == TestStage.backward) {
+      // 根据已测试的月龄数估算额外项目
+      List<int> testedAges = _areaTestedAges[_currentArea] ?? [];
+      int additionalAges = testedAges.length - 1; // 减去主测月龄
+      baseCount += additionalAges * 3; // 假设每个额外月龄3个项目
+    }
+    
+    return baseCount;
+  }
+
   // 移动到下一个能区
   void _moveToNextArea() {
     // 按顺序移动到下一个能区

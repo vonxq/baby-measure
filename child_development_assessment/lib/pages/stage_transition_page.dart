@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/assessment_provider.dart';
-import 'test_page.dart';
+import 'dynamic_test_page.dart';
 
 class StageTransitionPage extends StatefulWidget {
   const StageTransitionPage({super.key});
@@ -30,26 +30,26 @@ class _StageTransitionPageState extends State<StageTransitionPage> with TickerPr
     );
     _animationController.forward();
     
-    // 3秒后自动跳转到测试页面
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const TestPage(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1.0, 0.0),
-                  end: Offset.zero,
-                ).animate(animation),
-                child: child,
-              );
-            },
-          ),
-        );
-      }
-    });
+            // 3秒后自动跳转到测试页面
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => const DynamicTestPage(),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(1.0, 0.0),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
+                  );
+                },
+              ),
+            );
+          }
+        });
   }
 
   @override

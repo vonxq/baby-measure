@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/assessment_provider.dart';
-import '../widgets/test_progress_indicator.dart';
 import 'result_page.dart';
-import 'stage_transition_page.dart';
+import 'area_result_page.dart';
 
 class DynamicTestPage extends StatefulWidget {
   const DynamicTestPage({super.key});
@@ -15,6 +14,7 @@ class DynamicTestPage extends StatefulWidget {
 class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderStateMixin {
   late AnimationController _cardController;
   late Animation<double> _cardAnimation;
+  String? _progressChangeMessage;
 
   @override
   void initState() {
@@ -100,8 +100,8 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
               }
 
               if (provider.currentItem == null) {
-                // 当前阶段完成，显示过渡页
-                return const StageTransitionPage();
+                // 当前阶段完成，显示能区结果页
+                return _buildAreaResultPage(provider);
               }
 
               return Column(
@@ -136,13 +136,24 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                provider.currentStageDescription,
+                                _getCurrentAreaName(provider.currentArea),
                                 style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.orange[600],
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => _showExitDialog(context),
+                          icon: const Icon(Icons.exit_to_app),
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.red[50],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       ],
@@ -156,14 +167,8 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          // 动态测评进度指示器
-                          TestProgressIndicator(
-                            currentIndex: provider.currentStageItemIndex + 1,
-                            totalItems: provider.currentStageItems.length,
-                            currentItem: provider.currentItem,
-                            areaProgress: provider.areaCompleted,
-                            provider: provider,
-                          ),
+                          // 进度条和提示信息
+                          _buildProgressSection(provider),
                           const SizedBox(height: 16),
 
                           // 题目卡片
@@ -216,7 +221,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                                 Icon(Icons.info_outline, color: Colors.orange[600], size: 20),
                                                 const SizedBox(width: 8),
                                                 Text(
-                                                  '描述：',
+                                                  '题目描述：',
                                                   style: TextStyle(
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w600,
@@ -345,12 +350,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                               const SizedBox(width: 16),
                               Expanded(
                                 child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    provider.recordResult(provider.currentItem!.id, true);
-                                    provider.nextItem();
-                                    _cardController.reset();
-                                    _cardController.forward();
-                                  },
+                                  onPressed: () => _handleAnswer(true, provider),
                                   icon: const Icon(Icons.check),
                                   label: const Text('通过'),
                                   style: ElevatedButton.styleFrom(
@@ -366,12 +366,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                               const SizedBox(width: 16),
                               Expanded(
                                 child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    provider.recordResult(provider.currentItem!.id, false);
-                                    provider.nextItem();
-                                    _cardController.reset();
-                                    _cardController.forward();
-                                  },
+                                  onPressed: () => _handleAnswer(false, provider),
                                   icon: const Icon(Icons.close),
                                   label: const Text('不通过'),
                                   style: ElevatedButton.styleFrom(
@@ -399,6 +394,203 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
     );
   }
 
+  Widget _buildProgressSection(AssessmentProvider provider) {
+    // 使用provider的方法获取进度信息
+    int testedCount = provider.getCurrentAreaTestedCount();
+    int totalCount = provider.getCurrentAreaTotalCount();
+
+    return Column(
+      children: [
+        // 进度条
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 5,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '当前进度',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  Text(
+                    '$testedCount / $totalCount',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[600],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              LinearProgressIndicator(
+                value: totalCount > 0 ? testedCount / totalCount : 0.0,
+                backgroundColor: Colors.grey[200],
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
+                minHeight: 8,
+              ),
+            ],
+          ),
+        ),
+        
+        // 进度变化提示
+        if (_progressChangeMessage != null) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.orange[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.orange[200]!),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, color: Colors.orange[600], size: 16),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _progressChangeMessage!,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.orange[700],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildAreaResultPage(AssessmentProvider provider) {
+    // 使用provider的方法获取智龄和发育商
+    double mentalAge = provider.getCurrentAreaMentalAge();
+    double developmentQuotient = provider.getCurrentAreaDevelopmentQuotient();
+    
+    return AreaResultPage(
+      area: provider.currentArea,
+      mentalAge: mentalAge,
+      developmentQuotient: developmentQuotient,
+    );
+  }
+
+  void _handleAnswer(bool passed, AssessmentProvider provider) {
+    provider.recordResult(provider.currentItem!.id, passed);
+    
+    if (provider.currentStageItemIndex < provider.currentStageItems.length - 1) {
+      _cardController.reset();
+      provider.nextItem();
+      _cardController.forward();
+    } else {
+      // 当前阶段完成，检查是否需要进入下一阶段
+      _cardController.reset();
+      provider.nextItem(); // 这会触发阶段切换
+      
+      // 如果阶段已经切换到完成状态，直接跳转到结果页面
+      if (provider.currentStage == TestStage.completed) {
+        try {
+          // 跳转到结果页面
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => const ResultPage(),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(1.0, 0.0),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
+                  );
+                },
+              ),
+            );
+          }
+        } catch (e) {
+          // 显示错误信息
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('计算结果失败: $e'),
+                backgroundColor: Colors.red[600],
+              ),
+            );
+          }
+        }
+      } else {
+        // 如果切换到新阶段，显示过渡页
+        _cardController.forward();
+        
+        // 显示进度变化提示
+        _showProgressChangeMessage(provider);
+      }
+    }
+  }
+
+  void _showProgressChangeMessage(AssessmentProvider provider) {
+    String message = '';
+    
+    switch (provider.currentStage) {
+      case TestStage.forward:
+        message = '由于需要向前测查，增加了测试项目数量';
+        break;
+      case TestStage.backward:
+        message = '由于需要向后测查，增加了测试项目数量';
+        break;
+      default:
+        return;
+    }
+    
+    setState(() {
+      _progressChangeMessage = message;
+    });
+    
+    // 3秒后清除提示
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() {
+          _progressChangeMessage = null;
+        });
+      }
+    });
+  }
+
+
+
+  String _getCurrentAreaName(TestArea area) {
+    switch (area) {
+      case TestArea.motor:
+        return '大运动能区';
+      case TestArea.fineMotor:
+        return '精细动作能区';
+      case TestArea.language:
+        return '语言能区';
+      case TestArea.adaptive:
+        return '适应能力能区';
+      case TestArea.social:
+        return '社会行为能区';
+    }
+  }
+
   void _showExitDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -416,7 +608,8 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                 Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
-              child: const Text('退出'),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('确认退出'),
             ),
           ],
         );
