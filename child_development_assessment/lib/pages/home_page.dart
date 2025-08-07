@@ -14,6 +14,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   int _selectedAge = 6; // 默认选中6月龄
   final TextEditingController _nameController = TextEditingController();
   late TabController _tabController;
+  String _name = ''; // 添加姓名状态
   
   // 月龄选项列表
   final List<int> _ageOptions = [
@@ -35,6 +36,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
     _animationController.forward();
     
+    // 添加姓名控制器监听器
+    _nameController.addListener(_onNameChanged);
+    
     // 初始化数据
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AssessmentProvider>().initializeData();
@@ -45,7 +49,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void dispose() {
     _tabController.dispose();
     _animationController.dispose();
+    _nameController.removeListener(_onNameChanged);
+    _nameController.dispose();
     super.dispose();
+  }
+
+  // 姓名变化监听器
+  void _onNameChanged() {
+    setState(() {
+      _name = _nameController.text.trim();
+    });
   }
 
   @override
@@ -290,9 +303,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 SizedBox(
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: _nameController.text.trim().isNotEmpty ? () => _startDynamicTest() : null,
+                    onPressed: _name.isNotEmpty ? () => _startDynamicTest() : null,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: _nameController.text.trim().isNotEmpty ? Colors.green[600] : Colors.grey[400],
+                      backgroundColor: _name.isNotEmpty ? Colors.green[600] : Colors.grey[400],
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -313,7 +326,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
                 // 提示信息
-                if (_nameController.text.trim().isEmpty)
+                if (_name.isEmpty)
                   Container(
                     margin: const EdgeInsets.only(top: 8),
                     padding: const EdgeInsets.all(12),
@@ -726,8 +739,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   void _startDynamicTest() {
-    final name = _nameController.text.trim();
-    if (name.isEmpty) {
+    if (_name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Row(
@@ -746,7 +758,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     final navigator = Navigator.of(context);
-    context.read<AssessmentProvider>().startDynamicAssessment(name, _selectedAge.toDouble());
+    context.read<AssessmentProvider>().startDynamicAssessment(_name, _selectedAge.toDouble());
     navigator.push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => const DynamicTestPage(),
