@@ -162,14 +162,37 @@ class AssessmentProvider with ChangeNotifier {
     
     // 根据当前测试阶段和能区加载项目
     int testAge = _areaCurrentAge[_currentArea] ?? _mainTestAge;
+    String currentAreaString = _getAreaString(_currentArea);
+    
+    print('加载当前能区项目: $_currentArea ($currentAreaString), 月龄: $testAge');
+    print('数据总数: ${_allData.length}');
     
     for (var data in _allData) {
-      if (data.ageMonth == testAge && data.area == _currentArea.toString()) {
+      print('检查数据: 月龄=${data.ageMonth}, 能区=${data.area}');
+      if (data.ageMonth == testAge && data.area == currentAreaString) {
+        print('找到匹配数据，添加 ${data.testItems.length} 个项目');
         _currentStageItems.addAll(data.testItems);
       }
     }
     
+    print('最终加载项目数: ${_currentStageItems.length}');
     notifyListeners();
+  }
+
+  // 获取能区字符串
+  String _getAreaString(TestArea area) {
+    switch (area) {
+      case TestArea.motor:
+        return 'motor';
+      case TestArea.fineMotor:
+        return 'fineMotor';
+      case TestArea.language:
+        return 'language';
+      case TestArea.adaptive:
+        return 'adaptive';
+      case TestArea.social:
+        return 'social';
+    }
   }
 
   // 记录测试结果
@@ -376,8 +399,9 @@ class AssessmentProvider with ChangeNotifier {
       bool hasTestedItems = false;
       
       // 检查该月龄下该能区的所有项目是否都通过
+      String areaString = _getAreaString(area);
       for (var data in _allData) {
-        if (data.ageMonth == age && data.area == area.toString()) {
+        if (data.ageMonth == age && data.area == areaString) {
           for (var item in data.testItems) {
             if (_testResults.containsKey(item.id)) {
               hasTestedItems = true;
@@ -422,8 +446,9 @@ class AssessmentProvider with ChangeNotifier {
       bool hasTestedItems = false;
       
       // 检查该月龄下该能区的所有项目是否都不通过
+      String areaString = _getAreaString(area);
       for (var data in _allData) {
-        if (data.ageMonth == age && data.area == area.toString()) {
+        if (data.ageMonth == age && data.area == areaString) {
           for (var item in data.testItems) {
             if (_testResults.containsKey(item.id)) {
               hasTestedItems = true;
@@ -507,20 +532,33 @@ class AssessmentProvider with ChangeNotifier {
     double score = 0.0;
     
     // 按月龄段计算得分
+    String areaString = _getAreaString(area);
     for (int age in testedAges) {
       for (var data in _allData) {
-        if (data.ageMonth == age && data.area == area.toString()) {
+        if (data.ageMonth == age && data.area == areaString) {
+          // 计算该月龄该能区的总分
+          double ageAreaScore = 0.0;
+          if (age >= 1 && age <= 12) {
+            ageAreaScore = 1.0; // 1月龄～12月龄每个能区1.0分
+          } else if (age >= 15 && age <= 36) {
+            ageAreaScore = 3.0; // 15月龄～36月龄每个能区3.0分
+          } else if (age >= 42 && age <= 84) {
+            ageAreaScore = 6.0; // 42月龄～84月龄每个能区6.0分
+          }
+          
+          // 计算通过的项目数量
+          int passedItems = 0;
           for (var item in data.testItems) {
             if (_testResults.containsKey(item.id) && _testResults[item.id]!) {
-              // 根据月龄段确定分值
-              if (age >= 1 && age <= 12) {
-                score += 1.0; // 1月龄～12月龄每个能区1.0分
-              } else if (age >= 15 && age <= 36) {
-                score += 3.0; // 15月龄～36月龄每个能区3.0分
-              } else if (age >= 42 && age <= 84) {
-                score += 6.0; // 42月龄～84月龄每个能区6.0分
-              }
+              passedItems++;
             }
+          }
+          
+          // 如果该月龄该能区有测试项目，计算得分
+          if (data.testItems.isNotEmpty) {
+            // 每个通过的项目得分 = 该月龄该能区总分 / 该月龄该能区项目总数
+            double itemScore = ageAreaScore / data.testItems.length;
+            score += itemScore * passedItems;
           }
         }
       }
