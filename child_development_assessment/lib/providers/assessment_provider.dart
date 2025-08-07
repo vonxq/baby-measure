@@ -383,6 +383,11 @@ class AssessmentProvider with ChangeNotifier {
     return _currentStageItems.length;
   }
 
+  // 获取当前能区正在测试的月龄
+  int getCurrentAreaAge() {
+    return _areaCurrentAge[_currentArea] ?? _mainTestAge;
+  }
+
   // 生成最终结果
   void _generateFinalResult() {
     // 计算各能区的智龄和总分

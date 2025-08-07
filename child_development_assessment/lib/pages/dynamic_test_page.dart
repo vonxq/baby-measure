@@ -402,6 +402,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
   Widget _buildProgressSection(AssessmentProvider provider) {
     int testedCount = provider.getCurrentAreaTestedCount();
     int totalCount = provider.getCurrentAreaTotalCount();
+    int currentAge = provider.getCurrentAreaAge();
 
     return Column(
       children: [
@@ -424,13 +425,27 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '当前进度',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[700],
-                    ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${_getCurrentAreaName(provider.currentArea)}测试进度',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '当前测试月龄：${currentAge}个月',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.orange[600],
+                        ),
+                      ),
+                    ],
                   ),
                   Text(
                     '$testedCount / $totalCount',
