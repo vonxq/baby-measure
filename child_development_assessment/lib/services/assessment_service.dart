@@ -148,7 +148,7 @@ class AssessmentService {
     var items = getCurrentAgeAreaItems(allData, age, area);
     for (var item in items) {
       if (testResults.containsKey(item.id)) {
-        if (testResults[item.id]!) {
+        if (testResults[item.id] == true) {
           return true;
         }
       }
@@ -222,49 +222,33 @@ class AssessmentService {
     // 最大月龄没通过，上一月龄testedBackwardAges[len - 1]没通过，结束测查
     return backwardAges;
   }
-
+  List<int> getAllAreaItemIds(String area, List<AssessmentData> allData) {
+    return allData.where((data) => data.area == area).expand((data) => data.testItems.map((item) => item.id)).toList();
+  }
   // 计算能区智龄
   double calculateAreaMentalAge(String area, Map<int, bool> areaTestResults, List<AssessmentData> allData) {
-    // 按儿心量表算法：找到连续通过的最高月龄
-    int highestPassedAge = 0;
-    Map<int, List<bool>> ageResults = {};
-    
-    // 整理各月龄的测试结果
-    for (var entry in areaTestResults.entries) {
-      int itemAge = getItemAge(entry.key, allData);
-      if (!ageResults.containsKey(itemAge)) {
-        ageResults[itemAge] = [];
-      }
-      ageResults[itemAge]!.add(entry.value);
-    }
-    
-    // 检查各月龄是否全部通过
-    List<int> passedAges = [];
-    for (int age in ageResults.keys) {
-      var results = ageResults[age]!;
-      if (results.isNotEmpty && results.every((passed) => passed)) {
-        passedAges.add(age);
-      }
-    }
-    
-    // 找到连续通过的最高月龄
-    if (passedAges.isNotEmpty) {
-      passedAges.sort();
-      highestPassedAge = passedAges.last;
-      
-      // 检查连续性：从最高月龄向下检查是否连续
-      for (int i = highestPassedAge - 1; i >= 1; i--) {
-        if (passedAges.contains(i)) {
-          // 继续检查下一个
-        } else {
-          // 不连续，停止
-          break;
+    // 把连续通过的测查项目读至最高分（连续两个月龄通过则不再往前继续测，默认前面的全部通过），不通过的项目不计算，通过的项目（含默认通过的项目）分数逐项加上，为该能区的智龄。
+    // 连续通过的测查项目读至最高分
+    List<int> itemIds = getAllAreaItemIds(area, allData);
+    // 从小到大排序
+    itemIds.sort((a, b) => a.compareTo(b));
+    double score = 0;
+    double accumulatedScore = 0;
+    for (int i = 0; i < itemIds.length; i++) {
+      if (!areaTestResults.containsKey(itemIds[i])) {
+        if (score == 0) { // 如果score为0，则加上分
+          accumulatedScore += getItemScoreById(itemIds[i], allData);
         }
+        continue;
+      }
+      if (areaTestResults[itemIds[i]]!) {
+        if (score == 0) { // 如果score为0，则加上分
+          score = accumulatedScore;
+        }
+        score += getItemScoreById(itemIds[i], allData);
       }
     }
-    
-    // 智龄就是连续通过的最高月龄
-    return highestPassedAge.toDouble();
+    return score;
   }
 
   // 获取已测试的月龄列表
@@ -306,6 +290,17 @@ class AssessmentService {
     double totalScore = getAreaScoreForAge('', age); // area参数在这里不重要
     if (itemCount == 0) return 0.0;
     return totalScore / itemCount;
+  }
+
+  double getItemScoreById(int itemId, List<AssessmentData> allData) {
+    for (var data in allData) {
+      for (var item in data.testItems) {
+        if (item.id == itemId) {
+          return getItemScore(data.ageMonth, data.testItems.length);
+        }
+      }
+    }
+    return 0;
   }
 
   // 计算发育商
