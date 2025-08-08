@@ -160,14 +160,50 @@ class AssessmentGuidePage extends StatelessWidget {
                               content: '请根据宝宝的实际表现如实回答每个问题，不要猜测或夸大',
                               color: Colors.orange[600]!,
                             ),
-                            const SizedBox(height: 12),
-                            _buildSpecialNoteItem(
-                              icon: Icons.psychology,
-                              title: '特殊标注',
-                              line1: '注 1：标注 R 的测查项目表示该项目的表现可以通过询问家长获得。',
-                              line2: '注 2：标注 * 的测查项目表示该项目如果未通过需要引起注意。',
-                              color: Colors.purple[600]!,
-                            ),
+                            // const SizedBox(height: 12),
+                            // _buildSpecialNoteItem(
+                            //   icon: Icons.psychology,
+                            //   title: '特殊标注',
+                            //   line1: '注 1：标注 R 的测查项目表示该项目的表现可以通过询问家长获得。',
+                            //   line2: '注 2：标注 * 的测查项目表示该项目如果未通过需要引起注意。',
+                            //   color: Colors.purple[600]!,
+                            // ),
+                             const SizedBox(height: 12),
+                             // 量表说明（注1-注5）
+                             Container(
+                               decoration: BoxDecoration(
+                                 color: Colors.purple[50],
+                                 borderRadius: BorderRadius.circular(8),
+                                 border: Border.all(color: Colors.purple[100]!),
+                               ),
+                               child: Theme(
+                                 data: Theme.of(context).copyWith(
+                                   dividerColor: Colors.transparent,
+                                   splashColor: Colors.transparent,
+                                   highlightColor: Colors.transparent,
+                                 ),
+                                 child: ExpansionTile(
+                                   tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                   childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                                   leading: Icon(Icons.menu_book, color: Colors.purple[600], size: 20),
+                                   title: Text(
+                                     '量表说明（注）',
+                                     style: TextStyle(
+                                       fontSize: 14,
+                                       fontWeight: FontWeight.bold,
+                                       color: Colors.purple[700],
+                                     ),
+                                   ),
+                                   children: [
+                                     _buildBulletLine('注 1：标注 R 的测查项目表示该项目的表现可以通过询问家长获得。'),
+                                     _buildBulletLine('注 2：标注 * 的测查项目表示该项目如果未通过需要引起注意。'),
+                                     _buildBulletLine('注 3：测查床规格：长 140cm，宽 77cm，高 143cm，栏高 63cm。'),
+                                     _buildBulletLine('注 4：测查用桌子规格：长 120cm，宽 60cm，高 75cm，桌面颜色深绿。'),
+                                     _buildBulletLine('注 5：测查用楼梯规格：上平台长 50×宽 60×高 50cm，底座全梯长 150cm（单梯 75cm），每级台阶 60×25×高 17cm，共 3 级；单侧扶栏长 90cm，直径 2.5cm，从梯面计算扶栏高 40cm。'),
+                                   ],
+                                 ),
+                               ),
+                             ),
                             const SizedBox(height: 12),
                             _buildNoticeItem(
                               icon: Icons.medical_services,
@@ -338,6 +374,27 @@ class AssessmentGuidePage extends StatelessWidget {
                   style: TextStyle(fontSize: 12, color: Colors.grey[800]),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBulletLine(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 6, right: 6),
+            child: Icon(Icons.circle, size: 5, color: Colors.grey),
+          ),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(fontSize: 12, color: Colors.grey[800]),
             ),
           ),
         ],
