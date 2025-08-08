@@ -93,7 +93,7 @@ class ExportService {
   static String generateReport(TestResult result) {
     final buffer = StringBuffer();
     
-    buffer.writeln('儿童发育评估报告');
+            buffer.writeln('萌芽评测报告');
     buffer.writeln('=' * 50);
     buffer.writeln();
     

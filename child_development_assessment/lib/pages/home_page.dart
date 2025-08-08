@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '儿童发育评估',
+                            '萌芽评测',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,

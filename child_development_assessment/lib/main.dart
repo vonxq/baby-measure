@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AssessmentProvider()),
       ],
       child: MaterialApp(
-        title: '儿童发育评估',
+        title: '萌芽评测',
         theme: ThemeData(
           primarySwatch: Colors.blue,
           primaryColor: Colors.blue[600],
