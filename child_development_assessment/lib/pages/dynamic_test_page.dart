@@ -199,20 +199,61 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // 当前阶段标注
+                                    // 测试项目标识
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                       decoration: BoxDecoration(
-                                        color: _getStageColor(provider.currentStage),
-                                        borderRadius: BorderRadius.circular(12),
+                                        color: Colors.grey[50],
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(color: Colors.grey[300]!),
                                       ),
-                                      child: Text(
-                                        _getStageText(provider.currentStage),
-                                        style: const TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 24,
+                                            height: 24,
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue[100],
+                                              borderRadius: BorderRadius.circular(4),
+                                              border: Border.all(color: Colors.blue[300]!, width: 1.5),
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.check_box_outline_blank,
+                                                size: 16,
+                                                color: Colors.blue[600],
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            '测试项目 ${provider.currentItem!.id}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.grey[700],
+                                            ),
+                                          ),
+                                          const Spacer(),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: _getAreaColor(provider.currentItem!.area).withValues(alpha: 0.1),
+                                              borderRadius: BorderRadius.circular(12),
+                                              border: Border.all(
+                                                color: _getAreaColor(provider.currentItem!.area).withValues(alpha: 0.3),
+                                              ),
+                                            ),
+                                            child: Text(
+                                              _getAreaName(provider.currentItem!.area),
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w600,
+                                                color: _getAreaColor(provider.currentItem!.area),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     const SizedBox(height: 12),
@@ -259,10 +300,10 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                     const SizedBox(height: 12),
                                     
                                     // 题目描述
-                                    if (provider.currentItem!.desc.isNotEmpty) ...[
-                                      _buildInfoSection('题目描述', provider.currentItem!.desc, Colors.orange),
-                                      const SizedBox(height: 12),
-                                    ],
+                                    // if (provider.currentItem!.desc.isNotEmpty) ...[
+                                    //   _buildInfoSection('题目描述', provider.currentItem!.desc, Colors.orange),
+                                    //   const SizedBox(height: 12),
+                                    // ],
                                     
                                     // 操作方法
                                     _buildInfoSection('操作方法', provider.currentItem!.operation, Colors.purple),
@@ -836,5 +877,41 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
         );
       },
     );
+  }
+
+  // 根据能区字符串获取颜色
+  Color _getAreaColor(String area) {
+    switch (area) {
+      case 'motor':
+        return Colors.purple;
+      case 'fineMotor':
+        return Colors.orange;
+      case 'language':
+        return Colors.green;
+      case 'adaptive':
+        return Colors.blue;
+      case 'social':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // 根据能区字符串获取名称
+  String _getAreaName(String area) {
+    switch (area) {
+      case 'motor':
+        return '大运动';
+      case 'fineMotor':
+        return '精细动作';
+      case 'language':
+        return '语言';
+      case 'adaptive':
+        return '适应能力';
+      case 'social':
+        return '社会行为';
+      default:
+        return '未知';
+    }
   }
 } 
