@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/assessment_provider.dart';
-import 'dynamic_test_page.dart';
+import '../models/assessment_history.dart' as history;
+import 'assessment_guide_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,7 +27,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -41,7 +42,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     
     // 初始化数据
     WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.read<AssessmentProvider>().loadData();
+      context.read<AssessmentProvider>().loadData();
     });
   }
 
@@ -76,6 +77,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           unselectedLabelColor: Colors.white70,
           tabs: const [
             Tab(icon: Icon(Icons.assessment), text: '测评'),
+            Tab(icon: Icon(Icons.history), text: '测评历史'),
             Tab(icon: Icon(Icons.info), text: '功能介绍'),
           ],
         ),
@@ -92,6 +94,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           controller: _tabController,
           children: [
             _buildAssessmentTab(),
+            _buildHistoryTab(),
             _buildInfoTab(),
           ],
         ),
@@ -128,10 +131,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   onPressed: () => provider.loadData(),
                   icon: const Icon(Icons.refresh),
                   label: const Text('重试'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[600],
-                    foregroundColor: Colors.white,
-                  ),
                 ),
               ],
             ),
@@ -145,50 +144,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // 标题区域
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.child_care,
-                        size: 64,
-                        color: Colors.blue[600],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        '开始测评',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue[700],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '0-6岁儿童发育行为评估量表',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 32),
-
-                // 输入区域
+                // 基本信息卡片
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
@@ -299,11 +255,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
                 const SizedBox(height: 32),
 
-                // 动态测评按钮
+                // 开始测评按钮
                 SizedBox(
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: _name.isNotEmpty ? () => _startDynamicTest() : null,
+                    onPressed: _name.isNotEmpty ? () => _startAssessment() : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _name.isNotEmpty ? Colors.green[600] : Colors.grey[400],
                       foregroundColor: Colors.white,
@@ -318,7 +274,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Icon(Icons.psychology),
                         const SizedBox(width: 8),
                         Text(
-                          '开始动态测评',
+                          '开始测评',
                           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -392,6 +348,320 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildHistoryTab() {
+    return Consumer<AssessmentProvider>(
+      builder: (context, provider, child) {
+        // 这里应该从provider获取真实的历史数据
+        List<history.AssessmentHistory> historyList = [];
+        
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 页面标题
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(
+                  '测评历史',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
+                  ),
+                ),
+              ),
+
+              // 历史记录列表
+              if (historyList.isEmpty)
+                Container(
+                  padding: const EdgeInsets.all(40),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 5,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.history,
+                        size: 48,
+                        color: Colors.grey[400],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        '暂无测评记录',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '完成一次测评后，记录将显示在这里',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else
+                ...historyList.map((history) => _buildHistoryCard(history)).toList(),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildHistoryCard(history.AssessmentHistory historyData) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // 头部信息
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.blue[50],
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.blue[600],
+                  child: Text(
+                    historyData.babyName.substring(0, 1),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        historyData.babyName,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[700],
+                        ),
+                      ),
+                      Text(
+                        '${historyData.actualAge.toStringAsFixed(1)}个月',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: historyData.overallDQColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    historyData.overallLevel,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 时间信息 - 只显示开始时间
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    historyData.startTimeText,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 整体结果展示在上
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: historyData.overallDQColor.withValues(alpha: 0.1),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.psychology,
+                  color: historyData.overallDQColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '整体结果',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: historyData.overallDQColor,
+                        ),
+                      ),
+                      Text(
+                        '智龄: ${historyData.overallMentalAge.toStringAsFixed(1)}个月 | DQ: ${historyData.overallDQ.toStringAsFixed(1)}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: historyData.overallDQColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // 能区结果展示在下
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(12),
+                bottomRight: Radius.circular(12),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '各能区结果',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[700],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: history.TestArea.values.map((area) {
+                    final score = historyData.areaScores[area] ?? 0.0;
+                    final dq = historyData.areaDQs[area] ?? 0.0;
+                    final levelText = _getLevelText(dq);
+                    final levelColor = _getLevelColor(dq);
+                    
+                    return Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: _getAreaColor(area).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: _getAreaColor(area).withValues(alpha: 0.3)),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _getAreaName(area),
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: _getAreaColor(area),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '智龄: ${score.toStringAsFixed(1)}',
+                            style: TextStyle(
+                              fontSize: 8,
+                              color: _getAreaColor(area),
+                            ),
+                          ),
+                          Text(
+                            'DQ: ${dq.toStringAsFixed(0)}',
+                            style: TextStyle(
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                              color: _getAreaColor(area),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                            decoration: BoxDecoration(
+                              color: levelColor.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: levelColor.withValues(alpha: 0.5)),
+                            ),
+                            child: Text(
+                              levelText,
+                              style: TextStyle(
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: levelColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -500,7 +770,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           const SizedBox(height: 20),
 
-          // 评级标准卡片
+          // 各能区说明卡片
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -522,48 +792,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     Icon(Icons.assessment, color: Colors.blue[600], size: 28),
                     const SizedBox(width: 12),
                     Text(
-                      '发育商评级标准',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue[700],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildRatingItem('优秀', '>130', Colors.green[600]!, '发育水平优秀'),
-                _buildRatingItem('良好', '110-129', Colors.blue[600]!, '发育水平良好'),
-                _buildRatingItem('中等', '80-109', Colors.orange[600]!, '发育水平中等'),
-                _buildRatingItem('临界偏低', '70-79', Colors.orange[700]!, '发育水平偏低'),
-                _buildRatingItem('智力发育障碍', '<70', Colors.red[600]!, '可能存在发育障碍'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // 各能区说明卡片
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.category, color: Colors.blue[600], size: 28),
-                    const SizedBox(width: 12),
-                    Text(
                       '五大能区',
                       style: TextStyle(
                         fontSize: 20,
@@ -574,114 +802,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ],
                 ),
                 const SizedBox(height: 16),
-                _buildAreaItem('大运动', Colors.green[600]!, '抬头、翻身、坐、爬、站、走等'),
-                _buildAreaItem('精细动作', Colors.blue[600]!, '抓握、捏取、手眼协调等'),
-                _buildAreaItem('语言', Colors.orange[600]!, '发音、理解、表达等'),
-                _buildAreaItem('适应能力', Colors.purple[600]!, '感知、认知、解决问题等'),
-                _buildAreaItem('社会行为', Colors.red[600]!, '人际交往、情感表达等'),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // 注意事项卡片
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.orange[50],
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.orange[200]!),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.warning, color: Colors.orange[600], size: 28),
-                    const SizedBox(width: 12),
-                    Text(
-                      '重要提醒',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.orange[700],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  '• 本测试结果仅供参考，不能替代专业医生的诊断\n'
-                  '• 如发现发育异常，请及时咨询儿科医生\n'
-                  '• 儿童发育存在个体差异，请结合实际情况判断\n'
-                  '• 建议定期进行发育评估，跟踪发展情况',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.orange[800],
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRatingItem(String title, String range, Color color, String description) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: color,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      range,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[700],
-                  ),
-                ),
+                _buildAreaItem('大运动', Colors.green[600]!, '身体的姿势、头的平衡，以及坐、爬、立、走、跑、跳的能力'),
+                _buildAreaItem('精细动作', Colors.blue[600]!, '使用手指的能力'),
+                _buildAreaItem('语言', Colors.orange[600]!, '理解语言和语言的表达能力'),
+                _buildAreaItem('适应能力', Colors.purple[600]!, '儿童对其周围自然环境和社会需要作出反应和适应的能力'),
+                _buildAreaItem('社会行为', Colors.red[600]!, '对周围人们的交往能力和生活自理能力'),
               ],
             ),
           ),
@@ -738,7 +863,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  void _startDynamicTest() {
+  void _startAssessment() {
     if (_name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -757,11 +882,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       return;
     }
 
-    final navigator = Navigator.of(context);
-    context.read<AssessmentProvider>().startDynamicAssessment(_name, _selectedAge.toDouble());
-    navigator.push(
+    Navigator.push(
+      context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const DynamicTestPage(),
+        pageBuilder: (context, animation, secondaryAnimation) => AssessmentGuidePage(
+          babyName: _name,
+          selectedAge: _selectedAge,
+        ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return SlideTransition(
             position: Tween<Offset>(
@@ -773,5 +900,55 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         },
       ),
     );
+  }
+
+  // 获取能区名称
+  String _getAreaName(history.TestArea area) {
+    switch (area) {
+      case history.TestArea.motor:
+        return '大运动';
+      case history.TestArea.fineMotor:
+        return '精细动作';
+      case history.TestArea.language:
+        return '语言';
+      case history.TestArea.adaptive:
+        return '适应能力';
+      case history.TestArea.social:
+        return '社会行为';
+    }
+  }
+
+  // 获取能区颜色
+  Color _getAreaColor(history.TestArea area) {
+    switch (area) {
+      case history.TestArea.motor:
+        return Colors.green[600]!;
+      case history.TestArea.fineMotor:
+        return Colors.blue[600]!;
+      case history.TestArea.language:
+        return Colors.orange[600]!;
+      case history.TestArea.adaptive:
+        return Colors.purple[600]!;
+      case history.TestArea.social:
+        return Colors.red[600]!;
+    }
+  }
+
+  // 获取分段文本
+  String _getLevelText(double dq) {
+    if (dq > 130) return '优秀';
+    if (dq >= 110) return '良好';
+    if (dq >= 80) return '中等';
+    if (dq >= 70) return '临界偏低';
+    return '智力发育障碍';
+  }
+
+  // 获取分段颜色
+  Color _getLevelColor(double dq) {
+    if (dq > 130) return Colors.green[600]!;
+    if (dq >= 110) return Colors.blue[600]!;
+    if (dq >= 80) return Colors.orange[600]!;
+    if (dq >= 70) return Colors.orange[700]!;
+    return Colors.red[600]!;
   }
 } 

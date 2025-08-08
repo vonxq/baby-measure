@@ -394,129 +394,91 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
           const SizedBox(height: 6),
           // 带节点的进度条
           _buildStepperProgress(TestArea.values, provider),
-          // 已完成的能区结果
-          if (completedAreas > 0) ...[
-            const SizedBox(height: 6),
-            _buildCompletedAreasInfo(provider),
-          ],
         ],
       ),
     );
   }
 
   Widget _buildStepperProgress(List<TestArea> areas, AssessmentProvider provider) {
-    return Column(
-      children: [
-        // 进度节点
-        Row(
-          children: areas.asMap().entries.map((entry) {
-            int index = entry.key;
-            TestArea area = entry.value;
-            bool isCompleted = provider.areaCompleted[area] ?? false;
-            bool isCurrent = area == provider.currentArea;
-            
-            return Expanded(
-              child: Row(
-                children: [
-                  // 节点
-                  Container(
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: isCompleted ? Colors.green[600] : (isCurrent ? Colors.blue[600] : Colors.grey[300]),
-                    ),
-                    child: isCompleted 
-                      ? const Icon(Icons.check, size: 10, color: Colors.white)
-                      : null,
-                  ),
-                  // 连接线
-                  if (index < areas.length - 1)
-                    Expanded(
-                      child: Container(
-                        height: 1,
-                        color: isCompleted ? Colors.green[600] : Colors.grey[300],
-                      ),
-                    ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 4),
-        // 能区名称
-        Row(
-          children: areas.map((area) => Expanded(
-            child: Text(
-              _getAreaShortName(area),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
-              ),
-            ),
-          )).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCompletedAreasInfo(AssessmentProvider provider) {
-    List<Widget> areaInfoWidgets = [];
-    
-    for (TestArea area in TestArea.values) {
-      if (provider.areaCompleted[area] == true) {
+    return Row(
+      children: areas.map((area) {
+        bool isCompleted = provider.areaCompleted[area] ?? false;
+        bool isCurrent = area == provider.currentArea;
         double mentalAge = provider.areaScores[area] ?? 0.0;
         double dq = _calculateDevelopmentQuotient(mentalAge, provider.actualAge);
         
-        areaInfoWidgets.add(
-          Container(
-            margin: const EdgeInsets.only(right: 6),
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        // 确定卡片颜色
+        Color cardColor = Colors.grey[200]!;
+        Color textColor = Colors.grey[600]!;
+        
+        if (isCurrent) {
+          cardColor = Colors.blue[100]!;
+          textColor = Colors.blue[700]!;
+        } else if (isCompleted) {
+          if (dq >= 80) {
+            cardColor = Colors.green[100]!;
+            textColor = Colors.green[700]!;
+          } else {
+            cardColor = Colors.orange[100]!;
+            textColor = Colors.orange[700]!;
+          }
+        }
+        
+        return Expanded(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            height: 60, // 固定高度确保一致性
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
             decoration: BoxDecoration(
-              color: Colors.green[50],
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: Colors.green[200]!),
+              color: cardColor,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isCurrent ? Colors.blue[300]! : Colors.grey[300]!,
+                width: isCurrent ? 2 : 1,
+              ),
             ),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // 能区名称
                 Text(
                   _getAreaShortName(area),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                // 智龄信息（始终显示，未完成时显示占位符）
+                Text(
+                  isCompleted ? '智龄: ${mentalAge.toStringAsFixed(1)}' : '智龄: --',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 8,
+                    color: textColor,
+                  ),
+                ),
+                // 发育商信息（始终显示，未完成时显示占位符）
+                Text(
+                  isCompleted ? 'DQ: ${dq.toStringAsFixed(0)}' : 'DQ: --',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 8,
                     fontWeight: FontWeight.bold,
-                    color: Colors.green[700],
-                  ),
-                ),
-                Text(
-                  '智龄: ${mentalAge.toStringAsFixed(1)}',
-                  style: TextStyle(
-                    fontSize: 7,
-                    color: Colors.green[600],
-                  ),
-                ),
-                Text(
-                  'DQ: ${dq.toStringAsFixed(0)}',
-                  style: TextStyle(
-                    fontSize: 7,
-                    color: Colors.green[600],
+                    color: textColor,
                   ),
                 ),
               ],
             ),
           ),
         );
-      }
-    }
-    
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: areaInfoWidgets,
-      ),
+      }).toList(),
     );
   }
+
+
 
   Widget _buildCompactAgeProgress(AssessmentProvider provider) {
     List<int> testedAges = provider.areaTestedAges[provider.currentArea] ?? [];
@@ -549,18 +511,26 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                   color: Colors.grey[700],
                 ),
               ),
-              Text(
-                '当前: ${currentAge}个月',
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.orange[600],
+              // 阶段信息移到右上角
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getStageColor(provider.currentStage),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  _getStageText(provider.currentStage),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 6),
-          // 月龄节点进度 - 使用和整体进度一样的样式
+          // 月龄节点进度
           _buildAgeStepperProgress(testedAges, provider, currentAge),
         ],
       ),
@@ -570,70 +540,65 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
   Widget _buildAgeStepperProgress(List<int> ages, AssessmentProvider provider, int currentAge) {
     if (ages.isEmpty) return const SizedBox.shrink();
     
+    // 按月龄排序
+    ages.sort();
+    
+    // 计算每行8个圆点
+    const int maxPerRow = 8;
+    List<List<int>> rows = [];
+    for (int i = 0; i < ages.length; i += maxPerRow) {
+      rows.add(ages.sublist(i, (i + maxPerRow > ages.length) ? ages.length : i + maxPerRow));
+    }
+    
     return Column(
-      children: [
-        // 进度节点
-        Row(
-          children: ages.asMap().entries.map((entry) {
-            int index = entry.key;
-            int age = entry.value;
-            bool isCurrent = age == currentAge;
-            bool hasPassed = _hasAgePassed(age, provider);
-            bool hasFailed = _hasAgeFailed(age, provider);
-            
-            Color nodeColor = Colors.grey[300]!;
-            if (isCurrent) {
-              nodeColor = Colors.blue[600]!; // 进行中是蓝色
-            } else if (hasPassed && !hasFailed) {
-              nodeColor = Colors.green[600]!; // 全过是绿色
-            } else if (hasPassed && hasFailed) {
-              nodeColor = Colors.orange[600]!; // 部分过是橙色
-            }
-            
-            return Expanded(
-              child: Row(
-                children: [
-                  // 节点
-                  Container(
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: nodeColor,
-                    ),
-                    child: (hasPassed && !hasFailed) 
-                      ? const Icon(Icons.check, size: 10, color: Colors.white)
-                      : null,
-                  ),
-                  // 连接线
-                  if (index < ages.length - 1)
-                    Expanded(
-                      child: Container(
-                        height: 1,
-                        color: (hasPassed && !hasFailed) ? Colors.green[600] : Colors.grey[300],
+      children: rows.map((row) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Row(
+            children: row.map((age) {
+              bool isCurrent = age == currentAge;
+              bool hasPassed = _hasAgePassed(age, provider);
+              bool hasFailed = _hasAgeFailed(age, provider);
+              
+              Color nodeColor = Colors.grey[300]!;
+              
+              if (isCurrent) {
+                nodeColor = Colors.blue[600]!; // 进行中是蓝色
+              } else if (hasPassed && !hasFailed) {
+                nodeColor = Colors.green[600]!; // 全过是绿色
+              } else if (hasPassed && hasFailed) {
+                nodeColor = Colors.orange[600]!; // 部分过是橙色
+              }
+              
+              return Expanded(
+                child: Container(
+                  height: 24, // 固定高度
+                  child: Center(
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: nodeColor,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$age',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 4),
-        // 月龄名称
-        Row(
-          children: ages.map((age) => Expanded(
-            child: Text(
-              '${age}月龄',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
-              ),
-            ),
-          )).toList(),
-        ),
-      ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        );
+      }).toList(),
     );
   }
 

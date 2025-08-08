@@ -130,6 +130,11 @@ class TestProgressIndicator extends StatelessWidget {
     Color areaColor = _getAreaColor(area.toString());
     String areaName = _getAreaName(area.toString());
     
+    // 获取能区的分数和分段信息
+    double? areaScore = provider?.areaScores[area];
+    String levelText = _getLevelText(areaScore);
+    Color levelColor = _getLevelColor(areaScore);
+    
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -137,39 +142,64 @@ class TestProgressIndicator extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: completed ? Colors.green[300]! : Colors.orange[300]!),
       ),
-      child: Row(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            completed ? Icons.check_circle : Icons.pending,
-            size: 16,
-            color: completed ? Colors.green[600] : Colors.orange[600],
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                completed ? Icons.check_circle : Icons.pending,
+                size: 16,
+                color: completed ? Colors.green[600] : Colors.orange[600],
+              ),
+              const SizedBox(width: 6),
+              Text(
+                areaName,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: completed ? Colors.green[700] : Colors.orange[700],
+                ),
+              ),
+              const SizedBox(width: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: completed ? Colors.green[600] : Colors.orange[600],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  completed ? '完成' : '进行中',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 6),
-          Text(
-            areaName,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: completed ? Colors.green[700] : Colors.orange[700],
-            ),
-          ),
-          const SizedBox(width: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: completed ? Colors.green[600] : Colors.orange[600],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              completed ? '完成' : '进行中',
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+          // 添加分数分段信息
+          if (completed && areaScore != null) ...[
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: levelColor.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: levelColor.withValues(alpha: 0.5)),
+              ),
+              child: Text(
+                levelText,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: levelColor,
+                ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -209,5 +239,23 @@ class TestProgressIndicator extends StatelessWidget {
     }
   }
 
+  // 获取分段文本
+  String _getLevelText(double? score) {
+    if (score == null) return '';
+    if (score > 130) return '优秀';
+    if (score >= 110) return '良好';
+    if (score >= 80) return '中等';
+    if (score >= 70) return '临界偏低';
+    return '智力发育障碍';
+  }
 
+  // 获取分段颜色
+  Color _getLevelColor(double? score) {
+    if (score == null) return Colors.grey[600]!;
+    if (score > 130) return Colors.green[600]!;
+    if (score >= 110) return Colors.blue[600]!;
+    if (score >= 80) return Colors.orange[600]!;
+    if (score >= 70) return Colors.orange[700]!;
+    return Colors.red[600]!;
+  }
 }

@@ -27,134 +27,141 @@ class AreaResultPage extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              children: [
-                // 顶部标题
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
+          child: Column(
+            children: [
+              // 顶部标题
+              Container(
+                margin: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.check_circle,
+                      size: 64,
+                      color: Colors.green[600],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      '${_getAreaName(area)}能区测试完成',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue[700],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
+              ),
+              
+              // 可滚动的结果区域
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     children: [
-                      Icon(
-                        Icons.check_circle,
-                        size: 64,
-                        color: Colors.green[600],
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        '${_getAreaName(area)}能区测试完成',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue[700],
+                      // 结果卡片
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                const SizedBox(height: 24),
-                
-                // 结果卡片
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 智龄结果
-                        _buildResultCard(
-                          title: '智龄',
-                          value: '${mentalAge.toStringAsFixed(1)}月',
-                          icon: Icons.timeline,
-                          color: Colors.blue[600]!,
-                        ),
-                        
-                        const SizedBox(height: 16),
-                        
-                        // 发育商结果
-                        _buildResultCard(
-                          title: '发育商',
-                          value: '${developmentQuotient.toStringAsFixed(1)}',
-                          subtitle: _getDqLevel(developmentQuotient),
-                          icon: Icons.psychology,
-                          color: _getDqLevelColor(developmentQuotient),
-                        ),
-                        
-                        const SizedBox(height: 24),
-                        
-                        // 发育商说明
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey[300]!),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // 智龄结果
+                            _buildResultCard(
+                              title: '智龄',
+                              value: '${mentalAge.toStringAsFixed(1)}月',
+                              icon: Icons.timeline,
+                              color: Colors.blue[600]!,
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // 发育商结果
+                            _buildResultCard(
+                              title: '发育商',
+                              value: developmentQuotient.toStringAsFixed(1),
+                              subtitle: _getDqLevel(developmentQuotient),
+                              icon: Icons.psychology,
+                              color: _getDqLevelColor(developmentQuotient),
+                            ),
+                            
+                            const SizedBox(height: 24),
+                            
+                            // 发育商说明
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[50],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.grey[300]!),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(Icons.info_outline, color: Colors.grey[600], size: 20),
-                                  const SizedBox(width: 8),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.info_outline, color: Colors.grey[600], size: 20),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        '发育商说明',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey[700],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
                                   Text(
-                                    '发育商说明',
+                                    '发育商(DQ) = (智龄 / 实际年龄) × 100\n\n'
+                                    '• DQ > 130：优秀\n'
+                                    '• DQ 110-130：良好\n'
+                                    '• DQ 80-110：中等\n'
+                                    '• DQ 70-80：临界偏低\n'
+                                    '• DQ < 70：智力发育障碍',
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[700],
+                                      color: Colors.grey[600],
+                                      height: 1.5,
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '发育商(DQ) = (智龄 / 实际年龄) × 100\n\n'
-                                '• DQ > 130：优秀\n'
-                                '• DQ 110-130：良好\n'
-                                '• DQ 80-110：中等\n'
-                                '• DQ 70-80：临界偏低\n'
-                                '• DQ < 70：智力发育障碍',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  height: 1.5,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
                   ),
                 ),
-                
-                const SizedBox(height: 24),
-                
-                // 继续按钮
-                SizedBox(
+              ),
+              
+              // 底部按钮
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: onContinue ?? () {
@@ -173,8 +180,8 @@ class AreaResultPage extends StatelessWidget {
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

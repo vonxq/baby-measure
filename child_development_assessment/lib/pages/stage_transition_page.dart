@@ -119,7 +119,7 @@ class _StageTransitionPageState extends State<StageTransitionPage> with TickerPr
                           
                           // 阶段描述
                           Text(
-                            provider.currentStageDescription,
+                            _getStageSubtitle(provider.currentStage),
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey[600],
@@ -237,6 +237,21 @@ class _StageTransitionPageState extends State<StageTransitionPage> with TickerPr
         return Colors.green[600]!;
       case TestStage.allCompleted:
         return Colors.green[600]!;
+    }
+  }
+
+  String _getStageSubtitle(TestStage stage) {
+    switch (stage) {
+      case TestStage.current:
+        return '正在测试当前年龄段的发育水平';
+      case TestStage.forward:
+        return '向更高年龄段进行测试';
+      case TestStage.backward:
+        return '向更低年龄段进行测试';
+      case TestStage.areaCompleted:
+        return '本能区测试已完成，即将进入下一能区';
+      case TestStage.allCompleted:
+        return '恭喜您！已完成所有能区的测试';
     }
   }
 
