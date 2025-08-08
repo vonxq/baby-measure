@@ -35,7 +35,7 @@ class AreaScoreCard extends StatelessWidget {
     Widget cardContent = Container(
       width: width,
       margin: margin ?? const EdgeInsets.all(4),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: cardColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
@@ -51,12 +51,12 @@ class AreaScoreCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: FontWeight.bold,
               color: cardColor,
             ),
             textAlign: TextAlign.center,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
           
@@ -67,7 +67,7 @@ class AreaScoreCard extends StatelessWidget {
             Text(
               '智龄: ${score!.toStringAsFixed(1)}${unit ?? ''}',
               style: TextStyle(
-                fontSize: 10,
+                fontSize: 9,
                 color: textColor,
               ),
               textAlign: TextAlign.center,
@@ -79,7 +79,7 @@ class AreaScoreCard extends StatelessWidget {
               Text(
                 'DQ: ${dq!.toStringAsFixed(0)}',
                 style: TextStyle(
-                  fontSize: 10,
+                  fontSize: 9,
                   fontWeight: FontWeight.bold,
                   color: textColor,
                 ),
@@ -102,7 +102,7 @@ class AreaScoreCard extends StatelessWidget {
                 child: Text(
                   _getLevelText(dq!),
                   style: TextStyle(
-                    fontSize: 8,
+                    fontSize: 7,
                     fontWeight: FontWeight.bold,
                     color: _getLevelColor(dq!),
                   ),
@@ -218,7 +218,7 @@ class AreaScoreCardExpanded extends StatelessWidget {
         dq: dq,
         unit: '',
         showDQ: true,
-        margin: const EdgeInsets.only(right: 6),
+        margin: const EdgeInsets.symmetric(horizontal: 2),
         onTap: onTap,
       ),
     );
