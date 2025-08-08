@@ -51,46 +51,50 @@ class AreaScoreCard extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 9,
               fontWeight: FontWeight.bold,
               color: cardColor,
             ),
             textAlign: TextAlign.center,
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
           
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           
           if (hasScore) ...[
             // 智龄分数
             Text(
               '智龄: ${score!.toStringAsFixed(1)}${unit ?? ''}',
               style: TextStyle(
-                fontSize: 9,
+                fontSize: 8,
                 color: textColor,
               ),
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             
             if (showDQ && dq != null) ...[
-              const SizedBox(height: 2),
+              const SizedBox(height: 1),
               // 发育商
               Text(
                 'DQ: ${dq!.toStringAsFixed(0)}',
                 style: TextStyle(
-                  fontSize: 9,
+                  fontSize: 8,
                   fontWeight: FontWeight.bold,
                   color: textColor,
                 ),
                 textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               
               // 等级标签
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 decoration: BoxDecoration(
                   color: _getLevelColor(dq!).withOpacity(0.2),
                   borderRadius: BorderRadius.circular(4),
@@ -102,11 +106,13 @@ class AreaScoreCard extends StatelessWidget {
                 child: Text(
                   _getLevelText(dq!),
                   style: TextStyle(
-                    fontSize: 7,
+                    fontSize: 6,
                     fontWeight: FontWeight.bold,
                     color: _getLevelColor(dq!),
                   ),
                   textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -115,10 +121,12 @@ class AreaScoreCard extends StatelessWidget {
             Text(
               '暂无数据',
               style: TextStyle(
-                fontSize: 10,
+                fontSize: 8,
                 color: Colors.grey[600],
               ),
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 12),
           ],
