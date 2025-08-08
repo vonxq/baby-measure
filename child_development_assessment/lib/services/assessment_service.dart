@@ -72,10 +72,16 @@ class AssessmentService {
 
   // 获取指定月龄和能区的测试项目
   List<AssessmentItem> getAreaItems(List<AssessmentData> allData, int age, String area) {
-    return allData
-        .where((data) => data.ageMonth == age && data.area == area)
-        .expand((data) => data.testItems)
-        .toList();
+    print('Debug: getAreaItems called with age=$age, area=$area');
+    print('Debug: allData.length = ${allData.length}');
+    
+    var filteredData = allData.where((data) => data.ageMonth == age && data.area == area).toList();
+    print('Debug: filteredData.length = ${filteredData.length}');
+    
+    var result = filteredData.expand((data) => data.testItems).toList();
+    print('Debug: result.length = ${result.length}');
+    
+    return result;
   }
 
   // 获取指定能区在指定月龄的测试项目
