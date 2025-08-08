@@ -146,7 +146,7 @@ class AssessmentGuidePage extends StatelessWidget {
                       _buildNoticeItem(
                         icon: Icons.family_restroom,
                         title: '家长陪伴',
-                        content: '4岁以下儿童允许一位家长陪伴，4岁及以上如有需要也可陪伴',
+                        content: '如在医院，4岁以下儿童允许一位家长陪伴，4岁及以上如有需要也可陪伴',
                         color: Colors.blue[600]!,
                       ),
                       const SizedBox(height: 12),
@@ -155,6 +155,14 @@ class AssessmentGuidePage extends StatelessWidget {
                         title: '如实回答',
                         content: '请根据宝宝的实际表现如实回答每个问题，不要猜测或夸大',
                         color: Colors.orange[600]!,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildSpecialNoteItem(
+                        icon: Icons.psychology,
+                        title: '特殊标注',
+                        line1: '注 1：标注 R 的测查项目表示该项目的表现可以通过询问家长获得。',
+                        line2: '注 2：标注 * 的测查项目表示该项目如果未通过需要引起注意。',
+                        color: Colors.purple[600]!,
                       ),
                       const SizedBox(height: 12),
                       _buildNoticeItem(
@@ -256,6 +264,55 @@ class AssessmentGuidePage extends StatelessWidget {
                     fontSize: 12,
                     color: Colors.grey[700],
                   ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpecialNoteItem({
+    required IconData icon,
+    required String title,
+    required String line1,
+    required String line2,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  line1,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[800]),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  line2,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[800]),
                 ),
               ],
             ),
