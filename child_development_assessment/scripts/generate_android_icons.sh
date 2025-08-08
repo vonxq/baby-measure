@@ -20,12 +20,26 @@ fi
 TEMP_DIR="/tmp/android_icon_processing_$$"
 mkdir -p "${TEMP_DIR}"
 
-echo "[信息] 裁剪图标，去除边框..."
-# 裁剪中心区域，去除边框（假设有效内容在中心82%区域）
-CROP_SIZE=1680  # 82% of 2048
-OFFSET=184      # (2048 - 1680) / 2
+echo "[信息] 处理图标，去除边框并优化尺寸..."
 
-sips -c "${CROP_SIZE}" "${CROP_SIZE}" "${SOURCE_ICON}" --out "${TEMP_DIR}/cropped_icon.png"
+# 首先转换为PNG格式，去除可能的边框
+sips -s format png "${SOURCE_ICON}" --out "${TEMP_DIR}/converted.png"
+
+# 获取图片尺寸
+IMAGE_INFO=$(sips -g pixelWidth -g pixelHeight "${TEMP_DIR}/converted.png")
+WIDTH=$(echo "$IMAGE_INFO" | grep pixelWidth | awk '{print $2}')
+HEIGHT=$(echo "$IMAGE_INFO" | grep pixelHeight | awk '{print $2}')
+
+echo "[信息] 原始图片尺寸: ${WIDTH}x${HEIGHT}"
+
+# 计算合适的裁剪尺寸，使用90%的区域
+CROP_SIZE=$(echo "scale=0; $WIDTH * 0.9 / 1" | bc)
+OFFSET=$(echo "scale=0; ($WIDTH - $CROP_SIZE) / 2" | bc)
+
+echo "[信息] 裁剪尺寸: ${CROP_SIZE}x${CROP_SIZE}, 偏移: ${OFFSET}"
+
+# 裁剪中心区域，使用更大的比例
+sips -c "${CROP_SIZE}" "${CROP_SIZE}" "${TEMP_DIR}/converted.png" --out "${TEMP_DIR}/cropped_icon.png"
 
 echo "[信息] 生成各种尺寸的Android图标..."
 
