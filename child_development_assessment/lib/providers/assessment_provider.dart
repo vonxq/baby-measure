@@ -214,32 +214,21 @@ class AssessmentProvider with ChangeNotifier {
 
   // 增强的上一题功能：支持在能区内回退并清除后续答案
   void previousItemEnhanced() {
-    // 获取当前能区内所有已测试的项目
-    List<AssessmentItem> allAreaItems = _getAllAreaItems();
+    // 获取已回答的项目序列
+    List<AssessmentItem> answeredItems = _getAllAnsweredItems();
     
-    if (allAreaItems.isEmpty) return;
+    if (answeredItems.length < 2) return; // 需要至少2个项目才能回退
     
-    // 找到当前项目在所有能区项目中的位置
-    int currentGlobalIndex = -1;
-    for (int i = 0; i < allAreaItems.length; i++) {
-      if (allAreaItems[i].id == currentItem?.id) {
-        currentGlobalIndex = i;
-        break;
-      }
-    }
+    // 目标项目是倒数第二个（上一个已回答的项目）
+    AssessmentItem targetItem = answeredItems[answeredItems.length - 2];
     
-    // 如果找到了当前项目并且不是第一个，回退到上一个
-    if (currentGlobalIndex > 0) {
-      AssessmentItem targetItem = allAreaItems[currentGlobalIndex - 1];
-      
-      // 清除当前项目及之后所有项目的答案
-      _clearAnswersFromItem(targetItem.id);
-      
-      // 找到目标项目所在的月龄和stage
-      _navigateToItem(targetItem);
-      
-      notifyListeners();
-    }
+    // 清除目标项目之后的所有答案
+    _clearAnswersFromItem(targetItem.id);
+    
+    // 导航到目标项目
+    _navigateToItem(targetItem);
+    
+    notifyListeners();
   }
 
   // 获取当前能区的所有测试项目（按测试顺序）
@@ -247,12 +236,18 @@ class AssessmentProvider with ChangeNotifier {
     List<AssessmentItem> allItems = [];
     String areaString = _getAreaString(_currentArea);
     
-    // 获取已测试的月龄列表并排序
-    List<int> testedAges = (_areaTestedAges[_currentArea] ?? []).toList();
-    testedAges.sort();
+    // 获取已测试的月龄列表，加上当前测试月龄
+    Set<int> allAges = Set.from(_areaTestedAges[_currentArea] ?? []);
+    
+    // 添加当前测试月龄（如果还没有包含的话）
+    int currentAge = _areaCurrentAge[_currentArea] ?? _mainTestAge;
+    allAges.add(currentAge);
+    
+    // 转换为排序列表
+    List<int> sortedAges = allAges.toList()..sort();
     
     // 按月龄顺序收集所有测试项目
-    for (int age in testedAges) {
+    for (int age in sortedAges) {
       var ageItems = _allData
           .where((data) => data.ageMonth == age && data.area == areaString)
           .expand((data) => data.testItems)
@@ -261,6 +256,27 @@ class AssessmentProvider with ChangeNotifier {
     }
     
     return allItems;
+  }
+
+  // 获取测试序列中所有已经回答的项目（用于回退功能）
+  List<AssessmentItem> _getAllAnsweredItems() {
+    List<AssessmentItem> allItems = _getAllAreaItems();
+    List<AssessmentItem> answeredItems = [];
+    
+    // 按测试顺序收集所有已回答的项目，直到当前项目
+    for (AssessmentItem item in allItems) {
+      // 如果是当前项目，就停止（包含当前项目）
+      if (item.id == currentItem?.id) {
+        answeredItems.add(item);
+        break;
+      }
+      // 如果该项目已经有答案，添加到列表
+      if (_testResults.containsKey(item.id)) {
+        answeredItems.add(item);
+      }
+    }
+    
+    return answeredItems;
   }
 
   // 清除从指定项目开始之后的所有答案
@@ -332,20 +348,11 @@ class AssessmentProvider with ChangeNotifier {
 
   // 检查是否可以回退到上一题
   bool canGoToPreviousItem() {
-    List<AssessmentItem> allAreaItems = _getAllAreaItems();
-    if (allAreaItems.isEmpty) return false;
+    List<AssessmentItem> answeredItems = _getAllAnsweredItems();
     
-    // 找到当前项目在所有能区项目中的位置
-    int currentGlobalIndex = -1;
-    for (int i = 0; i < allAreaItems.length; i++) {
-      if (allAreaItems[i].id == currentItem?.id) {
-        currentGlobalIndex = i;
-        break;
-      }
-    }
-    
-    // 如果当前项目不是第一个，就可以回退
-    return currentGlobalIndex > 0;
+    // 如果已回答项目少于2个（包括当前项目），就不能回退
+    // 换句话说，至少要有一个之前已回答的项目才能回退
+    return answeredItems.length > 1;
   }
 
   // 检查并移动到下一阶段
