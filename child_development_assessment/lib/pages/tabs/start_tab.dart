@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class StartTab extends StatelessWidget {
   const StartTab({
@@ -424,16 +425,34 @@ class _AgeCalculatorDialogState extends State<_AgeCalculatorDialog> {
                         border: Border.all(color: Colors.grey[300]!),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: CupertinoDatePicker(
-                        mode: CupertinoDatePickerMode.date,
-                        initialDateTime: selectedDate,
-                        maximumDate: DateTime.now(),
-                        minimumDate: widget.minimumDate,
-                        dateOrder: DatePickerDateOrder.ymd, // 年月日顺序
-                        onDateTimeChanged: (DateTime date) {
-                          selectedDate = date;
-                          _calculateAge();
-                        },
+                      child: Localizations(
+                        locale: const Locale('zh', 'CN'),
+                        delegates: const [
+                          GlobalMaterialLocalizations.delegate,
+                          GlobalCupertinoLocalizations.delegate,
+                          GlobalWidgetsLocalizations.delegate,
+                        ],
+                        child: CupertinoTheme(
+                          data: const CupertinoThemeData(
+                            textTheme: CupertinoTextThemeData(
+                              pickerTextStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          child: CupertinoDatePicker(
+                            mode: CupertinoDatePickerMode.date,
+                            initialDateTime: selectedDate,
+                            maximumDate: DateTime.now(),
+                            minimumDate: widget.minimumDate,
+                            dateOrder: DatePickerDateOrder.ymd, // 年月日顺序
+                            onDateTimeChanged: (DateTime date) {
+                              selectedDate = date;
+                              _calculateAge();
+                            },
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -456,9 +475,9 @@ class _AgeCalculatorDialogState extends State<_AgeCalculatorDialog> {
                 children: [
                   Text(
                     '您的宝宝为 $calculatedMonths 个月，建议使用 $recommendedAge 月龄测试',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[700],
+                      color: Colors.black87,
                     ),
                     textAlign: TextAlign.center,
                   ),
