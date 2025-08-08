@@ -8,10 +8,12 @@ class HistoryTab extends StatelessWidget {
     super.key,
     required this.isLoading,
     required this.histories,
+    this.onDeleteHistory,
   });
 
   final bool isLoading;
   final List<AssessmentHistory> histories;
+  final Function(String historyId)? onDeleteHistory;
 
   @override
   Widget build(BuildContext context) {
@@ -45,22 +47,82 @@ class HistoryTab extends StatelessWidget {
       itemCount: histories.length,
       itemBuilder: (context, index) {
         final history = histories[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+        return Dismissible(
+          key: Key(history.id),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.red[400],
+              borderRadius: BorderRadius.circular(16),
+            ),
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 20),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '删除',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          confirmDismiss: (direction) async {
+            return await showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('确认删除'),
+                  content: Text('确定要删除${history.babyName}的测评记录吗？'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('取消'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.red,
+                      ),
+                      child: const Text('删除'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+          onDismissed: (direction) {
+            if (onDeleteHistory != null) {
+              onDeleteHistory!(history.id);
+            }
+          },
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
@@ -91,7 +153,7 @@ class HistoryTab extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            '${history.actualAge.toStringAsFixed(1)}个月 | ${history.startTimeText}',
+                            '${history.actualAge.round()}月龄 | ${history.startTimeText}',
                             style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                           ),
                         ],
@@ -137,6 +199,7 @@ class HistoryTab extends StatelessWidget {
                   }).toList(),
                 ),
               ],
+            ),
             ),
           ),
         );

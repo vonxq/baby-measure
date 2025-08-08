@@ -62,6 +62,49 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
   }
 
+  Future<void> _deleteHistory(String historyId) async {
+    try {
+      await DataService().deleteAssessmentHistory(historyId);
+      // 重新加载历史记录
+      await _loadHistories();
+      
+      // 显示删除成功提示
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 8),
+                Text('测评记录已删除'),
+              ],
+            ),
+            backgroundColor: Colors.green[600],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.error, color: Colors.white),
+                SizedBox(width: 8),
+                Text('删除失败，请重试'),
+              ],
+            ),
+            backgroundColor: Colors.red[600],
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -201,6 +244,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     HistoryTab(
                       isLoading: _isLoading,
                       histories: _histories,
+                      onDeleteHistory: _deleteHistory,
                     ),
                     const InfoTab(),
                   ],
