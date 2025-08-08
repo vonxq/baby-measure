@@ -25,72 +25,79 @@ class AssessmentGuidePage extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // 时间预估卡片
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
+          child: Column(
+            children: [
+              // 可滚动的内容区域
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Row(
-                        children: [
-                          Icon(Icons.access_time, color: Colors.orange[600], size: 24),
-                          const SizedBox(width: 12),
-                          Text(
-                            '预计时间',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[800],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
+                      // 时间预估卡片
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.orange[50],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.orange[200]!),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.timer, color: Colors.orange[600], size: 20),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '约3-10分钟',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.orange[700],
-                                    ),
+                            Row(
+                              children: [
+                                Icon(Icons.access_time, color: Colors.orange[600], size: 24),
+                                const SizedBox(width: 12),
+                                Text(
+                                  '预计时间',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[800],
                                   ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '根据宝宝配合程度，测评时间可能有所变化',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.orange[600],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.orange[50],
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.orange[200]!),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.timer, color: Colors.orange[600], size: 20),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '约3-10分钟',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.orange[700],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '根据宝宝配合程度，测评时间可能有所变化',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.orange[600],
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
@@ -99,128 +106,144 @@ class AssessmentGuidePage extends StatelessWidget {
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
+                      const SizedBox(height: 20),
 
-                // 注意事项卡片
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.info_outline, color: Colors.blue[600], size: 24),
-                          const SizedBox(width: 12),
-                          Text(
-                            '注意事项',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[800],
+                      // 注意事项卡片
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.info_outline, color: Colors.blue[600], size: 24),
+                                const SizedBox(width: 12),
+                                Text(
+                                  '注意事项',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            _buildNoticeItem(
+                              icon: Icons.child_care,
+                              title: '环境要求',
+                              content: '请确保测评环境安静、光线明亮，避免干扰',
+                              color: Colors.green[600]!,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildNoticeItem(
+                              icon: Icons.family_restroom,
+                              title: '家长陪伴',
+                              content: '如在医院，4岁以下儿童允许一位家长陪伴，4岁及以上如有需要也可陪伴',
+                              color: Colors.blue[600]!,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildNoticeItem(
+                              icon: Icons.psychology,
+                              title: '如实回答',
+                              content: '请根据宝宝的实际表现如实回答每个问题，不要猜测或夸大',
+                              color: Colors.orange[600]!,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildSpecialNoteItem(
+                              icon: Icons.psychology,
+                              title: '特殊标注',
+                              line1: '注 1：标注 R 的测查项目表示该项目的表现可以通过询问家长获得。',
+                              line2: '注 2：标注 * 的测查项目表示该项目如果未通过需要引起注意。',
+                              color: Colors.purple[600]!,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildNoticeItem(
+                              icon: Icons.medical_services,
+                              title: '结果参考',
+                              content: '测评结果仅供参考，如有疑问请咨询专业医生',
+                              color: Colors.red[600]!,
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 16),
-                      _buildNoticeItem(
-                        icon: Icons.child_care,
-                        title: '环境要求',
-                        content: '请确保测评环境安静、光线明亮，避免干扰',
-                        color: Colors.green[600]!,
-                      ),
-                      const SizedBox(height: 12),
-                      _buildNoticeItem(
-                        icon: Icons.family_restroom,
-                        title: '家长陪伴',
-                        content: '如在医院，4岁以下儿童允许一位家长陪伴，4岁及以上如有需要也可陪伴',
-                        color: Colors.blue[600]!,
-                      ),
-                      const SizedBox(height: 12),
-                      _buildNoticeItem(
-                        icon: Icons.psychology,
-                        title: '如实回答',
-                        content: '请根据宝宝的实际表现如实回答每个问题，不要猜测或夸大',
-                        color: Colors.orange[600]!,
-                      ),
-                      const SizedBox(height: 12),
-                      _buildSpecialNoteItem(
-                        icon: Icons.psychology,
-                        title: '特殊标注',
-                        line1: '注 1：标注 R 的测查项目表示该项目的表现可以通过询问家长获得。',
-                        line2: '注 2：标注 * 的测查项目表示该项目如果未通过需要引起注意。',
-                        color: Colors.purple[600]!,
-                      ),
-                      const SizedBox(height: 12),
-                      _buildNoticeItem(
-                        icon: Icons.medical_services,
-                        title: '结果参考',
-                        content: '测评结果仅供参考，如有疑问请咨询专业医生',
-                        color: Colors.red[600]!,
-                      ),
+                      const SizedBox(height: 24),
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
-
-                // 开始测评按钮
-                SizedBox(
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: () => _startAssessment(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[600],
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 4,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.play_arrow),
-                        const SizedBox(width: 8),
-                        Text(
-                          '开始测评',
-                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              
+              // 固定在底部的按钮区域
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.95),
+                  border: Border(
+                    top: BorderSide(color: Colors.grey[200]!, width: 1),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    // 开始测评按钮
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: () => _startAssessment(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green[600],
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 4,
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // 返回按钮
-                SizedBox(
-                  height: 48,
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.grey[600],
-                      side: BorderSide(color: Colors.grey[400]!),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.play_arrow),
+                            const SizedBox(width: 8),
+                            Text(
+                              '开始测评',
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    child: const Text('返回修改'),
-                  ),
+                    const SizedBox(height: 16),
+
+                    // 返回按钮
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.grey[600],
+                          side: BorderSide(color: Colors.grey[400]!),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('返回修改'),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

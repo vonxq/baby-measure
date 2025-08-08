@@ -123,64 +123,69 @@ class HistoryTab extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                Row(
                   children: TestArea.values.map((area) {
                     final score = history.areaScores[area] ?? 0.0;
                     final dq = history.areaDQs[area] ?? 0.0;
                     final levelText = _getLevelText(dq);
                     final levelColor = _getLevelColor(dq);
 
-                    return Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: _getAreaColor(area).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: _getAreaColor(area).withValues(alpha: 0.3)),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            _getAreaName(area),
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: _getAreaColor(area),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '智龄: ${score.toStringAsFixed(1)}',
-                            style: TextStyle(fontSize: 8, color: _getAreaColor(area)),
-                          ),
-                          Text(
-                            'DQ: ${dq.toStringAsFixed(0)}',
-                            style: TextStyle(
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
-                              color: _getAreaColor(area),
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                            decoration: BoxDecoration(
-                              color: levelColor.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(color: levelColor.withValues(alpha: 0.5)),
-                            ),
-                            child: Text(
-                              levelText,
+                    return Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 6),
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: _getAreaColor(area).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: _getAreaColor(area).withValues(alpha: 0.3)),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _getAreaName(area),
                               style: TextStyle(
-                                fontSize: 8,
+                                fontSize: 9,
                                 fontWeight: FontWeight.bold,
-                                color: levelColor,
+                                color: _getAreaColor(area),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              '智龄: ${score.toStringAsFixed(1)}',
+                              style: TextStyle(fontSize: 7, color: _getAreaColor(area)),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              'DQ: ${dq.toStringAsFixed(0)}',
+                              style: TextStyle(
+                                fontSize: 7,
+                                fontWeight: FontWeight.bold,
+                                color: _getAreaColor(area),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 2),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
+                              decoration: BoxDecoration(
+                                color: levelColor.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(3),
+                                border: Border.all(color: levelColor.withValues(alpha: 0.5)),
+                              ),
+                              child: Text(
+                                levelText,
+                                style: TextStyle(
+                                  fontSize: 7,
+                                  fontWeight: FontWeight.bold,
+                                  color: levelColor,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   }).toList(),
@@ -245,11 +250,11 @@ class HistoryTab extends StatelessWidget {
   }
 
   Color _getLevelColor(double dq) {
-    if (dq > 130) return Colors.green[600]!;
-    if (dq >= 110) return Colors.blue[600]!;
-    if (dq >= 80) return Colors.orange[600]!;
-    if (dq >= 70) return Colors.orange[700]!;
-    return Colors.red[600]!;
+    if (dq > 130) return Colors.green[800]!; // 优秀：深绿色
+    if (dq >= 110) return Colors.green[600]!; // 良好：中绿色
+    if (dq >= 80) return Colors.green[400]!; // 中等：浅绿色
+    if (dq >= 70) return Colors.orange[600]!; // 偏低：橙色
+    return Colors.red[600]!; // 障碍：红色
   }
 }
 

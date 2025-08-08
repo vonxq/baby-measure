@@ -68,12 +68,13 @@ class AssessmentHistory {
   // 获取测试时长文本
   String get durationText {
     final duration = this.duration;
-    if (duration.inMinutes < 60) {
-      return '${duration.inMinutes}分钟';
+    final minutes = duration.inMinutes.clamp(1, 9999); // 至少显示1分钟
+    if (minutes < 60) {
+      return '${minutes}分钟';
     } else {
-      final hours = duration.inHours;
-      final minutes = duration.inMinutes % 60;
-      return '${hours}小时${minutes}分钟';
+      final hours = minutes ~/ 60;
+      final remainingMinutes = minutes % 60;
+      return '${hours}小时${remainingMinutes}分钟';
     }
   }
 
@@ -91,11 +92,11 @@ class AssessmentHistory {
 
   // 获取整体发育商颜色
   Color get overallDQColor {
-    if (overallDQ > 130) return Colors.green[600]!;
-    if (overallDQ >= 110) return Colors.blue[600]!;
-    if (overallDQ >= 80) return Colors.orange[600]!;
-    if (overallDQ >= 70) return Colors.orange[700]!;
-    return Colors.red[600]!;
+    if (overallDQ > 130) return Colors.green[800]!; // 优秀：深绿色
+    if (overallDQ >= 110) return Colors.green[600]!; // 良好：中绿色
+    if (overallDQ >= 80) return Colors.green[400]!; // 中等：浅绿色
+    if (overallDQ >= 70) return Colors.orange[600]!; // 偏低：橙色
+    return Colors.red[600]!; // 障碍：红色
   }
 }
 

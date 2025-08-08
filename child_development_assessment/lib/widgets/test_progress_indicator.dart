@@ -252,10 +252,10 @@ class TestProgressIndicator extends StatelessWidget {
   // 获取分段颜色
   Color _getLevelColor(double? score) {
     if (score == null) return Colors.grey[600]!;
-    if (score > 130) return Colors.green[600]!;
-    if (score >= 110) return Colors.blue[600]!;
-    if (score >= 80) return Colors.orange[600]!;
-    if (score >= 70) return Colors.orange[700]!;
-    return Colors.red[600]!;
+    if (score > 130) return Colors.green[800]!; // 优秀：深绿色
+    if (score >= 110) return Colors.green[600]!; // 良好：中绿色
+    if (score >= 80) return Colors.green[400]!; // 中等：浅绿色
+    if (score >= 70) return Colors.orange[600]!; // 偏低：橙色
+    return Colors.red[600]!; // 障碍：红色
   }
 }

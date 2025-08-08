@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class StartTab extends StatelessWidget {
   const StartTab({
@@ -104,27 +105,24 @@ class StartTab extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey[300]!),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: DropdownButton<int>(
-                    value: selectedAge,
-                    isExpanded: true,
-                    underline: const SizedBox(),
-                    items: List.generate(73, (index) {
-                      return DropdownMenuItem(
-                        value: index,
-                        child: Text('${index}个月'),
-                      );
-                    }),
-                    onChanged: (value) {
-                      if (value != null) {
-                        onAgeChanged(value);
-                      }
-                    },
+                GestureDetector(
+                  onTap: () => _showAgePicker(context, selectedAge, onAgeChanged),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${selectedAge}个月',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -155,5 +153,101 @@ class StartTab extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showAgePicker(BuildContext context, int currentAge, ValueChanged<int> onAgeChanged) {
+  int selectedAge = currentAge;
+  
+  showCupertinoModalPopup(
+    context: context,
+    builder: (BuildContext context) => Container(
+      height: 280,
+      padding: const EdgeInsets.only(top: 6.0),
+      margin: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      color: CupertinoColors.systemBackground.resolveFrom(context),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          children: [
+            // 顶部工具栏
+            Container(
+              height: 44,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                border: Border(
+                  bottom: BorderSide(color: Colors.grey[300]!, width: 0.5),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      '取消',
+                      style: TextStyle(
+                        color: Colors.blue[600],
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '选择月龄',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[800],
+                    ),
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: () {
+                      onAgeChanged(selectedAge);
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      '确定',
+                      style: TextStyle(
+                        color: Colors.blue[600],
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // 选择器
+            Expanded(
+              child: CupertinoPicker(
+                magnification: 1.22,
+                squeeze: 1.2,
+                useMagnifier: true,
+                itemExtent: 32.0,
+                scrollController: FixedExtentScrollController(
+                  initialItem: currentAge,
+                ),
+                onSelectedItemChanged: (int selectedItem) {
+                  selectedAge = selectedItem;
+                },
+                children: List<Widget>.generate(73, (int index) {
+                  return Center(
+                    child: Text(
+                      '$index 个月',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
 
