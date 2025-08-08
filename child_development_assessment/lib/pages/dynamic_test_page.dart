@@ -240,11 +240,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                     ),
                                     const SizedBox(height: 12),
                                     
-                                    // 特殊标记提示信息
-                                    if (_hasSpecialMarkers(provider.currentItem!.name)) ...[
-                                      _buildSpecialMarkerTips(provider.currentItem!.name),
-                                      const SizedBox(height: 12),
-                                    ],
+                                  
                                     
                                     // 操作方法
                                     _buildInfoSection('操作方法', provider.currentItem!.operation, Colors.purple),
@@ -252,6 +248,12 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                     
                                     // 通过标准
                                     _buildInfoSection('通过标准', provider.currentItem!.passCondition, Colors.teal),
+                                    const SizedBox(height: 12),
+                                     // 特殊标记提示信息
+                                    if (_hasSpecialMarkers(provider.currentItem!.name)) ...[
+                                      _buildSpecialMarkerTips(provider.currentItem!.name),
+                                      const SizedBox(height: 12),
+                                    ],
                                   ],
                                 ),
                               ),
