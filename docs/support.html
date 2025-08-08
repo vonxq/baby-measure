@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>儿童发育评估应用 - 技术支持</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin: 30px 0 15px 0;
+            font-size: 1.5em;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: #34495e;
+            margin: 20px 0 10px 0;
+            font-size: 1.2em;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .contact {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .contact h3 {
+            color: white;
+            border-left: none;
+            padding-left: 0;
+        }
+        
+        .footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9em;
+        }
+        
+        .faq-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .faq-item h4 {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .header, .content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>技术支持</h1>
+            <p>儿童发育评估应用</p>
+        </div>
+        
+        <div class="content">
+            <h2>常见问题</h2>
+            
+            <div class="faq-item">
+                <h4>如何开始评估？</h4>
+                <p>打开应用后，输入儿童姓名和出生日期，选择开始评估即可。系统会自动计算实际年龄并开始测试。</p>
+            </div>
+            
+            <div class="faq-item">
+                <h4>评估需要多长时间？</h4>
+                <p>完整评估通常需要15-30分钟，具体时间取决于儿童的配合程度和测试项目数量。</p>
+            </div>
+            
+            <div class="faq-item">
+                <h4>如何理解评估结果？</h4>
+                <p>结果包括智龄和发育商两个指标。发育商在80-109之间为正常范围，110以上为优秀，低于80需要关注。</p>
+            </div>
+            
+            <div class="faq-item">
+                <h4>可以重复测试吗？</h4>
+                <p>可以。建议定期进行测试以跟踪儿童的发育进展。每次测试结果都会保存在历史记录中。</p>
+            </div>
+            
+            <div class="faq-item">
+                <h4>如何导出测试报告？</h4>
+                <p>在结果页面点击"导出"按钮，可以选择导出为JSON、CSV格式或生成详细报告。</p>
+            </div>
+            
+            <div class="faq-item">
+                <h4>数据安全吗？</h4>
+                <p>所有数据仅存储在您的设备本地，不会上传到任何服务器，确保您的隐私安全。</p>
+            </div>
+            
+            <h2>使用指南</h2>
+            <ul>
+                <li><strong>测试环境：</strong>选择安静、光线充足的环境进行测试</li>
+                <li><strong>测试时间：</strong>选择儿童精神状态良好的时间</li>
+                <li><strong>测试方法：</strong>严格按照操作说明进行，避免暗示或诱导</li>
+                <li><strong>结果解读：</strong>参考发育商评级标准，必要时咨询专业医生</li>
+            </ul>
+            
+            <h2>技术规格</h2>
+            <ul>
+                <li><strong>支持系统：</strong>iOS 12.0 及以上版本</li>
+                <li><strong>设备要求：</strong>iPhone 6s 及以上机型</li>
+                <li><strong>存储空间：</strong>需要至少 50MB 可用空间</li>
+                <li><strong>网络要求：</strong>仅首次下载需要网络，使用过程无需联网</li>
+            </ul>
+            
+            <div class="contact">
+                <h3>联系我们</h3>
+                <p>如果您遇到任何问题或需要技术支持，请通过以下方式联系我们：</p>
+                <ul>
+                    <li>邮箱：[您的邮箱地址]</li>
+                    <li>GitHub Issues：<a href="https://github.com/vonxq/baby-measure/issues" style="color: white;">https://github.com/vonxq/baby-measure/issues</a></li>
+                    <li>应用内反馈：通过应用设置页面提交反馈</li>
+                </ul>
+                <p>我们会在收到您的联系后尽快回复。</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2024 儿童发育评估应用. 保留所有权利.</p>
+            <p>基于中华人民共和国国家卫生行业标准WS/T 580—2017《0岁～6岁儿童发育行为评估量表》</p>
+        </div>
+    </div>
+</body>
+</html>
