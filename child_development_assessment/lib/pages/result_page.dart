@@ -5,6 +5,7 @@ import '../models/test_result.dart';
 import '../models/assessment_history.dart';
 import '../services/data_service.dart';
 import 'score_explanation_page.dart';
+import '../widgets/area_score_card.dart';
 
 class ResultPage extends StatefulWidget {
   const ResultPage({super.key});
@@ -287,7 +288,25 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                             ),
                             const SizedBox(height: 16),
 
-                            ...result.areaScores.entries.map((entry) => _buildAreaResultCard(entry.key, entry.value)),
+                            // 能区分数卡片网格布局
+                            GridView.count(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 12,
+                              childAspectRatio: 1.5,
+                              children: result.areaScores.entries.map((entry) {
+                                final areaDQ = _calculateAreaDQ(entry.value);
+                                return AreaScoreCard(
+                                  title: _getAreaDisplayName(entry.key),
+                                  score: entry.value,
+                                  dq: areaDQ,
+                                  unit: '月',
+                                  showDQ: true,
+                                );
+                              }).toList(),
+                            ),
                           ],
                         ),
                       ),
