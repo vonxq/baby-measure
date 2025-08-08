@@ -236,16 +236,9 @@ class AssessmentProvider with ChangeNotifier {
     // 清除被弹出项目的答案
     _testResults.remove(poppedItem.id);
     
-    // 如果堆栈不为空，导航到新的栈顶项目
-    if (stack.isNotEmpty) {
-      AssessmentItem targetItem = stack.last;
-      print('Debug previousItemEnhanced: navigating to stack top item ${targetItem.id}');
-      _navigateToItemByStack(targetItem);
-    } else {
-      // 堆栈为空，回到当前能区的起始状态
-      print('Debug previousItemEnhanced: stack empty, resetting to area start');
-      _resetToAreaStart();
-    }
+    AssessmentItem targetItem = poppedItem;
+    print('Debug previousItemEnhanced: navigating to stack top item ${targetItem.id}');
+    _navigateToItemByStack(targetItem);
     
     notifyListeners();
   }
