@@ -105,25 +105,58 @@ class StartTab extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                GestureDetector(
-                  onTap: () => _showAgePicker(context, selectedAge, onAgeChanged),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[300]!),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '${selectedAge}个月',
-                          style: const TextStyle(fontSize: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => _showAgePicker(context, selectedAge, onAgeChanged),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '$selectedAge个月',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                              Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
+                            ],
+                          ),
                         ),
-                        Icon(Icons.arrow_drop_down, color: Colors.grey[600]),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: () => _showAgeCalculator(context, onAgeChanged),
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          border: Border.all(color: Colors.blue[300]!),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.calculate, color: Colors.blue[600], size: 20),
+                            const SizedBox(width: 6),
+                            Text(
+                              '计算',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blue[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -249,5 +282,222 @@ void _showAgePicker(BuildContext context, int currentAge, ValueChanged<int> onAg
       ),
     ),
   );
+}
+
+void _showAgeCalculator(BuildContext context, ValueChanged<int> onAgeChanged) {
+  DateTime selectedDate = DateTime.now().subtract(const Duration(days: 365)); // 默认1岁
+  
+  showCupertinoModalPopup(
+    context: context,
+    builder: (BuildContext context) => _AgeCalculatorDialog(
+      initialDate: selectedDate,
+      onAgeCalculated: onAgeChanged,
+    ),
+  );
+}
+
+class _AgeCalculatorDialog extends StatefulWidget {
+  final DateTime initialDate;
+  final ValueChanged<int> onAgeCalculated;
+  
+  const _AgeCalculatorDialog({
+    required this.initialDate,
+    required this.onAgeCalculated,
+  });
+  
+  @override
+  State<_AgeCalculatorDialog> createState() => _AgeCalculatorDialogState();
+}
+
+class _AgeCalculatorDialogState extends State<_AgeCalculatorDialog> {
+  late DateTime selectedDate;
+  int? calculatedMonths;
+  int? recommendedAge;
+  
+  @override
+  void initState() {
+    super.initState();
+    selectedDate = widget.initialDate;
+    _calculateAge();
+  }
+  
+  void _calculateAge() {
+    final now = DateTime.now();
+    final difference = now.difference(selectedDate);
+    final months = (difference.inDays / 30.44).round(); // 平均每月30.44天
+    
+    setState(() {
+      calculatedMonths = months.clamp(0, 72); // 限制在0-72个月范围内
+      recommendedAge = _getRecommendedAge(calculatedMonths!);
+    });
+  }
+  
+  int _getRecommendedAge(int actualMonths) {
+    // 根据实际月龄推荐测试月龄，使用就近原则
+    final availableAges = [0, 1, 2, 3, 4, 5, 6, 9, 12, 15, 18, 21, 24, 30, 36, 42, 48, 54, 60, 66, 72];
+    
+    int closestAge = availableAges[0];
+    int minDifference = (actualMonths - availableAges[0]).abs();
+    
+    for (int age in availableAges) {
+      int difference = (actualMonths - age).abs();
+      if (difference < minDifference) {
+        minDifference = difference;
+        closestAge = age;
+      }
+    }
+    
+    return closestAge;
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 400,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        children: [
+          // 顶部标题栏
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: Colors.grey[200]!, width: 1),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '计算宝宝月龄',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    child: Icon(
+                      Icons.close,
+                      color: Colors.grey[600],
+                      size: 24,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // 内容区域
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '请选择宝宝的出生日期：',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // 日期选择器
+                  Container(
+                    height: 120,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: CupertinoDatePicker(
+                      mode: CupertinoDatePickerMode.date,
+                      initialDateTime: selectedDate,
+                      maximumDate: DateTime.now(),
+                      minimumDate: DateTime.now().subtract(const Duration(days: 365 * 6)), // 最多6岁
+                      onDateTimeChanged: (DateTime date) {
+                        selectedDate = date;
+                        _calculateAge();
+                      },
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 20),
+                  
+                  // 计算结果
+                  if (calculatedMonths != null && recommendedAge != null) ...[
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.blue[50],
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.blue[200]!),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '您的宝宝为 $calculatedMonths 个月',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue[700],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '建议使用 $recommendedAge 月龄测试',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.blue[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 20),
+                    
+                    // 使用此月龄按钮
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          widget.onAgeCalculated(recommendedAge!);
+                          Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[600],
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 2,
+                        ),
+                        child: Text(
+                          '使用 $recommendedAge 月龄',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
