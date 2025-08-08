@@ -149,13 +149,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               color: Colors.blue[700],
                             ),
                           ),
-                          Text(
-                            '基于儿心量表-Ⅱ的专业评估工具',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
+                                                      Text(
+                              '基于国家卫生行业标准WS/T 580—2017',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),

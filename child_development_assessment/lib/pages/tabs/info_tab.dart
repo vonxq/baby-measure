@@ -46,6 +46,39 @@ class InfoTab extends StatelessWidget {
                   '本应用基于0-6岁儿童发育行为评估量表（儿心量表-Ⅱ），为家长提供专业的儿童发育评估工具。通过科学的测评方法，帮助了解儿童在五大能区的发展情况。',
                   style: TextStyle(fontSize: 16, color: Colors.grey[700], height: 1.5),
                 ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange[50],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.orange[200]!),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.info_outline, color: Colors.orange[600], size: 16),
+                          const SizedBox(width: 8),
+                          Text(
+                            '版权声明',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange[700],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '本应用基于中华人民共和国国家卫生行业标准WS/T 580—2017《0岁～6岁儿童发育行为评估量表》。该量表由首都儿科研究所等单位起草，经国家卫生和计划生育委员会发布。',
+                        style: TextStyle(fontSize: 12, color: Colors.orange[700], height: 1.4),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
