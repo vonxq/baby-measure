@@ -50,6 +50,7 @@ class HistoryTab extends StatelessWidget {
         return Dismissible(
           key: Key(history.id),
           direction: DismissDirection.endToStart,
+          dismissThresholds: const {DismissDirection.endToStart: 0.4}, // 需要滑动40%才触发删除
           background: Container(
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
@@ -84,7 +85,7 @@ class HistoryTab extends StatelessWidget {
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: const Text('确认删除'),
-                  content: Text('确定要删除${history.babyName}的测评记录吗？'),
+                  content: Text('确认删除${history.babyName}的${history.actualAge.round()}月龄测评记录吗？'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(false),
