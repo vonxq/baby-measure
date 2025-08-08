@@ -71,7 +71,12 @@ class DataService {
       if (await file.exists()) {
         final jsonString = await file.readAsString();
         final List<dynamic> jsonList = json.decode(jsonString);
-        return jsonList.map((json) => AssessmentHistory.fromJson(json)).toList();
+        final histories = jsonList.map((json) => AssessmentHistory.fromJson(json)).toList();
+        
+        // 按开始时间降序排列（最新的在前）
+        histories.sort((a, b) => b.startTime.compareTo(a.startTime));
+        
+        return histories;
       }
       return [];
     } catch (e) {
