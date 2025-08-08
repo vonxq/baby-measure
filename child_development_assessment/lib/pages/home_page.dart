@@ -112,42 +112,68 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 ),
               ),
 
-              // 标签栏
+              // 标签栏 - iOS风格分段控制样式
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
                     ),
                   ],
                 ),
-                child: TabBar(
-                  controller: _tabController,
-                  labelColor: Colors.blue[600],
-                  unselectedLabelColor: Colors.grey[600],
-                  indicator: BoxDecoration(
-                    color: Colors.blue[50],
+                padding: const EdgeInsets.all(6),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey[300]!),
+                  ),
+                  child: TabBar(
+                    controller: _tabController,
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    labelPadding: const EdgeInsets.symmetric(vertical: 10),
+                    labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                    unselectedLabelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    labelColor: Colors.blue[700],
+                    unselectedLabelColor: Colors.grey[700],
+                    dividerColor: Colors.transparent,
+                    splashFactory: NoSplash.splashFactory,
+                    overlayColor: WidgetStateProperty.resolveWith((states) => Colors.transparent),
+                    indicator: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.blue[200]!),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blue.withValues(alpha: 0.06),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                   ),
                   tabs: const [
                     Tab(
-                      icon: Icon(Icons.play_circle_outline),
+                        iconMargin: EdgeInsets.only(bottom: 4),
+                        icon: Icon(Icons.play_circle_outline, size: 18),
                       text: '开始测试',
                     ),
                     Tab(
-                      icon: Icon(Icons.history),
+                        iconMargin: EdgeInsets.only(bottom: 4),
+                        icon: Icon(Icons.history, size: 18),
                       text: '测评历史',
                     ),
                     Tab(
-                      icon: Icon(Icons.info_outline),
+                        iconMargin: EdgeInsets.only(bottom: 4),
+                        icon: Icon(Icons.info_outline, size: 18),
                       text: '功能介绍',
                     ),
                   ],
+                  ),
                 ),
               ),
 
