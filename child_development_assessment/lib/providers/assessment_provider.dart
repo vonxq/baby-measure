@@ -212,6 +212,142 @@ class AssessmentProvider with ChangeNotifier {
     }
   }
 
+  // 增强的上一题功能：支持在能区内回退并清除后续答案
+  void previousItemEnhanced() {
+    // 获取当前能区内所有已测试的项目
+    List<AssessmentItem> allAreaItems = _getAllAreaItems();
+    
+    if (allAreaItems.isEmpty) return;
+    
+    // 找到当前项目在所有能区项目中的位置
+    int currentGlobalIndex = -1;
+    for (int i = 0; i < allAreaItems.length; i++) {
+      if (allAreaItems[i].id == currentItem?.id) {
+        currentGlobalIndex = i;
+        break;
+      }
+    }
+    
+    // 如果找到了当前项目并且不是第一个，回退到上一个
+    if (currentGlobalIndex > 0) {
+      AssessmentItem targetItem = allAreaItems[currentGlobalIndex - 1];
+      
+      // 清除当前项目及之后所有项目的答案
+      _clearAnswersFromItem(targetItem.id);
+      
+      // 找到目标项目所在的月龄和stage
+      _navigateToItem(targetItem);
+      
+      notifyListeners();
+    }
+  }
+
+  // 获取当前能区的所有测试项目（按测试顺序）
+  List<AssessmentItem> _getAllAreaItems() {
+    List<AssessmentItem> allItems = [];
+    String areaString = _getAreaString(_currentArea);
+    
+    // 获取已测试的月龄列表并排序
+    List<int> testedAges = (_areaTestedAges[_currentArea] ?? []).toList();
+    testedAges.sort();
+    
+    // 按月龄顺序收集所有测试项目
+    for (int age in testedAges) {
+      var ageItems = _allData
+          .where((data) => data.ageMonth == age && data.area == areaString)
+          .expand((data) => data.testItems)
+          .toList();
+      allItems.addAll(ageItems);
+    }
+    
+    return allItems;
+  }
+
+  // 清除从指定项目开始之后的所有答案
+  void _clearAnswersFromItem(int fromItemId) {
+    List<AssessmentItem> allAreaItems = _getAllAreaItems();
+    bool startClearing = false;
+    
+    for (AssessmentItem item in allAreaItems) {
+      if (item.id == fromItemId) {
+        startClearing = true;
+        continue; // 不清除目标项目本身
+      }
+      
+      if (startClearing) {
+        _testResults.remove(item.id);
+      }
+    }
+  }
+
+  // 导航到指定项目
+  void _navigateToItem(AssessmentItem targetItem) {
+    String areaString = _getAreaString(_currentArea);
+    
+    // 找到目标项目所在的月龄
+    int targetAge = -1;
+    for (var data in _allData) {
+      if (data.area == areaString) {
+        for (var item in data.testItems) {
+          if (item.id == targetItem.id) {
+            targetAge = data.ageMonth;
+            break;
+          }
+        }
+      }
+      if (targetAge != -1) break;
+    }
+    
+    if (targetAge == -1) return;
+    
+    // 确定应该在哪个stage
+    if (targetAge == _mainTestAge) {
+      _currentStage = TestStage.current;
+    } else if (targetAge > _mainTestAge) {
+      _currentStage = TestStage.forward;
+    } else {
+      _currentStage = TestStage.backward;
+    }
+    
+    // 更新当前测试月龄
+    _areaCurrentAge[_currentArea] = targetAge;
+    
+    // 重新加载该月龄的项目
+    _loadCurrentStageItems(targetAge);
+    
+    // 找到目标项目在当前stage items中的索引
+    for (int i = 0; i < _currentStageItems.length; i++) {
+      if (_currentStageItems[i].id == targetItem.id) {
+        _currentStageItemIndex = i;
+        break;
+      }
+    }
+  }
+
+  // 加载指定月龄的stage items
+  void _loadCurrentStageItems(int age) {
+    String areaString = _getAreaString(_currentArea);
+    _currentStageItems = _assessmentService.getCurrentAgeAreaItems(_allData, age, areaString);
+  }
+
+  // 检查是否可以回退到上一题
+  bool canGoToPreviousItem() {
+    List<AssessmentItem> allAreaItems = _getAllAreaItems();
+    if (allAreaItems.isEmpty) return false;
+    
+    // 找到当前项目在所有能区项目中的位置
+    int currentGlobalIndex = -1;
+    for (int i = 0; i < allAreaItems.length; i++) {
+      if (allAreaItems[i].id == currentItem?.id) {
+        currentGlobalIndex = i;
+        break;
+      }
+    }
+    
+    // 如果当前项目不是第一个，就可以回退
+    return currentGlobalIndex > 0;
+  }
+
   // 检查并移动到下一阶段
   void _checkAndMoveToNextStage() {
     switch (_currentStage) {

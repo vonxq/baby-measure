@@ -199,65 +199,6 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    // 测试项目标识
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[50],
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: Colors.grey[300]!),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            width: 24,
-                                            height: 24,
-                                            decoration: BoxDecoration(
-                                              color: Colors.blue[100],
-                                              borderRadius: BorderRadius.circular(4),
-                                              border: Border.all(color: Colors.blue[300]!, width: 1.5),
-                                            ),
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.check_box_outline_blank,
-                                                size: 16,
-                                                color: Colors.blue[600],
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Text(
-                                            '测试项目 ${provider.currentItem!.id}',
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Colors.grey[700],
-                                            ),
-                                          ),
-                                          const Spacer(),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              color: _getAreaColor(provider.currentItem!.area).withValues(alpha: 0.1),
-                                              borderRadius: BorderRadius.circular(12),
-                                              border: Border.all(
-                                                color: _getAreaColor(provider.currentItem!.area).withValues(alpha: 0.3),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              _getAreaName(provider.currentItem!.area),
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w600,
-                                                color: _getAreaColor(provider.currentItem!.area),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    
                                     // 题目标题
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -270,7 +211,7 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              provider.currentItem!.name,
+                                              '${provider.currentItem!.id} ${provider.currentItem!.name}',
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -299,11 +240,11 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                                     ),
                                     const SizedBox(height: 12),
                                     
-                                    // 题目描述
-                                    // if (provider.currentItem!.desc.isNotEmpty) ...[
-                                    //   _buildInfoSection('题目描述', provider.currentItem!.desc, Colors.orange),
-                                    //   const SizedBox(height: 12),
-                                    // ],
+                                    // 特殊标记提示信息
+                                    if (_hasSpecialMarkers(provider.currentItem!.name)) ...[
+                                      _buildSpecialMarkerTips(provider.currentItem!.name),
+                                      const SizedBox(height: 12),
+                                    ],
                                     
                                     // 操作方法
                                     _buildInfoSection('操作方法', provider.currentItem!.operation, Colors.purple),
@@ -330,9 +271,9 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
                       children: [
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: provider.currentStageItemIndex > 0
+                            onPressed: provider.canGoToPreviousItem()
                                 ? () {
-                                    provider.previousItem();
+                                    provider.previousItemEnhanced();
                                     _cardController.reset();
                                     _cardController.forward();
                                   }
@@ -879,39 +820,102 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
     );
   }
 
-  // 根据能区字符串获取颜色
-  Color _getAreaColor(String area) {
-    switch (area) {
-      case 'motor':
-        return Colors.purple;
-      case 'fineMotor':
-        return Colors.orange;
-      case 'language':
-        return Colors.green;
-      case 'adaptive':
-        return Colors.blue;
-      case 'social':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
+  // 检查题目名称是否包含特殊标记
+  bool _hasSpecialMarkers(String name) {
+    return name.contains('*') || name.contains('R');
   }
 
-  // 根据能区字符串获取名称
-  String _getAreaName(String area) {
-    switch (area) {
-      case 'motor':
-        return '大运动';
-      case 'fineMotor':
-        return '精细动作';
-      case 'language':
-        return '语言';
-      case 'adaptive':
-        return '适应能力';
-      case 'social':
-        return '社会行为';
-      default:
-        return '未知';
+  // 构建特殊标记提示信息
+  Widget _buildSpecialMarkerTips(String name) {
+    List<Widget> tips = [];
+    
+    if (name.contains('R')) {
+      tips.add(_buildTipItem(
+        icon: Icons.family_restroom,
+        iconColor: Colors.blue[600]!,
+        backgroundColor: Colors.blue[50]!,
+        borderColor: Colors.blue[200]!,
+        title: 'R 标记说明',
+        content: '该项目的表现可以通过询问家长获得',
+      ));
     }
+    
+    if (name.contains('*')) {
+      tips.add(_buildTipItem(
+        icon: Icons.warning_amber_rounded,
+        iconColor: Colors.orange[600]!,
+        backgroundColor: Colors.orange[50]!,
+        borderColor: Colors.orange[200]!,
+        title: '* 标记说明',
+        content: '该项目如果未通过需要引起注意',
+      ));
+    }
+    
+    return Column(
+      children: tips.map((tip) => Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: tip,
+      )).toList(),
+    );
+  }
+
+  // 构建单个提示项
+  Widget _buildTipItem({
+    required IconData icon,
+    required Color iconColor,
+    required Color backgroundColor,
+    required Color borderColor,
+    required String title,
+    required String content,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: borderColor),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(
+              icon,
+              size: 18,
+              color: iconColor,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: iconColor,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  content,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[700],
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 } 
