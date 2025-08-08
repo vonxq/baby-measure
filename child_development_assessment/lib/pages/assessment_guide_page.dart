@@ -315,9 +315,9 @@ class AssessmentGuidePage extends StatelessWidget {
     );
   }
 
-  void _startAssessment(BuildContext context) {
+  void _startAssessment(BuildContext context) async {
     // 设置用户信息并开始测评
-    context.read<AssessmentProvider>().startDynamicAssessment(babyName, selectedAge.toDouble());
+    await context.read<AssessmentProvider>().startDynamicAssessment(babyName, selectedAge.toDouble());
     
     Navigator.pushReplacement(
       context,

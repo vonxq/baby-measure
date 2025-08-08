@@ -121,7 +121,7 @@ class AssessmentProvider with ChangeNotifier {
   }
 
   // 开始动态测评
-  void startDynamicAssessment(String userName, double actualAge) {
+  Future<void> startDynamicAssessment(String userName, double actualAge) async {
     _userName = userName;
     _actualAge = actualAge;
     _mainTestAge = _assessmentService.determineMainTestAge(actualAge);
@@ -138,14 +138,11 @@ class AssessmentProvider with ChangeNotifier {
     }
     
     // 确保数据已加载
-    if (_allData.isNotEmpty) {
-      _loadCurrentAreaItems();
-    } else {
-      // 如果数据未加载，先加载数据
-      loadData().then((_) {
-        _loadCurrentAreaItems();
-      });
+    if (_allData.isEmpty) {
+      await loadData();
     }
+    
+    _loadCurrentAreaItems();
     notifyListeners();
   }
 
