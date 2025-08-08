@@ -47,6 +47,9 @@ class AssessmentProvider with ChangeNotifier {
   Map<TestArea, int> _areaCurrentAge = {}; // 每个能区当前测试的月龄
   Map<TestArea, List<int>> _areaTestedAges = {}; // 每个能区已测试的月龄
   Map<TestArea, double> _areaScores = {}; // 每个能区的智龄
+  
+  // 答题堆栈 - 每个能区维护自己的答题历史
+  Map<TestArea, List<AssessmentItem>> _areaAnswerStack = {};
 
   // Getters
   List<AssessmentData> get allData => _allData;
@@ -138,6 +141,7 @@ class AssessmentProvider with ChangeNotifier {
     for (TestArea area in TestArea.values) {
       _areaCurrentAge[area] = _mainTestAge;
       _areaTestedAges[area] = [_mainTestAge];
+      _areaAnswerStack[area] = []; // 初始化答题堆栈
     }
     
     // 确保数据已加载
@@ -187,9 +191,16 @@ class AssessmentProvider with ChangeNotifier {
     }
   }
 
-  // 记录测试结果
+  // 记录测试结果 - 推入答题堆栈
   void recordResult(int itemId, bool passed) {
     _testResults[itemId] = passed;
+    
+    // 将当前项目推入答题堆栈
+    if (currentItem != null) {
+      _areaAnswerStack[_currentArea]!.add(currentItem!);
+      print('Debug recordResult: pushed item ${currentItem!.id} to stack, stack length = ${_areaAnswerStack[_currentArea]!.length}');
+    }
+    
     notifyListeners();
   }
 
@@ -212,21 +223,29 @@ class AssessmentProvider with ChangeNotifier {
     }
   }
 
-  // 增强的上一题功能：支持在能区内回退并清除后续答案
+  // 增强的上一题功能：基于堆栈的回退
   void previousItemEnhanced() {
-    // 获取已回答的项目序列
-    List<AssessmentItem> answeredItems = _getAllAnsweredItems();
+    List<AssessmentItem> stack = _areaAnswerStack[_currentArea]!;
     
-    if (answeredItems.length < 2) return; // 需要至少2个项目才能回退
+    if (stack.isEmpty) return; // 堆栈为空，无法回退
     
-    // 目标项目是倒数第二个（上一个已回答的项目）
-    AssessmentItem targetItem = answeredItems[answeredItems.length - 2];
+    // 从堆栈弹出最后一个项目
+    AssessmentItem poppedItem = stack.removeLast();
+    print('Debug previousItemEnhanced: popped item ${poppedItem.id}, stack length now = ${stack.length}');
     
-    // 清除目标项目之后的所有答案
-    _clearAnswersFromItem(targetItem.id);
+    // 清除被弹出项目的答案
+    _testResults.remove(poppedItem.id);
     
-    // 导航到目标项目
-    _navigateToItem(targetItem);
+    // 如果堆栈不为空，导航到新的栈顶项目
+    if (stack.isNotEmpty) {
+      AssessmentItem targetItem = stack.last;
+      print('Debug previousItemEnhanced: navigating to stack top item ${targetItem.id}');
+      _navigateToItemByStack(targetItem);
+    } else {
+      // 堆栈为空，回到当前能区的起始状态
+      print('Debug previousItemEnhanced: stack empty, resetting to area start');
+      _resetToAreaStart();
+    }
     
     notifyListeners();
   }
@@ -258,46 +277,10 @@ class AssessmentProvider with ChangeNotifier {
     return allItems;
   }
 
-  // 获取测试序列中所有已经回答的项目（用于回退功能）
-  List<AssessmentItem> _getAllAnsweredItems() {
-    List<AssessmentItem> allItems = _getAllAreaItems();
-    List<AssessmentItem> answeredItems = [];
-    
-    // 按测试顺序收集所有已回答的项目
-    for (AssessmentItem item in allItems) {
-      // 如果该项目已经有答案，添加到列表
-      if (_testResults.containsKey(item.id)) {
-        answeredItems.add(item);
-      }
-      // 如果是当前项目且没有答案，也要包含（表示正在回答）
-      else if (item.id == currentItem?.id) {
-        answeredItems.add(item);
-        break; // 当前项目后面的不算已回答
-      }
-    }
-    
-    return answeredItems;
-  }
 
-  // 清除从指定项目开始之后的所有答案
-  void _clearAnswersFromItem(int fromItemId) {
-    List<AssessmentItem> allAreaItems = _getAllAreaItems();
-    bool startClearing = false;
-    
-    for (AssessmentItem item in allAreaItems) {
-      if (item.id == fromItemId) {
-        startClearing = true;
-        continue; // 不清除目标项目本身
-      }
-      
-      if (startClearing) {
-        _testResults.remove(item.id);
-      }
-    }
-  }
 
-  // 导航到指定项目
-  void _navigateToItem(AssessmentItem targetItem) {
+  // 基于堆栈导航到指定项目
+  void _navigateToItemByStack(AssessmentItem targetItem) {
     String areaString = _getAreaString(_currentArea);
     
     // 找到目标项目所在的月龄
@@ -316,8 +299,8 @@ class AssessmentProvider with ChangeNotifier {
     
     if (targetAge == -1) return;
     
-    // 重新构建_areaTestedAges，只包含回退点及之前的月龄
-    _rebuildAreaTestedAges(targetAge);
+    // 重新构建已测试月龄列表（基于堆栈中的项目）
+    _rebuildAreaTestedAgesFromStack();
     
     // 确定应该在哪个stage
     if (targetAge == _mainTestAge) {
@@ -343,26 +326,28 @@ class AssessmentProvider with ChangeNotifier {
     }
   }
 
-  // 重新构建已测试月龄列表，只保留回退点及之前的有效月龄
-  void _rebuildAreaTestedAges(int targetAge) {
+  // 重置到能区开始状态
+  void _resetToAreaStart() {
+    _currentStage = TestStage.current;
+    _areaCurrentAge[_currentArea] = _mainTestAge;
+    _areaTestedAges[_currentArea] = [_mainTestAge];
+    _loadCurrentAreaItems();
+  }
+
+  // 基于答题堆栈重新构建已测试月龄列表
+  void _rebuildAreaTestedAgesFromStack() {
     String areaString = _getAreaString(_currentArea);
     Set<int> validAges = <int>{};
     
-    // 获取所有已回答的项目及其月龄
-    for (var entry in _testResults.entries) {
-      int itemId = entry.key;
-      bool passed = entry.value;
-      
+    // 基于堆栈中的项目重建月龄列表
+    List<AssessmentItem> stack = _areaAnswerStack[_currentArea] ?? [];
+    for (AssessmentItem item in stack) {
       // 找到该项目所属的月龄
       for (var data in _allData) {
         if (data.area == areaString) {
-          for (var item in data.testItems) {
-            if (item.id == itemId) {
-              int itemAge = data.ageMonth;
-              // 只保留目标月龄及之前的月龄
-              if (itemAge <= targetAge) {
-                validAges.add(itemAge);
-              }
+          for (var dataItem in data.testItems) {
+            if (dataItem.id == item.id) {
+              validAges.add(data.ageMonth);
               break;
             }
           }
@@ -370,8 +355,8 @@ class AssessmentProvider with ChangeNotifier {
       }
     }
     
-    // 确保目标月龄在列表中
-    validAges.add(targetAge);
+    // 确保主测月龄在列表中
+    validAges.add(_mainTestAge);
     
     // 更新已测试月龄列表
     _areaTestedAges[_currentArea] = validAges.toList()..sort();
@@ -383,20 +368,19 @@ class AssessmentProvider with ChangeNotifier {
     _currentStageItems = _assessmentService.getCurrentAgeAreaItems(_allData, age, areaString);
   }
 
-  // 检查是否可以回退到上一题
+  // 检查是否可以回退到上一题 - 基于堆栈
   bool canGoToPreviousItem() {
-    List<AssessmentItem> answeredItems = _getAllAnsweredItems();
+    List<AssessmentItem> stack = _areaAnswerStack[_currentArea] ?? [];
     
     // 调试信息
-    print('Debug canGoToPreviousItem: answeredItems.length = ${answeredItems.length}');
-    if (answeredItems.isNotEmpty) {
-      print('Debug canGoToPreviousItem: currentItem.id = ${currentItem?.id}');
-      print('Debug canGoToPreviousItem: answeredItems IDs = ${answeredItems.map((e) => e.id).toList()}');
+    print('Debug canGoToPreviousItem: stack.length = ${stack.length}');
+    if (stack.isNotEmpty) {
+      print('Debug canGoToPreviousItem: stack top item = ${stack.last.id}');
+      print('Debug canGoToPreviousItem: stack IDs = ${stack.map((e) => e.id).toList()}');
     }
     
-    // 如果已回答项目少于2个（包括当前项目），就不能回退
-    // 换句话说，至少要有一个之前已回答的项目才能回退
-    bool canGoPrevious = answeredItems.length > 1;
+    // 堆栈不为空就可以回退
+    bool canGoPrevious = stack.isNotEmpty;
     print('Debug canGoToPreviousItem: result = $canGoPrevious');
     
     return canGoPrevious;
@@ -506,6 +490,7 @@ class AssessmentProvider with ChangeNotifier {
     _currentStage = TestStage.current;
     _areaCurrentAge[_currentArea] = _mainTestAge;
     _areaTestedAges[_currentArea] = [_mainTestAge];
+    _areaAnswerStack[_currentArea] = []; // 清空新能区的答题堆栈
      
     
     _loadCurrentAreaItems();
