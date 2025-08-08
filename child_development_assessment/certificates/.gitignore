@@ -1,0 +1,12 @@
+# 证书文件配置
+# 
+# 注意：这个项目包含开发证书文件
+# 仅用于多设备开发，请不要在公开仓库中使用
+#
+# 允许提交的文件：
+# - CSR文件 (*.certSigningRequest)
+# - 证书文件 (*.cer) 
+# - Provisioning Profile (*.mobileprovision)
+# - 私钥文件 (*.pem) - 仅限私有项目
+#
+# 如果项目要公开，请将 *.pem 添加到忽略列表
