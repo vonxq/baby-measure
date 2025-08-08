@@ -285,12 +285,18 @@ void _showAgePicker(BuildContext context, int currentAge, ValueChanged<int> onAg
 }
 
 void _showAgeCalculator(BuildContext context, ValueChanged<int> onAgeChanged) {
-  DateTime selectedDate = DateTime.now().subtract(const Duration(days: 365)); // 默认1岁
+  final now = DateTime.now();
+  final minDate = DateTime(now.year - 6, now.month, now.day); // 6年前
+  final defaultDate = DateTime(now.year - 1, now.month, now.day); // 默认1岁
+  
+  // 确保默认日期在允许范围内
+  final initialDate = defaultDate.isBefore(minDate) ? minDate : defaultDate;
   
   showCupertinoModalPopup(
     context: context,
     builder: (BuildContext context) => _AgeCalculatorDialog(
-      initialDate: selectedDate,
+      initialDate: initialDate,
+      minimumDate: minDate,
       onAgeCalculated: onAgeChanged,
     ),
   );
@@ -298,10 +304,12 @@ void _showAgeCalculator(BuildContext context, ValueChanged<int> onAgeChanged) {
 
 class _AgeCalculatorDialog extends StatefulWidget {
   final DateTime initialDate;
+  final DateTime minimumDate;
   final ValueChanged<int> onAgeCalculated;
   
   const _AgeCalculatorDialog({
     required this.initialDate,
+    required this.minimumDate,
     required this.onAgeCalculated,
   });
   
@@ -420,7 +428,7 @@ class _AgeCalculatorDialogState extends State<_AgeCalculatorDialog> {
                         mode: CupertinoDatePickerMode.date,
                         initialDateTime: selectedDate,
                         maximumDate: DateTime.now(),
-                        minimumDate: DateTime.now().subtract(const Duration(days: 365 * 6)), // 最多6岁
+                        minimumDate: widget.minimumDate,
                         dateOrder: DatePickerDateOrder.ymd, // 年月日顺序
                         onDateTimeChanged: (DateTime date) {
                           selectedDate = date;
