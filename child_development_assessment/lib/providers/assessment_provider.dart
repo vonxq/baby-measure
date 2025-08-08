@@ -263,16 +263,16 @@ class AssessmentProvider with ChangeNotifier {
     List<AssessmentItem> allItems = _getAllAreaItems();
     List<AssessmentItem> answeredItems = [];
     
-    // 按测试顺序收集所有已回答的项目，直到当前项目
+    // 按测试顺序收集所有已回答的项目
     for (AssessmentItem item in allItems) {
-      // 如果是当前项目，就停止（包含当前项目）
-      if (item.id == currentItem?.id) {
-        answeredItems.add(item);
-        break;
-      }
       // 如果该项目已经有答案，添加到列表
       if (_testResults.containsKey(item.id)) {
         answeredItems.add(item);
+      }
+      // 如果是当前项目且没有答案，也要包含（表示正在回答）
+      else if (item.id == currentItem?.id) {
+        answeredItems.add(item);
+        break; // 当前项目后面的不算已回答
       }
     }
     
@@ -316,6 +316,9 @@ class AssessmentProvider with ChangeNotifier {
     
     if (targetAge == -1) return;
     
+    // 重新构建_areaTestedAges，只包含回退点及之前的月龄
+    _rebuildAreaTestedAges(targetAge);
+    
     // 确定应该在哪个stage
     if (targetAge == _mainTestAge) {
       _currentStage = TestStage.current;
@@ -340,6 +343,40 @@ class AssessmentProvider with ChangeNotifier {
     }
   }
 
+  // 重新构建已测试月龄列表，只保留回退点及之前的有效月龄
+  void _rebuildAreaTestedAges(int targetAge) {
+    String areaString = _getAreaString(_currentArea);
+    Set<int> validAges = <int>{};
+    
+    // 获取所有已回答的项目及其月龄
+    for (var entry in _testResults.entries) {
+      int itemId = entry.key;
+      bool passed = entry.value;
+      
+      // 找到该项目所属的月龄
+      for (var data in _allData) {
+        if (data.area == areaString) {
+          for (var item in data.testItems) {
+            if (item.id == itemId) {
+              int itemAge = data.ageMonth;
+              // 只保留目标月龄及之前的月龄
+              if (itemAge <= targetAge) {
+                validAges.add(itemAge);
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+    
+    // 确保目标月龄在列表中
+    validAges.add(targetAge);
+    
+    // 更新已测试月龄列表
+    _areaTestedAges[_currentArea] = validAges.toList()..sort();
+  }
+
   // 加载指定月龄的stage items
   void _loadCurrentStageItems(int age) {
     String areaString = _getAreaString(_currentArea);
@@ -350,9 +387,19 @@ class AssessmentProvider with ChangeNotifier {
   bool canGoToPreviousItem() {
     List<AssessmentItem> answeredItems = _getAllAnsweredItems();
     
+    // 调试信息
+    print('Debug canGoToPreviousItem: answeredItems.length = ${answeredItems.length}');
+    if (answeredItems.isNotEmpty) {
+      print('Debug canGoToPreviousItem: currentItem.id = ${currentItem?.id}');
+      print('Debug canGoToPreviousItem: answeredItems IDs = ${answeredItems.map((e) => e.id).toList()}');
+    }
+    
     // 如果已回答项目少于2个（包括当前项目），就不能回退
     // 换句话说，至少要有一个之前已回答的项目才能回退
-    return answeredItems.length > 1;
+    bool canGoPrevious = answeredItems.length > 1;
+    print('Debug canGoToPreviousItem: result = $canGoPrevious');
+    
+    return canGoPrevious;
   }
 
   // 检查并移动到下一阶段
