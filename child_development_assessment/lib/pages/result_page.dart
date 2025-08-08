@@ -3,10 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/assessment_provider.dart';
 import '../models/test_result.dart';
 import '../models/assessment_history.dart';
-import '../services/export_service.dart';
 import '../services/data_service.dart';
 import 'score_explanation_page.dart';
-import 'dart:math';
 
 class ResultPage extends StatefulWidget {
   const ResultPage({super.key});
@@ -362,42 +360,10 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                         ),
                         const SizedBox(height: 12),
                         
-                        // 导出按钮
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton.icon(
-                            onPressed: () => _showExportDialog(context, result),
-                            icon: const Icon(Icons.download),
-                            label: const Text('导出结果'),
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
+                       
                         // 操作按钮
                         Row(
                           children: [
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                onPressed: () {
-                                  provider.reset();
-                                  Navigator.popUntil(context, (route) => route.isFirst);
-                                },
-                                icon: const Icon(Icons.refresh),
-                                label: const Text('重新测试'),
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
                             Expanded(
                               child: ElevatedButton.icon(
                                 onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
@@ -457,95 +423,29 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
     return '您的孩子可能存在发育障碍，请及时咨询专业医生进行评估。';
   }
 
-  // 显示导出对话框
-  void _showExportDialog(BuildContext context, TestResult result) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('导出结果'),
-          content: const Text('选择导出格式：'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _exportToJson(context, result);
-              },
-              child: const Text('JSON格式'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _exportToCsv(context, result);
-              },
-              child: const Text('CSV格式'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                _showReport(context, result);
-              },
-              child: const Text('查看报告'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('取消'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
-  // 导出为JSON
-  Future<void> _exportToJson(BuildContext context, TestResult result) async {
-    try {
-      final filePath = await ExportService.exportToJson(result);
-      if (context.mounted) {
-        _showSuccessDialog(context, 'JSON文件已导出到: $filePath');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        _showErrorDialog(context, '导出失败: $e');
-      }
-    }
-  }
 
-  // 导出为CSV
-  Future<void> _exportToCsv(BuildContext context, TestResult result) async {
-    try {
-      final filePath = await ExportService.exportToCsv(result);
-      if (context.mounted) {
-        _showSuccessDialog(context, 'CSV文件已导出到: $filePath');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        _showErrorDialog(context, '导出失败: $e');
-      }
-    }
-  }
-
-  // 显示报告
-  void _showReport(BuildContext context, TestResult result) {
-    final report = ExportService.generateReport(result);
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('测试报告'),
-          content: SingleChildScrollView(
-            child: Text(report, style: const TextStyle(fontSize: 12)),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('关闭'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // // 显示报告
+  // void _showReport(BuildContext context, TestResult result) {
+  //   final report = ExportService.generateReport(result);
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('测试报告'),
+  //         content: SingleChildScrollView(
+  //           child: Text(report, style: const TextStyle(fontSize: 12)),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(),
+  //             child: const Text('关闭'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   // 显示成功对话框
   void _showSuccessDialog(BuildContext context, String message) {
@@ -691,22 +591,6 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
               ],
             ),
             const SizedBox(height: 12),
-            // 分数范围说明
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                _getAreaScoreDescription(score),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[700],
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
           ],
         ),
       ),
@@ -740,16 +624,6 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
     return Colors.red[600]!;
   }
 
-  // 获取能区分数说明
-  String _getAreaScoreDescription(double score) {
-    if (score >= 3.0) {
-      return '该能区发展优秀，超出同龄儿童平均水平';
-    } else if (score >= 1.0) {
-      return '该能区发展正常，符合同龄儿童发展水平';
-    } else {
-      return '该能区发展需要关注，建议加强相关训练';
-    }
-  }
 
   String _getAreaDisplayName(String areaName) {
     switch (areaName) {
