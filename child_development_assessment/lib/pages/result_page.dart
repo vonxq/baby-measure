@@ -57,7 +57,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         babyName: provider.userName,
         actualAge: provider.actualAge,
-        startTime: DateTime.now(),
+        startTime: provider.testStartTime ?? DateTime.now(),
         endTime: DateTime.now(),
         areaScores: result.areaScores.map((key, value) => MapEntry(
           _getTestAreaFromString(key), value

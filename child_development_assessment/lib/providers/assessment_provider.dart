@@ -34,6 +34,7 @@ class AssessmentProvider with ChangeNotifier {
   String _userName = '';
   double _actualAge = 0.0;
   int _mainTestAge = 0;
+  DateTime? _testStartTime;
   
   // 当前测试状态
   TestStage _currentStage = TestStage.current;
@@ -56,6 +57,7 @@ class AssessmentProvider with ChangeNotifier {
   String get userName => _userName;
   double get actualAge => _actualAge;
   int get mainTestAge => _mainTestAge;
+  DateTime? get testStartTime => _testStartTime;
   
   // 当前测试状态 getters
   TestStage get currentStage => _currentStage;
@@ -125,6 +127,7 @@ class AssessmentProvider with ChangeNotifier {
     _userName = userName;
     _actualAge = actualAge;
     _mainTestAge = _assessmentService.determineMainTestAge(actualAge);
+    _testStartTime = DateTime.now(); // 记录测试开始时间
     _currentStage = TestStage.current;
     _currentArea = TestArea.motor; // 从大运动开始
     _currentStageItemIndex = 0;
