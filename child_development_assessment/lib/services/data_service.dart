@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/assessment_data.dart';
+import '../models/assessment_history.dart';
 
 class DataService {
   // 加载评估数据
@@ -45,6 +46,50 @@ class DataService {
       return [];
     } catch (e) {
       return [];
+    }
+  }
+
+  // 保存测评历史
+  Future<void> saveAssessmentHistory(AssessmentHistory history) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/assessment_history.json');
+      final histories = await loadAssessmentHistories();
+      histories.add(history);
+      
+      await file.writeAsString(json.encode(histories.map((h) => h.toJson()).toList()));
+    } catch (e) {
+      throw Exception('保存测评历史失败: $e');
+    }
+  }
+
+  // 加载测评历史
+  Future<List<AssessmentHistory>> loadAssessmentHistories() async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/assessment_history.json');
+      if (await file.exists()) {
+        final jsonString = await file.readAsString();
+        final List<dynamic> jsonList = json.decode(jsonString);
+        return jsonList.map((json) => AssessmentHistory.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // 删除测评历史
+  Future<void> deleteAssessmentHistory(String id) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/assessment_history.json');
+      final histories = await loadAssessmentHistories();
+      histories.removeWhere((history) => history.id == id);
+      
+      await file.writeAsString(json.encode(histories.map((h) => h.toJson()).toList()));
+    } catch (e) {
+      throw Exception('删除测评历史失败: $e');
     }
   }
 

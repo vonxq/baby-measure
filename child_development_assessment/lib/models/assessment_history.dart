@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../providers/assessment_provider.dart';
 
 class AssessmentHistory {
   final String id;
@@ -96,14 +97,6 @@ class AssessmentHistory {
     if (overallDQ >= 70) return Colors.orange[700]!;
     return Colors.red[600]!;
   }
-}
-
-enum TestArea {
-  motor,      // 大运动
-  fineMotor,  // 精细动作
-  language,   // 语言
-  adaptive,   // 适应能力
-  social,     // 社会行为
 }
 
 extension TestAreaExtension on TestArea {

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/assessment_provider.dart';
 import '../models/test_result.dart';
+import '../models/assessment_history.dart';
 import '../services/export_service.dart';
+import '../services/data_service.dart';
 import 'score_explanation_page.dart';
+import 'dart:math';
 
 class ResultPage extends StatefulWidget {
   const ResultPage({super.key});
@@ -15,6 +18,7 @@ class ResultPage extends StatefulWidget {
 class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  bool _isSaving = false;
 
   @override
   void initState() {
@@ -27,12 +31,79 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
     _animationController.forward();
+    
+    // 自动保存测评历史
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _saveAssessmentHistory();
+    });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  // 保存测评历史
+  Future<void> _saveAssessmentHistory() async {
+    final provider = Provider.of<AssessmentProvider>(context, listen: false);
+    if (provider.finalResult == null) return;
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      final result = provider.finalResult!;
+      final history = AssessmentHistory(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        babyName: provider.userName,
+        actualAge: provider.actualAge,
+        startTime: DateTime.now(),
+        endTime: DateTime.now(),
+        areaScores: result.areaScores.map((key, value) => MapEntry(
+          _getTestAreaFromString(key), value
+        )),
+        areaDQs: result.areaScores.map((key, value) => MapEntry(
+          _getTestAreaFromString(key), _calculateAreaDQ(value)
+        )),
+        overallMentalAge: result.averageScore,
+        overallDQ: result.dq,
+        overallLevel: result.dqLevel,
+      );
+
+      await DataService().saveAssessmentHistory(history);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('保存测评历史失败: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  // 从字符串获取TestArea枚举
+  TestArea _getTestAreaFromString(String areaName) {
+    switch (areaName) {
+      case 'motor':
+        return TestArea.motor;
+      case 'fineMotor':
+        return TestArea.fineMotor;
+      case 'language':
+        return TestArea.language;
+      case 'adaptive':
+        return TestArea.adaptive;
+      case 'social':
+        return TestArea.social;
+      default:
+        return TestArea.motor;
+    }
   }
 
   @override
@@ -240,6 +311,33 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                     ),
                     child: Column(
                       children: [
+                        // 保存状态提示
+                        if (_isSaving)
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.blue[600],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '正在保存测评历史...',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        
                         // 分数说明按钮
                         SizedBox(
                           width: double.infinity,
@@ -348,24 +446,6 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
         ),
       ],
     );
-  }
-
-  // 获取发育商评级
-  String _getDevelopmentLevel(double dq) {
-    if (dq > 130) return '优秀';
-    if (dq >= 110) return '良好';
-    if (dq >= 80) return '中等';
-    if (dq >= 70) return '临界偏低';
-    return '智力发育障碍';
-  }
-
-  // 获取发育商评级颜色
-  Color _getDevelopmentLevelColor(double dq) {
-    if (dq > 130) return Colors.green[600]!;
-    if (dq >= 110) return Colors.blue[600]!;
-    if (dq >= 80) return Colors.orange[600]!;
-    if (dq >= 70) return Colors.orange[700]!;
-    return Colors.red[600]!;
   }
 
   // 获取发育商评级说明
@@ -525,6 +605,11 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
       iconColor = Colors.orange[600]!;
     }
 
+    // 计算能区发育商
+    final areaDQ = _calculateAreaDQ(score);
+    final dqLevel = _getAreaDQLevel(areaDQ);
+    final dqColor = _getAreaDQColor(areaDQ);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -541,42 +626,85 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
-        child: Row(
+        child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(iconData, color: iconColor, size: 28),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _getAreaDisplayName(areaName),
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: iconColor,
-                    ),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: iconColor.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(height: 12),
-                  Row(
+                  child: Icon(iconData, color: iconColor, size: 28),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: _buildResultItem('智龄', '${score.toStringAsFixed(1)}月'),
+                      Text(
+                        _getAreaDisplayName(areaName),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: iconColor,
+                        ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildResultItem('发育商', '${_calculateAreaDQ(score).toStringAsFixed(1)}'),
+                      const SizedBox(height: 8),
+                      // 发育商评级
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: dqColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: dqColor.withValues(alpha: 0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          dqLevel,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: dqColor,
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // 分数详情
+            Row(
+              children: [
+                Expanded(
+                  child: _buildResultItem('智龄', '${score.toStringAsFixed(1)}月'),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildResultItem('发育商', '${areaDQ.toStringAsFixed(1)}'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // 分数范围说明
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                _getAreaScoreDescription(score),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[700],
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ],
@@ -592,6 +720,35 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
     double actualAge = provider.actualAge;
     if (actualAge == 0) return 0;
     return (mentalAge / actualAge) * 100;
+  }
+
+  // 获取能区发育商评级
+  String _getAreaDQLevel(double dq) {
+    if (dq > 130) return '优秀';
+    if (dq >= 110) return '良好';
+    if (dq >= 80) return '中等';
+    if (dq >= 70) return '偏低';
+    return '障碍';
+  }
+
+  // 获取能区发育商颜色
+  Color _getAreaDQColor(double dq) {
+    if (dq > 130) return Colors.green[600]!;
+    if (dq >= 110) return Colors.blue[600]!;
+    if (dq >= 80) return Colors.orange[600]!;
+    if (dq >= 70) return Colors.orange[700]!;
+    return Colors.red[600]!;
+  }
+
+  // 获取能区分数说明
+  String _getAreaScoreDescription(double score) {
+    if (score >= 3.0) {
+      return '该能区发展优秀，超出同龄儿童平均水平';
+    } else if (score >= 1.0) {
+      return '该能区发展正常，符合同龄儿童发展水平';
+    } else {
+      return '该能区发展需要关注，建议加强相关训练';
+    }
   }
 
   String _getAreaDisplayName(String areaName) {
