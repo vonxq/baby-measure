@@ -137,7 +137,15 @@ class AssessmentProvider with ChangeNotifier {
       _areaTestedAges[area] = [_mainTestAge];
     }
     
-    _loadCurrentAreaItems();
+    // 确保数据已加载
+    if (_allData.isNotEmpty) {
+      _loadCurrentAreaItems();
+    } else {
+      // 如果数据未加载，先加载数据
+      loadData().then((_) {
+        _loadCurrentAreaItems();
+      });
+    }
     notifyListeners();
   }
 
@@ -150,9 +158,15 @@ class AssessmentProvider with ChangeNotifier {
     int testAge = _areaCurrentAge[_currentArea] ?? _mainTestAge;
     String currentAreaString = _getAreaString(_currentArea);
     
+    // 调试信息
+    print('Debug: _allData.length = ${_allData.length}');
+    print('Debug: testAge = $testAge');
+    print('Debug: currentAreaString = $currentAreaString');
+    
     // 使用 assessment_service 获取项目
     _currentStageItems = _assessmentService.getCurrentAgeAreaItems(_allData, testAge, currentAreaString);
-
+    
+    print('Debug: _currentStageItems.length = ${_currentStageItems.length}');
     
     notifyListeners();
   }

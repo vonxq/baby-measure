@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/assessment_provider.dart';
 import 'dynamic_test_page.dart';
 
 class AssessmentGuidePage extends StatelessWidget {
@@ -126,7 +128,7 @@ class AssessmentGuidePage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '约15-30分钟',
+                                    '约3-10分钟',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -314,6 +316,9 @@ class AssessmentGuidePage extends StatelessWidget {
   }
 
   void _startAssessment(BuildContext context) {
+    // 设置用户信息并开始测评
+    context.read<AssessmentProvider>().startDynamicAssessment(babyName, selectedAge.toDouble());
+    
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
