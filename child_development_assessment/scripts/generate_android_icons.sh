@@ -6,7 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
-SOURCE_ICON="/Users/vonxq/code/cursor/baby-measure/图片/应用图标.JPG"
+SOURCE_ICON="/Users/vonxq/code/cursor/growAssess/图片/萌芽图标.JPG"
 
 echo "[信息] 开始处理Android应用图标..."
 
