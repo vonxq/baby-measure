@@ -46,43 +46,57 @@ class InfoTab extends StatelessWidget {
                   '本应用基于0-6岁儿童发育行为评估量表（儿心量表-Ⅱ），为家长提供专业的儿童发育评估工具。通过科学的测评方法，帮助了解儿童在五大能区的发展情况。',
                   style: TextStyle(fontSize: 16, color: Colors.grey[700], height: 1.5),
                 ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          
+          // 智龄说明卡片
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.timeline, color: Colors.green[600], size: 28),
+                    const SizedBox(width: 12),
+                    Text(
+                      '什么是智龄？',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green[700],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '智龄（Mental Age）是指儿童在某个特定年龄阶段应该达到的认知发展水平。它反映了儿童在各项能力上的发展程度，是衡量儿童发育水平的重要指标。',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[700], height: 1.5),
+                ),
                 const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.orange[50],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.orange[200]!),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.info_outline, color: Colors.orange[600], size: 16),
-                          const SizedBox(width: 8),
-                          Text(
-                            '版权声明',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.orange[700],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '本应用基于中华人民共和国国家卫生行业标准WS/T 580—2017《0岁～6岁儿童发育行为评估量表》。该量表由首都儿科研究所等单位起草，经国家卫生和计划生育委员会发布。',
-                        style: TextStyle(fontSize: 12, color: Colors.orange[700], height: 1.4),
-                      ),
-                    ],
-                  ),
+                Text(
+                  '智龄通过标准化测试得出，表示儿童当前的认知能力相当于正常儿童几岁时的水平。例如，一个2岁儿童的智龄为2.5岁，说明其认知发展水平高于同龄儿童。',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600], height: 1.5),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
+          
           // 发育商说明卡片
           Container(
             padding: const EdgeInsets.all(20),
@@ -120,14 +134,66 @@ class InfoTab extends StatelessWidget {
                   style: TextStyle(fontSize: 16, color: Colors.grey[700], height: 1.5),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  '计算公式：发育商 = (智龄 ÷ 实际年龄) × 100',
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600], fontStyle: FontStyle.italic),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.blue[200]!),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '计算公式：',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[700],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '发育商 = (智龄 ÷ 实际年龄) × 100',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[600],
+                          fontFamily: 'monospace',
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '例如：2岁儿童智龄为2.5岁，发育商 = (2.5 ÷ 2) × 100 = 125',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(height: 16),
+                Text(
+                  '发育商评级标准：',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _buildRatingItem('优秀', '>130', Colors.green[800]!),
+                _buildRatingItem('良好', '110-129', Colors.green[600]!),
+                _buildRatingItem('中等', '80-109', Colors.green[400]!),
+                _buildRatingItem('临界偏低', '70-79', Colors.orange[700]!),
+                _buildRatingItem('智力发育障碍', '<70', Colors.red[600]!),
               ],
             ),
           ),
           const SizedBox(height: 20),
+          
           // 各能区说明卡片
           Container(
             padding: const EdgeInsets.all(20),
@@ -151,6 +217,86 @@ class InfoTab extends StatelessWidget {
                 _AreaItem(title: '适应能力', color: Colors.purple, description: '儿童对其周围自然环境和社会需要作出反应和适应的能力'),
                 _AreaItem(title: '社会行为', color: Colors.red, description: '对周围人们的交往能力和生活自理能力'),
               ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          
+          // 版权声明卡片
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.orange[600], size: 28),
+                    const SizedBox(width: 12),
+                    Text(
+                      '版权声明',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange[700],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '本应用基于中华人民共和国国家卫生行业标准WS/T 580—2017《0岁～6岁儿童发育行为评估量表》。该量表由首都儿科研究所等单位起草，经国家卫生和计划生育委员会发布。',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[700], height: 1.5),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildRatingItem(String level, String range, Color color) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            level,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const Spacer(),
+          Text(
+            range,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: color,
             ),
           ),
         ],
