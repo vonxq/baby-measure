@@ -144,6 +144,7 @@ def _open_font_candidates() -> List[str]:
         str(Path.home() / "Library/Fonts/NotoSansSC-Regular.otf"),
         str(Path.home() / "Library/Fonts/NotoSansTC-Regular.otf"),
         str(Path.home() / "Library/Fonts/NotoSansCJKsc-Regular.otf"),
+        str(Path.home() / "Library/Fonts/NotoSansCJK.ttc"),
         str(Path.home() / "Library/Fonts/NotoSansSC-Regular.ttf"),
         str(Path.home() / "Library/Fonts/NotoSansTC-Regular.ttf"),
         str(Path.home() / "Library/Fonts/NotoSansCJKsc-Regular.ttf"),
@@ -154,6 +155,7 @@ def _open_font_candidates() -> List[str]:
 
         # 系统字体目录（如有）
         "/Library/Fonts/NotoSansSC-Regular.otf",
+        "/Library/Fonts/NotoSansCJK.ttc",
         "/Library/Fonts/NotoSansSC-Regular.ttf",
         "/Library/Fonts/NotoSansCJKsc-Regular.otf",
         "/Library/Fonts/NotoSansCJKsc-Regular.ttf",
