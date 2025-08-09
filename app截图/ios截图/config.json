@@ -5,6 +5,9 @@
     "backgroundColor": "#FFFFFF",
     "titleColor": "#111111",
     "subtitleColor": "#111111",
+    "openFontOnly": false,
+    "titleFontPath": "/System/Library/Fonts/PingFang.ttc",
+    "subtitleFontPath": "/System/Library/Fonts/PingFang.ttc",
     "panelTopColor": "#F6F7FB",
     "panelBottomColor": "#ECEEF5",
     "screenshotBorderColor": "#E5E8EF"

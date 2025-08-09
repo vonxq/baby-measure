@@ -310,9 +310,9 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
     subtitle_color = parse_color(get_value_case_insensitive(style_cfg, "subtitlecolor", "#333333"), (51, 51, 51, 255))
     title_font_size = int(get_value_case_insensitive(style_cfg, "titlefontsize", 76))
     subtitle_font_size = int(get_value_case_insensitive(style_cfg, "subtitlefontsize", 42))
-    # 强制仅使用开源字体：忽略自定义路径
-    title_font_path = None
-    subtitle_font_path = None
+    # 允许通过配置指定字体路径（如系统字体 PingFang.ttc）；若未指定则为 None
+    title_font_path = get_value_case_insensitive(style_cfg, "titlefontpath")
+    subtitle_font_path = get_value_case_insensitive(style_cfg, "subtitlefontpath")
     padding = int(get_value_case_insensitive(style_cfg, "padding", 64))
     line_spacing = int(get_value_case_insensitive(style_cfg, "linespacing", 12))
     max_text_width_ratio = float(get_value_case_insensitive(style_cfg, "maxtextwidthratio", 0.88))
@@ -328,7 +328,8 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
     screenshot_border_color = parse_color(
         get_value_case_insensitive(style_cfg, "screenshotbordercolor", "#E5E8EF"), (229, 232, 239, 255)
     )
-    open_font_only = True
+    # 是否仅允许开源字体（Noto/思源）。默认关闭以便在无网络时可使用系统字体
+    open_font_only = bool(get_value_case_insensitive(style_cfg, "openfontonly", False))
     # 背景与设备卡片默认（参考 IMG_2762 风格）
     use_background_gradient = bool(get_value_case_insensitive(style_cfg, "usebackgroundgradient", False))
     background_top_color = parse_color(get_value_case_insensitive(style_cfg, "backgroundtopcolor", "#FFFFFF"), (255, 255, 255, 255))
@@ -439,9 +440,9 @@ def render_single_image(
     canvas.alpha_composite(panel)
     draw = ImageDraw.Draw(canvas)
 
-    # 始终仅使用开源字体
-    title_font = try_load_font(style.title_font_path, style.title_font_size, require_open_font=True)
-    subtitle_font = try_load_font(style.subtitle_font_path, style.subtitle_font_size, require_open_font=True)
+    # 根据配置决定是否仅限开源字体
+    title_font = try_load_font(style.title_font_path, style.title_font_size, require_open_font=style.open_font_only)
+    subtitle_font = try_load_font(style.subtitle_font_path, style.subtitle_font_size, require_open_font=style.open_font_only)
     try:
         logging.debug("title_font: %s", getattr(title_font, "getname", lambda: (str(title_font), ""))())
         logging.debug("subtitle_font: %s", getattr(subtitle_font, "getname", lambda: (str(subtitle_font), ""))())
@@ -465,7 +466,7 @@ def render_single_image(
             current_y += line_h + style.line_spacing
 
         # 再绘制大字号副标题
-        big_subtitle_font = try_load_font(None, int(style.subtitle_font_size * style.subtitle_scale), require_open_font=True)
+        big_subtitle_font = try_load_font(None, int(style.subtitle_font_size * style.subtitle_scale), require_open_font=style.open_font_only)
         subtitle_lines = wrap_text_to_width(draw, subtitle or " ", big_subtitle_font, max_text_width)
         logging.debug("subtitle(headline) raw=%r -> lines=%s", subtitle, subtitle_lines)
         for line in subtitle_lines:
