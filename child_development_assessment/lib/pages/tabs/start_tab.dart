@@ -2,6 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+// 允许选择的月龄（基于量表定义的真实节点）
+const List<int> kAllowedAges = <int>[
+  1, 2, 3, 4, 5, 6,
+  7, 8, 9, 10, 11, 12,
+  15, 18, 21, 24, 27, 30, 33, 36,
+  42, 48, 54, 60, 66, 72, 78, 84,
+];
+
+int _nearestAllowedAge(int currentAge) {
+  if (kAllowedAges.isEmpty) return currentAge;
+  int closest = kAllowedAges.first;
+  int minDiff = (currentAge - closest).abs();
+  for (final age in kAllowedAges) {
+    final diff = (currentAge - age).abs();
+    if (diff < minDiff) {
+      minDiff = diff;
+      closest = age;
+    }
+  }
+  return closest;
+}
+
 class StartTab extends StatelessWidget {
   const StartTab({
     super.key,
@@ -190,7 +212,9 @@ class StartTab extends StatelessWidget {
 }
 
 void _showAgePicker(BuildContext context, int currentAge, ValueChanged<int> onAgeChanged) {
-  int selectedAge = currentAge;
+  // 若当前月龄不在可选列表中，映射到最近的可选月龄
+  final int initialAge = kAllowedAges.contains(currentAge) ? currentAge : _nearestAllowedAge(currentAge);
+  int selectedAge = initialAge;
   
   showCupertinoModalPopup(
     context: context,
@@ -263,19 +287,19 @@ void _showAgePicker(BuildContext context, int currentAge, ValueChanged<int> onAg
                 useMagnifier: true,
                 itemExtent: 32.0,
                 scrollController: FixedExtentScrollController(
-                  initialItem: currentAge,
+                  initialItem: kAllowedAges.indexOf(initialAge).clamp(0, kAllowedAges.length - 1),
                 ),
                 onSelectedItemChanged: (int selectedItem) {
-                  selectedAge = selectedItem;
+                  selectedAge = kAllowedAges[selectedItem];
                 },
-                children: List<Widget>.generate(73, (int index) {
-                  return Center(
-                    child: Text(
-                      '$index 个月',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  );
-                }),
+                children: kAllowedAges
+                    .map((age) => Center(
+                          child: Text(
+                            '$age 个月',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ))
+                    .toList(),
               ),
             ),
           ],
@@ -336,26 +360,23 @@ class _AgeCalculatorDialogState extends State<_AgeCalculatorDialog> {
     final months = (difference.inDays / 30.44).round(); // 平均每月30.44天
     
     setState(() {
-      calculatedMonths = months.clamp(0, 72); // 限制在0-72个月范围内
+      calculatedMonths = months.clamp(0, 84); // 限制在0-84个月范围内
       recommendedAge = _getRecommendedAge(calculatedMonths!);
     });
   }
   
   int _getRecommendedAge(int actualMonths) {
-    // 根据实际月龄推荐测试月龄，使用就近原则
-    final availableAges = [0, 1, 2, 3, 4, 5, 6, 9, 12, 15, 18, 21, 24, 30, 36, 42, 48, 54, 60, 66, 72];
-    
-    int closestAge = availableAges[0];
-    int minDifference = (actualMonths - availableAges[0]).abs();
-    
-    for (int age in availableAges) {
-      int difference = (actualMonths - age).abs();
+    // 根据实际月龄推荐测试月龄（取最近的允许月龄）
+    if (kAllowedAges.isEmpty) return actualMonths;
+    int closestAge = kAllowedAges.first;
+    int minDifference = (actualMonths - kAllowedAges.first).abs();
+    for (final age in kAllowedAges) {
+      final difference = (actualMonths - age).abs();
       if (difference < minDifference) {
         minDifference = difference;
         closestAge = age;
       }
     }
-    
     return closestAge;
   }
   
