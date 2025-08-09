@@ -6,12 +6,12 @@ enum DqLevel { excellent, good, medium, borderlineLow, impaired }
 class DqUtils {
   // 颜色方案（用户提供）
   // 最新配色（按用户指定）
-  // 优秀（≥130） → #135200
-  static const Color colorExcellent = Color(0xFF135200);
+  // 优秀（≥130） → #237804
+  static const Color colorExcellent = Color(0xFF237804);
   // 良好（110～129） → #389E0D
   static const Color colorGood = Color(0xFF389E0D);
-  // 中等（80～109） → #73D13D
-  static const Color colorMedium = Color(0xFF73D13D);
+  // 中等（80～109） → #52C41A
+  static const Color colorMedium = Color(0xFF52C41A);
   // 临界偏低（70～79） → #FAAD14
   static const Color colorBorderlineLow = Color(0xFFFAAD14);
   // 发育障碍（＜70） → #F5222D
