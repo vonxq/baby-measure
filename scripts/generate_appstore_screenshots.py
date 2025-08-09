@@ -130,6 +130,12 @@ def _font_candidates() -> List[str]:
 def _open_font_candidates() -> List[str]:
     # 仅包含开源许可字体（SIL OFL 等）：Noto / 思源黑体（Source Han Sans）
     return [
+        # 项目内可选字体目录（请将 NotoSansSC-Regular.otf 放在 scripts/fonts/ 下）
+        str((Path(__file__).parent / "fonts" / "NotoSansSC-Regular.otf").resolve()),
+        str((Path(__file__).parent / "fonts" / "NotoSansCJKsc-Regular.otf").resolve()),
+        str((Path(__file__).parent / "fonts" / "SourceHanSansCN-Regular.otf").resolve()),
+        str((Path(__file__).parent / "fonts" / "SourceHanSansSC-Regular.otf").resolve()),
+
         # 用户字体（常见安装位置）
         str(Path.home() / "Library/Fonts/NotoSansSC-Regular.otf"),
         str(Path.home() / "Library/Fonts/NotoSansTC-Regular.otf"),
