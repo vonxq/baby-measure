@@ -56,7 +56,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from PIL import Image, ImageColor, ImageDraw, ImageFont
+from PIL import Image, ImageColor, ImageDraw, ImageFont, ImageFilter
 
 
 def parse_args() -> argparse.Namespace:
@@ -286,6 +286,19 @@ class Style:
     screenshot_bottom_margin: int
     screenshot_border_width: int
     screenshot_border_color: Tuple[int, int, int, int]
+    # 背景渐变与设备卡片（仿示例风格）
+    use_background_gradient: bool
+    background_top_color: Tuple[int, int, int, int]
+    background_bottom_color: Tuple[int, int, int, int]
+    device_card_corner_radius: int
+    device_card_fill: Tuple[int, int, int, int]
+    device_card_shadow_color: Tuple[int, int, int, int]
+    device_card_shadow_blur: int
+    device_card_shadow_offset_y: int
+    device_card_padding: int
+    # 文案强调：将副标题作为主标题（更大）
+    subtitle_is_headline: bool
+    subtitle_scale: float
 
 
 def build_style(style_cfg: Dict[str, Any]) -> Style:
@@ -316,6 +329,19 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
         get_value_case_insensitive(style_cfg, "screenshotbordercolor", "#E5E8EF"), (229, 232, 239, 255)
     )
     open_font_only = True
+    # 背景与设备卡片默认（参考 IMG_2762 风格）
+    use_background_gradient = bool(get_value_case_insensitive(style_cfg, "usebackgroundgradient", True))
+    background_top_color = parse_color(get_value_case_insensitive(style_cfg, "backgroundtopcolor", "#F6F7FB"), (246, 247, 251, 255))
+    background_bottom_color = parse_color(get_value_case_insensitive(style_cfg, "backgroundbottomcolor", "#ECEEF5"), (236, 238, 245, 255))
+    device_card_corner_radius = int(get_value_case_insensitive(style_cfg, "devicecardcornerradius", 64))
+    device_card_fill = parse_color(get_value_case_insensitive(style_cfg, "devicecardfill", "#FFFFFF"), (255, 255, 255, 255))
+    device_card_shadow_color = parse_color(get_value_case_insensitive(style_cfg, "devicecardshadowcolor", "#22000000"), (0, 0, 0, 34))
+    device_card_shadow_blur = int(get_value_case_insensitive(style_cfg, "devicecardshadowblur", 36))
+    device_card_shadow_offset_y = int(get_value_case_insensitive(style_cfg, "devicecardshadowoffsety", 12))
+    device_card_padding = int(get_value_case_insensitive(style_cfg, "devicecardpadding", 36))
+    # 文案强调
+    subtitle_is_headline = bool(get_value_case_insensitive(style_cfg, "subtitleisheadline", True))
+    subtitle_scale = float(get_value_case_insensitive(style_cfg, "subtitlescale", 1.4))
 
     if text_align not in {"center", "left", "right"}:
         logging.warning("textAlign=%r 无效，回退为 center", text_align)
@@ -346,6 +372,17 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
         screenshot_bottom_margin=screenshot_bottom_margin,
         screenshot_border_width=screenshot_border_width,
         screenshot_border_color=screenshot_border_color,
+        use_background_gradient=use_background_gradient,
+        background_top_color=background_top_color,
+        background_bottom_color=background_bottom_color,
+        device_card_corner_radius=device_card_corner_radius,
+        device_card_fill=device_card_fill,
+        device_card_shadow_color=device_card_shadow_color,
+        device_card_shadow_blur=device_card_shadow_blur,
+        device_card_shadow_offset_y=device_card_shadow_offset_y,
+        device_card_padding=device_card_padding,
+        subtitle_is_headline=subtitle_is_headline,
+        subtitle_scale=subtitle_scale,
     )
 
 
@@ -379,7 +416,22 @@ def render_single_image(
         logging.error("找不到截图文件: %s", screenshot_path)
         return None
 
+    # 背景：纯色或渐变
     canvas = Image.new("RGBA", (style.width, style.height), style.background)
+    if style.use_background_gradient:
+        grad = Image.new("RGBA", (1, style.height), (0, 0, 0, 0))
+        top = style.background_top_color
+        bottom = style.background_bottom_color
+        # 垂直渐变插值
+        for y in range(style.height):
+            t = y / max(1, style.height - 1)
+            r = int(top[0] * (1 - t) + bottom[0] * t)
+            g = int(top[1] * (1 - t) + bottom[1] * t)
+            b = int(top[2] * (1 - t) + bottom[2] * t)
+            a = int(top[3] * (1 - t) + bottom[3] * t)
+            grad.putpixel((0, y), (r, g, b, a))
+        grad = grad.resize((style.width, style.height))
+        canvas.alpha_composite(grad)
     draw = ImageDraw.Draw(canvas)
 
     # 始终仅使用开源字体
@@ -394,35 +446,53 @@ def render_single_image(
     # 文本区域最大宽度
     max_text_width = int(style.width * style.max_text_width_ratio) - style.padding * (0 if style.text_align == "center" else 1)
 
-    # 1) 绘制标题
-    title_lines = wrap_text_to_width(draw, title or "", title_font, max_text_width)
-    logging.debug("title raw=%r -> lines=%s", title, title_lines)
-    title_block_w, title_block_h = measure_multiline_text(draw, title_lines, title_font, style.line_spacing)
+    # 标题与副标题：支持“副标题更醒目”的风格
     current_y = style.padding
-    for line in title_lines:
-        x = compute_text_x(style, draw, line, title_font)
-        logging.debug("draw title line at x=%d, y=%d: %r", x, current_y, line)
-        draw.text((x, current_y), line, font=title_font, fill=style.title_color)
-        bbox = draw.textbbox((x, current_y), line, font=title_font)
-        line_h = bbox[3] - bbox[1]
-        current_y += line_h + style.line_spacing
+    if style.subtitle_is_headline:
+        # 先绘制小标题（原 title）
+        title_lines = wrap_text_to_width(draw, title or "", title_font, max_text_width)
+        logging.debug("title raw=%r -> lines=%s", title, title_lines)
+        for line in title_lines:
+            x = compute_text_x(style, draw, line, title_font)
+            draw.text((x, current_y), line, font=title_font, fill=style.title_color)
+            bbox = draw.textbbox((x, current_y), line, font=title_font)
+            line_h = bbox[3] - bbox[1]
+            current_y += line_h + style.line_spacing
 
-    # 2) 绘制副标题
-    subtitle_lines = wrap_text_to_width(draw, subtitle or "", subtitle_font, max_text_width)
-    logging.debug("subtitle raw=%r -> lines=%s", subtitle, subtitle_lines)
-    subtitle_block_w, subtitle_block_h = measure_multiline_text(draw, subtitle_lines, subtitle_font, style.line_spacing)
-    for line in subtitle_lines:
-        x = compute_text_x(style, draw, line, subtitle_font)
-        logging.debug("draw subtitle line at x=%d, y=%d: %r", x, current_y, line)
-        draw.text((x, current_y), line, font=subtitle_font, fill=style.subtitle_color)
-        bbox = draw.textbbox((x, current_y), line, font=subtitle_font)
-        line_h = bbox[3] - bbox[1]
-        current_y += line_h + style.line_spacing
+        # 再绘制大字号副标题
+        big_subtitle_font = try_load_font(None, int(style.subtitle_font_size * style.subtitle_scale), require_open_font=True)
+        subtitle_lines = wrap_text_to_width(draw, subtitle or "", big_subtitle_font, max_text_width)
+        logging.debug("subtitle(headline) raw=%r -> lines=%s", subtitle, subtitle_lines)
+        for line in subtitle_lines:
+            x = compute_text_x(style, draw, line, big_subtitle_font)
+            draw.text((x, current_y), line, font=big_subtitle_font, fill=style.title_color)
+            bbox = draw.textbbox((x, current_y), line, font=big_subtitle_font)
+            line_h = bbox[3] - bbox[1]
+            current_y += line_h + style.line_spacing
+    else:
+        # 常规：大标题 + 小副标题
+        title_lines = wrap_text_to_width(draw, title or "", title_font, max_text_width)
+        logging.debug("title raw=%r -> lines=%s", title, title_lines)
+        for line in title_lines:
+            x = compute_text_x(style, draw, line, title_font)
+            draw.text((x, current_y), line, font=title_font, fill=style.title_color)
+            bbox = draw.textbbox((x, current_y), line, font=title_font)
+            line_h = bbox[3] - bbox[1]
+            current_y += line_h + style.line_spacing
+
+        subtitle_lines = wrap_text_to_width(draw, subtitle or "", subtitle_font, max_text_width)
+        logging.debug("subtitle raw=%r -> lines=%s", subtitle, subtitle_lines)
+        for line in subtitle_lines:
+            x = compute_text_x(style, draw, line, subtitle_font)
+            draw.text((x, current_y), line, font=subtitle_font, fill=style.subtitle_color)
+            bbox = draw.textbbox((x, current_y), line, font=subtitle_font)
+            line_h = bbox[3] - bbox[1]
+            current_y += line_h + style.line_spacing
 
     # 文本区到截图之间美观间距
     current_y += max(style.text_to_image_spacing, style.padding // 2)
 
-    # 3) 绘制截图（保持比例缩放居中）
+    # 3) 绘制截图（居中偏下，带设备卡片与阴影）
     with Image.open(screenshot_path) as src:
         src = src.convert("RGBA")
         available_height = int(style.height * style.screenshot_max_height_ratio)
@@ -442,6 +512,38 @@ def render_single_image(
             resized = src.resize(target_size, Image.LANCZOS)
             x = (style.width - target_size[0]) // 2
             y = current_y
+            # 设备卡片阴影
+            if style.device_card_shadow_blur > 0:
+                shadow = Image.new("RGBA", (style.width, style.height), (0, 0, 0, 0))
+                shadow_draw = ImageDraw.Draw(shadow)
+                card_rect = [
+                    x - style.device_card_padding,
+                    y - style.device_card_padding + style.device_card_shadow_offset_y,
+                    x + target_size[0] + style.device_card_padding,
+                    y + target_size[1] + style.device_card_padding,
+                ]
+                shadow_draw.rounded_rectangle(
+                    card_rect,
+                    radius=style.device_card_corner_radius,
+                    fill=style.device_card_shadow_color,
+                )
+                shadow = shadow.filter(ImageFilter.GaussianBlur(radius=style.device_card_shadow_blur))
+                canvas.alpha_composite(shadow)
+            # 设备卡片底
+            card = Image.new("RGBA", (style.width, style.height), (0, 0, 0, 0))
+            card_draw = ImageDraw.Draw(card)
+            card_rect2 = [
+                x - style.device_card_padding,
+                y - style.device_card_padding,
+                x + target_size[0] + style.device_card_padding,
+                y + target_size[1] + style.device_card_padding,
+            ]
+            card_draw.rounded_rectangle(
+                card_rect2,
+                radius=style.device_card_corner_radius,
+                fill=style.device_card_fill,
+            )
+            canvas.alpha_composite(card)
             # 绘制边框（先画矩形，再贴图）
             if style.screenshot_border_width > 0:
                 border_x0 = x - style.screenshot_border_width
