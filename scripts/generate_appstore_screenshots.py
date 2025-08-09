@@ -230,6 +230,66 @@ def try_load_font(font_path: Optional[str], font_size: int, require_open_font: b
     return fallback
 
 
+def _load_bold_open_font(font_size: int) -> Optional[ImageFont.FreeTypeFont]:
+    """尝试在开源字体集合中寻找更粗的字重（Bold/SemiBold/Medium/Black/Heavy）。
+    优先扫描本机已安装的 Noto Sans CJK TTC，再回退到常见 OTF。
+    """
+    weight_keywords_priority: List[List[str]] = [
+        ["Bold", "SemiBold", "DemiBold"],
+        ["Medium"],
+        ["Black", "Heavy"]
+    ]
+
+    ttc_candidates = [
+        str(Path.home() / "Library/Fonts/NotoSansCJK.ttc"),
+        "/Library/Fonts/NotoSansCJK.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+    ]
+    otf_candidates = [
+        str(Path.home() / "Library/Fonts/NotoSerifCJKsc-Bold.otf"),
+        "/Library/Fonts/NotoSerifCJKsc-Bold.otf",
+        str((Path(__file__).parent / "fonts" / "NotoSansSC-Bold.otf").resolve()),
+        str((Path(__file__).parent / "fonts" / "SourceHanSansSC-Bold.otf").resolve()),
+    ]
+
+    # 先扫描 TTC 的权重面（index）
+    tmp_img = Image.new("RGB", (10, 10), (255, 255, 255))
+    tmp_draw = ImageDraw.Draw(tmp_img)
+    for ttc in ttc_candidates:
+        if not Path(ttc).exists():
+            continue
+        # Pillow 一般 TTC 面数不会很大，这里扫到 32 以内
+        try:
+            # 分优先级查找目标权重
+            for keywords in weight_keywords_priority:
+                for idx in range(0, 32):
+                    try:
+                        f = ImageFont.truetype(ttc, font_size, index=idx)
+                        name = getattr(f, "getname", lambda: ("", ""))()
+                        family, subfam = (name + ("",))[:2] if isinstance(name, tuple) else (str(name), "")
+                        if any(k.lower() in (family.lower() + " " + subfam.lower()) for k in keywords):
+                            if _is_font_effective(tmp_draw, f, font_size):
+                                return f
+                    except Exception:
+                        continue
+        except Exception:
+            continue
+
+    # 回退到常见 OTF 粗体
+    for otf in otf_candidates:
+        p = Path(otf)
+        if not p.exists():
+            continue
+        try:
+            f = ImageFont.truetype(str(p), font_size)
+            if _is_font_effective(tmp_draw, f, font_size):
+                return f
+        except Exception:
+            continue
+
+    return None
+
 def measure_multiline_text(draw: ImageDraw.ImageDraw, text_lines: List[str], font: ImageFont.ImageFont, line_spacing: int) -> Tuple[int, int]:
     max_width = 0
     total_height = 0
@@ -456,7 +516,12 @@ def render_single_image(
     draw = ImageDraw.Draw(canvas)
 
     # 根据配置决定是否仅限开源字体
-    title_font = try_load_font(style.title_font_path, style.title_font_size, require_open_font=style.open_font_only)
+    # 标题尝试使用更粗的开源字重
+    title_font = None
+    if style.open_font_only:
+        title_font = _load_bold_open_font(style.title_font_size)
+    if title_font is None:
+        title_font = try_load_font(style.title_font_path, style.title_font_size, require_open_font=style.open_font_only)
     subtitle_font = try_load_font(style.subtitle_font_path, style.subtitle_font_size, require_open_font=style.open_font_only)
     try:
         logging.debug("title_font: %s", getattr(title_font, "getname", lambda: (str(title_font), ""))())
