@@ -67,7 +67,7 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('评估量表说明'),
+        title: const Text('评估量表速查'),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -209,38 +209,59 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
       onTap: () {
         showCupertinoModalPopup(
           context: context,
-          builder: (_) => Container(
+          builder: (_) => CupertinoTheme(
+            data: const CupertinoThemeData(
+              primaryColor: CupertinoColors.activeBlue,
+              barBackgroundColor: CupertinoColors.white,
+              scaffoldBackgroundColor: CupertinoColors.white,
+            ),
+            child: Container(
             height: 260,
-            color: Colors.white,
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 44,
-                  child: Row(
-                    children: [
-                      const SizedBox(width: 12),
-                      Text('选择$label', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      const Spacer(),
-                      CupertinoButton(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: const Text('完成'),
-                        onPressed: () => Navigator.of(context).pop(),
-                      )
-                    ],
-                  ),
-                ),
-                const Divider(height: 1),
-                Expanded(
-                  child: CupertinoPicker(
-                    itemExtent: 36,
-                    scrollController: FixedExtentScrollController(
-                      initialItem: options.indexOf(value),
+              color: Colors.white,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 44,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 12),
+                        Text(
+                          '选择$label',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const Spacer(),
+                        CupertinoButton(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: const Text('完成'),
+                          onPressed: () => Navigator.of(context).pop(),
+                        )
+                      ],
                     ),
-                    onSelectedItemChanged: (index) => onChanged(options[index]),
-                    children: options.map((e) => Center(child: Text(toText(e)))).toList(),
                   ),
-                )
-              ],
+                  const Divider(height: 1),
+                  Expanded(
+                    child: CupertinoPicker(
+                      itemExtent: 36,
+                      scrollController: FixedExtentScrollController(
+                        initialItem: options.indexOf(value),
+                      ),
+                      onSelectedItemChanged: (index) => onChanged(options[index]),
+                      children: options
+                          .map((e) => Center(
+                                child: Text(
+                                  toText(e),
+                                  style: const TextStyle(fontSize: 16, color: Colors.black87),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         );
@@ -258,7 +279,10 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
             ),
             child: Row(
               children: [
-                Text(toText(value)),
+                Text(
+                  toText(value),
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
                 const Icon(Icons.arrow_drop_down),
               ],
             ),
