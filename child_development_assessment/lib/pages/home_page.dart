@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_onTabChanged);
-    _loadHistories();
+    _loadHistories().then((_) => _prefillFromLatest());
   }
 
   @override
@@ -61,6 +61,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         _isLoading = false;
       });
     }
+  }
+
+  void _prefillFromLatest() {
+    if (_histories.isEmpty) return;
+    final latest = _histories.first; // 已按时间降序
+    setState(() {
+      _name = latest.babyName;
+      _nameController.text = latest.babyName;
+      // 取最新一次测评时的主测月龄近似值：actualAge向下取整
+      _selectedAge = latest.actualAge.floor();
+      if (_selectedAge < 0) _selectedAge = 0;
+    });
   }
 
   Future<void> _deleteHistory(String historyId) async {
