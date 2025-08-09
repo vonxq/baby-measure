@@ -595,7 +595,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
             // 分数详情
             Row(
               children: [
@@ -608,7 +608,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
           ],
         ),
       ),

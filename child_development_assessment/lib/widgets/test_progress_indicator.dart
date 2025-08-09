@@ -131,20 +131,27 @@ class TestProgressIndicator extends StatelessWidget {
     Color areaColor = _getAreaColor(area.toString());
     String areaName = _getAreaName(area.toString());
     
-    // 获取能区的分数和分段信息
+    // 获取能区的分数（智龄）并换算DQ用于配色
     double? areaScore = provider?.areaScores[area];
-    String levelText = _getLevelText(areaScore);
-    Color levelColor = _getLevelColor(areaScore);
+    double? dq;
+    if (areaScore != null) {
+      final actualAge = provider?.actualAge ?? 0;
+      if (actualAge > 0) {
+        dq = (areaScore / actualAge) * 100;
+      }
+    }
+    String levelText = _getLevelText(dq);
+    Color levelColor = _getLevelColor(dq);
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: (areaScore != null)
+        color: (dq != null)
             ? levelColor.withValues(alpha: 0.12)
             : (completed ? Colors.green[50] : Colors.orange[50]),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (areaScore != null)
+          color: (dq != null)
               ? levelColor.withValues(alpha: 0.4)
               : (completed ? Colors.green[300]! : Colors.orange[300]!),
         ),
@@ -158,7 +165,7 @@ class TestProgressIndicator extends StatelessWidget {
               Icon(
                 completed ? Icons.check_circle : Icons.pending,
                 size: 16,
-                color: (areaScore != null)
+                color: (dq != null)
                     ? levelColor
                     : (completed ? Colors.green[600] : Colors.orange[600]),
               ),
@@ -168,7 +175,7 @@ class TestProgressIndicator extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: (areaScore != null)
+                  color: (dq != null)
                       ? levelColor
                       : (completed ? Colors.green[700] : Colors.orange[700]),
                 ),
@@ -177,7 +184,7 @@ class TestProgressIndicator extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: (areaScore != null)
+                  color: (dq != null)
                       ? levelColor
                       : (completed ? Colors.green[600] : Colors.orange[600]),
                   borderRadius: BorderRadius.circular(8),

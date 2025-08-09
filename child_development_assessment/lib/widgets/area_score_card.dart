@@ -172,7 +172,10 @@ class AreaScoreCard extends StatelessWidget {
   /// 根据DQ获取等级文本
   String _getLevelText(double dq) => DqUtils.labelByDq(dq);
 
-  String _getCompactLevelText(double dq) => DqUtils.compactLabelByDq(dq);
+  String _getCompactLevelText(double dq) {
+    final label = DqUtils.compactLabelByDq(dq);
+    return label == '障碍' ? '发育障碍' : label;
+  }
 
   /// 根据能区名称获取默认颜色
   Color _getAreaDefaultColor() {

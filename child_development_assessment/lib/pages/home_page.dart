@@ -137,16 +137,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.child_care,
-                        size: 32,
-                        color: Colors.blue[600],
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.asset(
+                        'ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png',
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     const SizedBox(width: 16),
