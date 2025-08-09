@@ -290,12 +290,12 @@ class Style:
     use_background_gradient: bool
     background_top_color: Tuple[int, int, int, int]
     background_bottom_color: Tuple[int, int, int, int]
-    device_card_corner_radius: int
-    device_card_fill: Tuple[int, int, int, int]
-    device_card_shadow_color: Tuple[int, int, int, int]
-    device_card_shadow_blur: int
-    device_card_shadow_offset_y: int
-    device_card_padding: int
+    # 主体灰色面板（代替外层白边），圆角与内边距
+    panel_corner_radius: int
+    panel_top_color: Tuple[int, int, int, int]
+    panel_bottom_color: Tuple[int, int, int, int]
+    panel_margin: int
+    panel_padding: int
     # 文案强调：将副标题作为主标题（更大）
     subtitle_is_headline: bool
     subtitle_scale: float
@@ -330,15 +330,15 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
     )
     open_font_only = True
     # 背景与设备卡片默认（参考 IMG_2762 风格）
-    use_background_gradient = bool(get_value_case_insensitive(style_cfg, "usebackgroundgradient", True))
-    background_top_color = parse_color(get_value_case_insensitive(style_cfg, "backgroundtopcolor", "#F6F7FB"), (246, 247, 251, 255))
-    background_bottom_color = parse_color(get_value_case_insensitive(style_cfg, "backgroundbottomcolor", "#ECEEF5"), (236, 238, 245, 255))
-    device_card_corner_radius = int(get_value_case_insensitive(style_cfg, "devicecardcornerradius", 64))
-    device_card_fill = parse_color(get_value_case_insensitive(style_cfg, "devicecardfill", "#FFFFFF"), (255, 255, 255, 255))
-    device_card_shadow_color = parse_color(get_value_case_insensitive(style_cfg, "devicecardshadowcolor", "#22000000"), (0, 0, 0, 34))
-    device_card_shadow_blur = int(get_value_case_insensitive(style_cfg, "devicecardshadowblur", 36))
-    device_card_shadow_offset_y = int(get_value_case_insensitive(style_cfg, "devicecardshadowoffsety", 12))
-    device_card_padding = int(get_value_case_insensitive(style_cfg, "devicecardpadding", 36))
+    use_background_gradient = bool(get_value_case_insensitive(style_cfg, "usebackgroundgradient", False))
+    background_top_color = parse_color(get_value_case_insensitive(style_cfg, "backgroundtopcolor", "#FFFFFF"), (255, 255, 255, 255))
+    background_bottom_color = parse_color(get_value_case_insensitive(style_cfg, "backgroundbottomcolor", "#FFFFFF"), (255, 255, 255, 255))
+    # 灰色主体面板（参考图视觉主体）
+    panel_corner_radius = int(get_value_case_insensitive(style_cfg, "panelcornerradius", 80))
+    panel_top_color = parse_color(get_value_case_insensitive(style_cfg, "paneltopcolor", "#F6F7FB"), (246, 247, 251, 255))
+    panel_bottom_color = parse_color(get_value_case_insensitive(style_cfg, "panelbottomcolor", "#ECEEF5"), (236, 238, 245, 255))
+    panel_margin = int(get_value_case_insensitive(style_cfg, "panelmargin", 48))
+    panel_padding = int(get_value_case_insensitive(style_cfg, "panelpadding", 56))
     # 文案强调
     subtitle_is_headline = bool(get_value_case_insensitive(style_cfg, "subtitleisheadline", True))
     subtitle_scale = float(get_value_case_insensitive(style_cfg, "subtitlescale", 1.4))
@@ -375,12 +375,11 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
         use_background_gradient=use_background_gradient,
         background_top_color=background_top_color,
         background_bottom_color=background_bottom_color,
-        device_card_corner_radius=device_card_corner_radius,
-        device_card_fill=device_card_fill,
-        device_card_shadow_color=device_card_shadow_color,
-        device_card_shadow_blur=device_card_shadow_blur,
-        device_card_shadow_offset_y=device_card_shadow_offset_y,
-        device_card_padding=device_card_padding,
+        panel_corner_radius=panel_corner_radius,
+        panel_top_color=panel_top_color,
+        panel_bottom_color=panel_bottom_color,
+        panel_margin=panel_margin,
+        panel_padding=panel_padding,
         subtitle_is_headline=subtitle_is_headline,
         subtitle_scale=subtitle_scale,
     )
@@ -416,13 +415,12 @@ def render_single_image(
         logging.error("找不到截图文件: %s", screenshot_path)
         return None
 
-    # 背景：纯色或渐变
+    # 背景：纯白（参考图最外白边忽略，仅作画布背景）或渐变
     canvas = Image.new("RGBA", (style.width, style.height), style.background)
     if style.use_background_gradient:
         grad = Image.new("RGBA", (1, style.height), (0, 0, 0, 0))
         top = style.background_top_color
         bottom = style.background_bottom_color
-        # 垂直渐变插值
         for y in range(style.height):
             t = y / max(1, style.height - 1)
             r = int(top[0] * (1 - t) + bottom[0] * t)
@@ -432,6 +430,38 @@ def render_single_image(
             grad.putpixel((0, y), (r, g, b, a))
         grad = grad.resize((style.width, style.height))
         canvas.alpha_composite(grad)
+
+    # 主体灰色圆角面板（替代参考图内层灰色背景）
+    panel = Image.new("RGBA", (style.width, style.height), (0, 0, 0, 0))
+    panel_draw = ImageDraw.Draw(panel)
+    panel_rect = [
+        style.panel_margin,
+        style.panel_margin,
+        style.width - style.panel_margin,
+        style.height - style.panel_margin,
+    ]
+    # 面板渐变
+    grad_panel = Image.new("RGBA", (1, panel_rect[3] - panel_rect[1]), (0, 0, 0, 0))
+    top_c = style.panel_top_color
+    bot_c = style.panel_bottom_color
+    for y in range(grad_panel.height):
+        t = y / max(1, grad_panel.height - 1)
+        r = int(top_c[0] * (1 - t) + bot_c[0] * t)
+        g = int(top_c[1] * (1 - t) + bot_c[1] * t)
+        b = int(top_c[2] * (1 - t) + bot_c[2] * t)
+        a = int(top_c[3] * (1 - t) + bot_c[3] * t)
+        grad_panel.putpixel((0, y), (r, g, b, a))
+    grad_panel = grad_panel.resize((panel_rect[2] - panel_rect[0], panel_rect[3] - panel_rect[1]))
+    # 圆角遮罩
+    mask = Image.new("L", (grad_panel.width, grad_panel.height), 0)
+    mask_draw = ImageDraw.Draw(mask)
+    mask_draw.rounded_rectangle(
+        [0, 0, grad_panel.width, grad_panel.height],
+        radius=style.panel_corner_radius,
+        fill=255,
+    )
+    panel.paste(grad_panel, (panel_rect[0], panel_rect[1]), mask)
+    canvas.alpha_composite(panel)
     draw = ImageDraw.Draw(canvas)
 
     # 始终仅使用开源字体
@@ -447,7 +477,7 @@ def render_single_image(
     max_text_width = int(style.width * style.max_text_width_ratio) - style.padding * (0 if style.text_align == "center" else 1)
 
     # 标题与副标题：支持“副标题更醒目”的风格
-    current_y = style.padding
+    current_y = style.panel_margin + style.panel_padding
     if style.subtitle_is_headline:
         # 先绘制小标题（原 title）
         title_lines = wrap_text_to_width(draw, title or "", title_font, max_text_width)
@@ -501,8 +531,12 @@ def render_single_image(
             current_y = style.screenshot_top_offset
 
         # 截图最大显示区域（左右各留 padding）
-        max_w = style.width - style.padding * 2
-        max_h = min(available_height, style.height - current_y - max(style.screenshot_bottom_margin, style.padding))
+        # 截图放置在主体面板内部，底部对齐
+        panel_left = style.panel_margin + style.panel_padding
+        panel_right = style.width - style.panel_margin - style.panel_padding
+        panel_bottom = style.height - style.panel_margin - style.panel_padding
+        max_w = panel_right - panel_left
+        max_h = min(available_height, panel_bottom - current_y)
         if max_w <= 0 or max_h <= 0:
             logging.warning("可用区域不足，跳过截图绘制: %s", screenshot_path)
         else:
@@ -510,40 +544,30 @@ def render_single_image(
             ratio = min(max_w / src.width, max_h / src.height)
             target_size = (max(1, int(src.width * ratio)), max(1, int(src.height * ratio)))
             resized = src.resize(target_size, Image.LANCZOS)
-            x = (style.width - target_size[0]) // 2
-            y = current_y
-            # 设备卡片阴影
-            if style.device_card_shadow_blur > 0:
-                shadow = Image.new("RGBA", (style.width, style.height), (0, 0, 0, 0))
-                shadow_draw = ImageDraw.Draw(shadow)
-                card_rect = [
-                    x - style.device_card_padding,
-                    y - style.device_card_padding + style.device_card_shadow_offset_y,
-                    x + target_size[0] + style.device_card_padding,
-                    y + target_size[1] + style.device_card_padding,
-                ]
-                shadow_draw.rounded_rectangle(
-                    card_rect,
-                    radius=style.device_card_corner_radius,
-                    fill=style.device_card_shadow_color,
-                )
-                shadow = shadow.filter(ImageFilter.GaussianBlur(radius=style.device_card_shadow_blur))
-                canvas.alpha_composite(shadow)
-            # 设备卡片底
-            card = Image.new("RGBA", (style.width, style.height), (0, 0, 0, 0))
-            card_draw = ImageDraw.Draw(card)
-            card_rect2 = [
-                x - style.device_card_padding,
-                y - style.device_card_padding,
-                x + target_size[0] + style.device_card_padding,
-                y + target_size[1] + style.device_card_padding,
-            ]
-            card_draw.rounded_rectangle(
-                card_rect2,
-                radius=style.device_card_corner_radius,
-                fill=style.device_card_fill,
+            x = panel_left + (max_w - target_size[0]) // 2
+            # 让图片紧贴面板底部（保留少量底部内边距）
+            y = panel_bottom - target_size[1]
+            # 截图圆角裁切 + 外描边
+            screenshot_mask = Image.new("L", target_size, 0)
+            ImageDraw.Draw(screenshot_mask).rounded_rectangle(
+                [0, 0, target_size[0], target_size[1]],
+                radius=40,
+                fill=255,
             )
-            canvas.alpha_composite(card)
+            rounded = Image.new("RGBA", target_size, (0, 0, 0, 0))
+            rounded.paste(resized, (0, 0), screenshot_mask)
+            # 外描边
+            if style.screenshot_border_width > 0:
+                border_img = Image.new("RGBA", (target_size[0] + style.screenshot_border_width * 2, target_size[1] + style.screenshot_border_width * 2), (0, 0, 0, 0))
+                border_draw = ImageDraw.Draw(border_img)
+                border_draw.rounded_rectangle(
+                    [0, 0, border_img.width - 1, border_img.height - 1],
+                    radius=44,
+                    outline=style.screenshot_border_color,
+                    width=style.screenshot_border_width,
+                )
+                canvas.alpha_composite(border_img, (x - style.screenshot_border_width, y - style.screenshot_border_width))
+            canvas.alpha_composite(rounded, (x, y))
             # 绘制边框（先画矩形，再贴图）
             if style.screenshot_border_width > 0:
                 border_x0 = x - style.screenshot_border_width
