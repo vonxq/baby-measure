@@ -415,21 +415,8 @@ def render_single_image(
         logging.error("找不到截图文件: %s", screenshot_path)
         return None
 
-    # 背景：纯白（参考图最外白边忽略，仅作画布背景）或渐变
+    # 背景：纯白画布（外层白边忽略，仅作画布），不再绘制背景渐变
     canvas = Image.new("RGBA", (style.width, style.height), style.background)
-    if style.use_background_gradient:
-        grad = Image.new("RGBA", (1, style.height), (0, 0, 0, 0))
-        top = style.background_top_color
-        bottom = style.background_bottom_color
-        for y in range(style.height):
-            t = y / max(1, style.height - 1)
-            r = int(top[0] * (1 - t) + bottom[0] * t)
-            g = int(top[1] * (1 - t) + bottom[1] * t)
-            b = int(top[2] * (1 - t) + bottom[2] * t)
-            a = int(top[3] * (1 - t) + bottom[3] * t)
-            grad.putpixel((0, y), (r, g, b, a))
-        grad = grad.resize((style.width, style.height))
-        canvas.alpha_composite(grad)
 
     # 主体灰色圆角面板（替代参考图内层灰色背景）
     panel = Image.new("RGBA", (style.width, style.height), (0, 0, 0, 0))
@@ -547,11 +534,11 @@ def render_single_image(
             x = panel_left + (max_w - target_size[0]) // 2
             # 让图片紧贴面板底部（保留少量底部内边距）
             y = panel_bottom - target_size[1]
-            # 截图圆角裁切 + 外描边
+            # 截图圆角裁切 + 外描边（更大圆角）
             screenshot_mask = Image.new("L", target_size, 0)
             ImageDraw.Draw(screenshot_mask).rounded_rectangle(
                 [0, 0, target_size[0], target_size[1]],
-                radius=40,
+                radius=56,
                 fill=255,
             )
             rounded = Image.new("RGBA", target_size, (0, 0, 0, 0))
@@ -562,26 +549,13 @@ def render_single_image(
                 border_draw = ImageDraw.Draw(border_img)
                 border_draw.rounded_rectangle(
                     [0, 0, border_img.width - 1, border_img.height - 1],
-                    radius=44,
+                    radius=60,
                     outline=style.screenshot_border_color,
                     width=style.screenshot_border_width,
                 )
                 canvas.alpha_composite(border_img, (x - style.screenshot_border_width, y - style.screenshot_border_width))
             canvas.alpha_composite(rounded, (x, y))
-            # 绘制边框（先画矩形，再贴图）
-            if style.screenshot_border_width > 0:
-                border_x0 = x - style.screenshot_border_width
-                border_y0 = y - style.screenshot_border_width
-                border_x1 = x + target_size[0] + style.screenshot_border_width
-                border_y1 = y + target_size[1] + style.screenshot_border_width
-                draw.rounded_rectangle(
-                    [border_x0, border_y0, border_x1, border_y1],
-                    radius=max(12, style.screenshot_border_width * 2),
-                    fill=None,
-                    outline=style.screenshot_border_color,
-                    width=style.screenshot_border_width,
-                )
-            canvas.alpha_composite(resized, (x, y))
+            # 删除重复贴图与矩形描边，避免双边问题
 
     # 导出文件名
     if output_name:
@@ -592,8 +566,15 @@ def render_single_image(
 
     out_path = output_dir / out_name
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    canvas = canvas.convert("RGB")  # App Store 推荐 JPG/PNG，统一去除 alpha
-    canvas.save(out_path, format="PNG", optimize=True)
+    # 整体输出也使用圆角（与主体面板一致），保留透明角
+    outer_radius = max(32, style.panel_corner_radius)
+    full_mask = Image.new("L", (style.width, style.height), 0)
+    ImageDraw.Draw(full_mask).rounded_rectangle(
+        [0, 0, style.width, style.height], radius=outer_radius, fill=255
+    )
+    rounded_canvas = Image.new("RGBA", (style.width, style.height), (0, 0, 0, 0))
+    rounded_canvas.paste(canvas, (0, 0), full_mask)
+    rounded_canvas.save(out_path, format="PNG", optimize=True)
     logging.info("已生成: %s", out_path)
     return out_path
 
