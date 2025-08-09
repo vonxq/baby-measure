@@ -1,28 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
-// 允许选择的月龄（基于量表定义的真实节点）
-const List<int> kAllowedAges = <int>[
-  1, 2, 3, 4, 5, 6,
-  7, 8, 9, 10, 11, 12,
-  15, 18, 21, 24, 27, 30, 33, 36,
-  42, 48, 54, 60, 66, 72, 78, 84,
-];
-
-int _nearestAllowedAge(int currentAge) {
-  if (kAllowedAges.isEmpty) return currentAge;
-  int closest = kAllowedAges.first;
-  int minDiff = (currentAge - closest).abs();
-  for (final age in kAllowedAges) {
-    final diff = (currentAge - age).abs();
-    if (diff < minDiff) {
-      minDiff = diff;
-      closest = age;
-    }
-  }
-  return closest;
-}
+import '../../utils/age_constants.dart';
 
 class StartTab extends StatelessWidget {
   const StartTab({
@@ -213,7 +192,7 @@ class StartTab extends StatelessWidget {
 
 void _showAgePicker(BuildContext context, int currentAge, ValueChanged<int> onAgeChanged) {
   // 若当前月龄不在可选列表中，映射到最近的可选月龄
-  final int initialAge = kAllowedAges.contains(currentAge) ? currentAge : _nearestAllowedAge(currentAge);
+  final int initialAge = kAllowedAges.contains(currentAge) ? currentAge : nearestAllowedAge(currentAge);
   int selectedAge = initialAge;
   
   showCupertinoModalPopup(

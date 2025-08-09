@@ -5,6 +5,7 @@ import '../services/data_service.dart';
 import 'assessment_guide_page.dart';
 import 'scale_reference_page.dart';
 import 'tabs/start_tab.dart';
+import '../utils/age_constants.dart';
 import 'tabs/history_tab.dart';
 import 'tabs/info_tab.dart';
 
@@ -70,7 +71,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       _name = latest.babyName;
       _nameController.text = latest.babyName;
       // 取最新一次测评时的主测月龄近似值：actualAge向下取整
-      _selectedAge = latest.actualAge.floor();
+      _selectedAge = nearestAllowedAge(latest.actualAge.floor());
       if (_selectedAge < 0) _selectedAge = 0;
     });
   }
