@@ -104,20 +104,68 @@ def parse_color(value: Optional[str], default: Tuple[int, int, int, int]) -> Tup
     return default
 
 
-def try_load_font(font_path: Optional[str], font_size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
-    # 优先使用指定字体；否则退回到 PIL 默认字体
-    if font_path:
-        p = Path(font_path)
-        if p.exists():
-            try:
-                return ImageFont.truetype(str(p), font_size)
-            except Exception as exc:
-                logging.warning("加载字体失败 %s: %s，改用默认字体", font_path, exc)
+def _font_candidates() -> List[str]:
+    # 常见系统中可用的中文或全量字符覆盖的可缩放字体
+    return [
+        # macOS CJK
+        "/System/Library/Fonts/Hiragino Sans GB.ttc",
+        "/System/Library/Fonts/STHeiti Medium.ttc",
+        "/System/Library/Fonts/STHeiti Light.ttc",
+        "/System/Library/Fonts/Supplemental/Songti.ttc",
+        "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
+        # Windows
+        "C:/Windows/Fonts/msyh.ttc",              # 微软雅黑
+        "C:/Windows/Fonts/simhei.ttf",            # 黑体
+        "C:/Windows/Fonts/simsun.ttc",            # 宋体
+        "C:/Windows/Fonts/arialuni.ttf",          # Arial Unicode
+        # Linux 常见
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
+        "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
+    ]
+
+
+def _is_font_effective(draw: ImageDraw.ImageDraw, font: ImageFont.ImageFont, target_size: int) -> bool:
+    # 通过测量一个代表性字符的 bbox 高度，判断当前字体是否接近目标字号（避免退回到很小的位图字体）
     try:
-        return ImageFont.load_default()
+        bbox = draw.textbbox((0, 0), "国", font=font)
+        height = bbox[3] - bbox[1]
+        # 允许一定误差；若小于目标字号的一半，则认为无效
+        return height >= max(12, target_size // 2)
     except Exception:
-        # 理论上不会发生，但为安全起见
-        return ImageFont.load_default()
+        return False
+
+
+def try_load_font(font_path: Optional[str], font_size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    # 优先使用指定字体；失败则在候选集中回退，最后再回退到 PIL 默认字体
+    candidates: List[str] = []
+    if font_path:
+        candidates.append(font_path)
+    candidates.extend(_font_candidates())
+
+    # 使用一个临时画布来验证字号是否有效
+    tmp_img = Image.new("RGB", (10, 10), (255, 255, 255))
+    tmp_draw = ImageDraw.Draw(tmp_img)
+
+    for path in candidates:
+        p = Path(path)
+        if not p.exists():
+            continue
+        try:
+            font = ImageFont.truetype(str(p), font_size)
+            if _is_font_effective(tmp_draw, font, font_size):
+                logging.debug("使用字体: %s @ %d", path, font_size)
+                return font
+            else:
+                logging.debug("字体有效性不足（字号过小）: %s @ %d，继续回退", path, font_size)
+        except Exception as exc:
+            logging.debug("尝试字体失败 %s: %s", path, exc)
+
+    # 最后退回 PIL 默认字体
+    fallback = ImageFont.load_default()
+    logging.warning("未找到合适的可缩放中文字体，已回退到 PIL 默认字体（可能导致文字偏小）")
+    return fallback
 
 
 def measure_multiline_text(draw: ImageDraw.ImageDraw, text_lines: List[str], font: ImageFont.ImageFont, line_spacing: int) -> Tuple[int, int]:
