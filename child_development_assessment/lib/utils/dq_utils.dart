@@ -42,6 +42,22 @@ class DqUtils {
 
   static String labelByDq(double dq) => labelOf(levelOf(dq));
 
+  // 更短标签，适合窄卡片/徽标
+  static String compactLabelByDq(double dq) {
+    switch (levelOf(dq)) {
+      case DqLevel.excellent:
+        return '优秀';
+      case DqLevel.good:
+        return '良好';
+      case DqLevel.medium:
+        return '中等';
+      case DqLevel.borderlineLow:
+        return '临界';
+      case DqLevel.impaired:
+        return '障碍';
+    }
+  }
+
   static Color colorOf(DqLevel level) {
     switch (level) {
       case DqLevel.excellent:

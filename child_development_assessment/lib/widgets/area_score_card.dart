@@ -97,19 +97,19 @@ class AreaScoreCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 decoration: BoxDecoration(
-                   color: _getLevelColor(dq!).withValues(alpha: 0.2),
+                  color: _getLevelColor(dq!),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
-                    color: _getLevelColor(dq!).withValues(alpha: 0.5),
+                    color: Colors.white.withValues(alpha: 0.6),
                     width: 0.5,
                   ),
                 ),
                 child: Text(
-                  _getLevelText(dq!),
-                  style: TextStyle(
+                  _getCompactLevelText(dq!),
+                  style: const TextStyle(
                     fontSize: 6,
                     fontWeight: FontWeight.bold,
-                    color: _getLevelColor(dq!),
+                    color: Colors.white,
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 1,
@@ -171,6 +171,8 @@ class AreaScoreCard extends StatelessWidget {
 
   /// 根据DQ获取等级文本
   String _getLevelText(double dq) => DqUtils.labelByDq(dq);
+
+  String _getCompactLevelText(double dq) => DqUtils.compactLabelByDq(dq);
 
   /// 根据能区名称获取默认颜色
   Color _getAreaDefaultColor() {
