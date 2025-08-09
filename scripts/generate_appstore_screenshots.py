@@ -64,6 +64,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-dir", required=True, help="输入目录，包含 JSON 配置与原始截图")
     parser.add_argument("--config", default="config.json", help="配置文件名（位于输入目录下），默认 config.json")
     parser.add_argument("--output-dir", default=None, help="输出目录，默认为输入目录下的 output 子目录")
+    parser.add_argument("--require-open-font", action="store_true", default=False, help="仅允许使用开源字体（如 Noto/思源）；若未找到则回退到默认字体并给出警告")
     parser.add_argument("--verbose", action="store_true", help="输出详细日志")
     return parser.parse_args()
 
@@ -126,6 +127,32 @@ def _font_candidates() -> List[str]:
     ]
 
 
+def _open_font_candidates() -> List[str]:
+    # 仅包含开源许可字体（SIL OFL 等）：Noto / 思源黑体（Source Han Sans）
+    return [
+        # 用户字体（常见安装位置）
+        str(Path.home() / "Library/Fonts/NotoSansSC-Regular.otf"),
+        str(Path.home() / "Library/Fonts/NotoSansTC-Regular.otf"),
+        str(Path.home() / "Library/Fonts/NotoSansCJKsc-Regular.otf"),
+        str(Path.home() / "Library/Fonts/SourceHanSansCN-Regular.otf"),
+        str(Path.home() / "Library/Fonts/SourceHanSansSC-Regular.otf"),
+
+        # 系统字体目录（如有）
+        "/Library/Fonts/NotoSansSC-Regular.otf",
+        "/Library/Fonts/NotoSansCJKsc-Regular.otf",
+        "/Library/Fonts/SourceHanSansCN-Regular.otf",
+        "/Library/Fonts/SourceHanSansSC-Regular.otf",
+
+        # Linux 常见路径
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJKsc-Regular.otf",
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/noto/NotoSansSC-Regular.otf",
+        "/usr/share/fonts/opentype/adobe-fonts/source-han-sans/SourceHanSansCN-Regular.otf",
+        "/usr/share/fonts/opentype/adobe-fonts/source-han-sans/SourceHanSansSC-Regular.otf",
+    ]
+
+
 def _is_font_effective(draw: ImageDraw.ImageDraw, font: ImageFont.ImageFont, target_size: int) -> bool:
     # 通过测量一个代表性字符的 bbox 高度，判断当前字体是否接近目标字号（避免退回到很小的位图字体）
     try:
@@ -137,12 +164,23 @@ def _is_font_effective(draw: ImageDraw.ImageDraw, font: ImageFont.ImageFont, tar
         return False
 
 
-def try_load_font(font_path: Optional[str], font_size: int) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+def try_load_font(font_path: Optional[str], font_size: int, require_open_font: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
     # 优先使用指定字体；失败则在候选集中回退，最后再回退到 PIL 默认字体
     candidates: List[str] = []
-    if font_path:
-        candidates.append(font_path)
-    candidates.extend(_font_candidates())
+    if require_open_font:
+        if font_path:
+            base = os.path.basename(font_path).lower()
+            if any(token in base for token in ["notosans", "sourcehansans", "思源", "noto"]):
+                candidates.append(font_path)
+            else:
+                logging.warning("已启用 open-font-only，忽略非开源字体路径: %s", font_path)
+        candidates.extend(_open_font_candidates())
+    else:
+        if font_path:
+            candidates.append(font_path)
+        # 开源优先，再到通用候选
+        candidates.extend(_open_font_candidates())
+        candidates.extend(_font_candidates())
 
     # 使用一个临时画布来验证字号是否有效
     tmp_img = Image.new("RGB", (10, 10), (255, 255, 255))
@@ -164,7 +202,10 @@ def try_load_font(font_path: Optional[str], font_size: int) -> ImageFont.FreeTyp
 
     # 最后退回 PIL 默认字体
     fallback = ImageFont.load_default()
-    logging.warning("未找到合适的可缩放中文字体，已回退到 PIL 默认字体（可能导致文字偏小）")
+    if require_open_font:
+        logging.warning("已启用 open-font-only，但未找到合适的开源中文字体，已回退到 PIL 默认字体（可能导致文字偏小）")
+    else:
+        logging.warning("未找到合适的可缩放中文字体，已回退到 PIL 默认字体（可能导致文字偏小）")
     return fallback
 
 
@@ -233,6 +274,7 @@ class Style:
     screenshot_mode: str
     screenshot_max_height_ratio: float
     screenshot_top_offset: Optional[int]
+    open_font_only: bool
 
 
 def build_style(style_cfg: Dict[str, Any]) -> Style:
@@ -254,6 +296,7 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
     screenshot_max_height_ratio = float(get_value_case_insensitive(style_cfg, "screenshotmaxheightratio", 0.72))
     screenshot_top_offset = get_value_case_insensitive(style_cfg, "screenshottopoffset")
     screenshot_top_offset = int(screenshot_top_offset) if screenshot_top_offset is not None else None
+    open_font_only = bool(get_value_case_insensitive(style_cfg, "openfontonly", False))
 
     if text_align not in {"center", "left", "right"}:
         logging.warning("textAlign=%r 无效，回退为 center", text_align)
@@ -279,6 +322,7 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
         screenshot_mode=screenshot_mode,
         screenshot_max_height_ratio=screenshot_max_height_ratio,
         screenshot_top_offset=screenshot_top_offset,
+        open_font_only=open_font_only,
     )
 
 
@@ -315,8 +359,18 @@ def render_single_image(
     canvas = Image.new("RGBA", (style.width, style.height), style.background)
     draw = ImageDraw.Draw(canvas)
 
-    title_font = try_load_font(style.title_font_path, style.title_font_size)
-    subtitle_font = try_load_font(style.subtitle_font_path, style.subtitle_font_size)
+    # 若命令行传入 --require-open-font，优先覆盖 style.open_font_only
+    from argparse import Namespace
+    require_open = False
+    try:
+        # 读取全局解析的 args（通过 main() 传递更安全，但为避免大改保持局部）
+        import sys
+        require_open = "--require-open-font" in sys.argv
+    except Exception:
+        require_open = False
+
+    title_font = try_load_font(style.title_font_path, style.title_font_size, require_open_font=style.open_font_only or require_open)
+    subtitle_font = try_load_font(style.subtitle_font_path, style.subtitle_font_size, require_open_font=style.open_font_only or require_open)
     try:
         logging.debug("title_font: %s", getattr(title_font, "getname", lambda: (str(title_font), ""))())
         logging.debug("subtitle_font: %s", getattr(subtitle_font, "getname", lambda: (str(subtitle_font), ""))())
