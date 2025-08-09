@@ -170,15 +170,25 @@ class TestProgressIndicator extends StatelessWidget {
                     : (completed ? Colors.green[600] : Colors.orange[600]),
               ),
               const SizedBox(width: 6),
-              Text(
-                areaName,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: (dq != null)
-                      ? levelColor
-                      : (completed ? Colors.green[700] : Colors.orange[700]),
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    areaName,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: (dq != null)
+                          ? levelColor
+                          : (completed ? Colors.green[700] : Colors.orange[700]),
+                    ),
+                  ),
+                  if (dq != null)
+                    Text(
+                      DqUtils.labelByDq(dq!),
+                      style: TextStyle(fontSize: 10, color: levelColor.withValues(alpha: 0.9)),
+                    ),
+                ],
               ),
               const SizedBox(width: 4),
               Container(
