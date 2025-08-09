@@ -561,15 +561,8 @@ def render_single_image(
 
     out_path = output_dir / out_name
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    # 整体输出也使用圆角（与主体面板一致），保留透明角
-    outer_radius = max(32, style.panel_corner_radius)
-    full_mask = Image.new("L", (style.width, style.height), 0)
-    ImageDraw.Draw(full_mask).rounded_rectangle(
-        [0, 0, style.width, style.height], radius=outer_radius, fill=255
-    )
-    rounded_canvas = Image.new("RGBA", (style.width, style.height), (0, 0, 0, 0))
-    rounded_canvas.paste(canvas, (0, 0), full_mask)
-    rounded_canvas.save(out_path, format="PNG", optimize=True)
+    # 按需导出为常规矩形图片（不再对最外层做圆角）
+    canvas.save(out_path, format="PNG", optimize=True)
     logging.info("已生成: %s", out_path)
     return out_path
 
