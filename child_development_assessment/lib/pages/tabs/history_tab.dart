@@ -213,7 +213,7 @@ class HistoryTab extends StatelessWidget {
                       );
                     },
                     icon: const Icon(Icons.list_alt),
-                    label: const Text('查看答题记录'),
+                    label: const Text('查看测评记录'),
                   ),
                 ),
               ],

@@ -26,7 +26,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
 
   List<AssessmentData> _allData = [];
   late Map<int, bool> _answers; // itemId -> passed
-  bool _onlyWrong = false; // 是否只显示错题
+  bool _onlyWrong = false; // 是否仅显示未通过项
   double? _actualAge; // 实际月龄（用于超过实际月龄的错题提示）
 
   // 快速跳转 section key
@@ -66,7 +66,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
           orElse: () => {},
         );
         if (found.isEmpty) {
-          throw Exception('未找到对应的答题记录');
+          throw Exception('未找到对应的测评记录');
         }
         final raw = Map<String, dynamic>.from(found['testResults'] as Map);
         // JSON 反序列化后 key 可能是字符串，需要转为 int
@@ -75,7 +75,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
       }
 
       if (testResults == null) {
-        throw Exception('答题记录为空');
+        throw Exception('测评记录为空');
       }
 
       setState(() {
@@ -89,7 +89,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
       });
     } catch (e) {
       setState(() {
-        _error = '加载答题记录失败：$e';
+        _error = '加载测评记录失败：$e';
         _isLoading = false;
       });
     }
@@ -108,7 +108,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('答题记录'),
+        title: const Text('测评记录'),
         actions: [
           TextButton.icon(
             onPressed: () => setState(() => _onlyWrong = !_onlyWrong),
@@ -118,7 +118,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
               size: 18,
             ),
             label: Text(
-              _onlyWrong ? '只看错题' : '查看全部',
+              _onlyWrong ? '仅看未通过项' : '查看全部',
               style: TextStyle(
                 fontSize: 12,
                 color: _onlyWrong ? Colors.red[600] : Colors.grey[700],
@@ -169,7 +169,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
     final sortedAges = ages.toList()..sort();
 
     if (sortedAges.isEmpty) {
-      return Center(child: Text(_onlyWrong ? '暂无错题' : '暂无答题记录'));
+      return Center(child: Text(_onlyWrong ? '暂无未通过项' : '暂无测评记录'));
     }
 
     return CustomScrollView(
@@ -300,7 +300,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
     final areas = areaToItems.keys.toList()..sort();
 
     if (areas.isEmpty) {
-      return Center(child: Text(_onlyWrong ? '暂无错题' : '暂无答题记录'));
+      return Center(child: Text(_onlyWrong ? '暂无未通过项' : '暂无测评记录'));
     }
 
     return CustomScrollView(
@@ -552,7 +552,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
     );
   }
 
-  // 超出实际月龄的错题安心提示
+  // 超出实际月龄的未通过项安心提示
   Widget _buildBeyondAgeReassureTip() {
     return Container(
       padding: const EdgeInsets.all(8),
