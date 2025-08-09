@@ -217,7 +217,17 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
             children: [
               Text('${age}月龄', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
-              ...items.map((it) => _buildAnswerItemCard(it, ageMonth: age)),
+              ...items.expand((it) {
+                final passed = _answers[it.id] ?? false;
+                final needsTip = !passed && _actualAge != null && age > _actualAge!;
+                return [
+                  _buildAnswerItemCard(it, area: it.area, ageMonth: age),
+                  if (needsTip) ...[
+                    const SizedBox(height: 6),
+                    _buildBeyondAgeReassureTip(),
+                  ],
+                ];
+              }),
             ],
           ),
         ),
@@ -316,7 +326,21 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
             children: [
               Text('${AreaUtils.displayName(area)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
-              ...items.map((iwa) => _buildAnswerItemCard(iwa.item, subtitle: '${iwa.age}月龄', ageMonth: iwa.age)),
+              ...items.expand((iwa) {
+                final passed = _answers[iwa.item.id] ?? false;
+                final needsTip = !passed && _actualAge != null && iwa.age > _actualAge!;
+                return [
+                  _buildAnswerItemCard(
+                    iwa.item,
+                    area: area,
+                    ageMonth: iwa.age,
+                  ),
+                  if (needsTip) ...[
+                    const SizedBox(height: 6),
+                    _buildBeyondAgeReassureTip(),
+                  ],
+                ];
+              }),
             ],
           ),
         ),
@@ -336,7 +360,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
   }
 
   // =============== 题目卡片（复用速查样式 + 背景区分） ===============
-  Widget _buildAnswerItemCard(AssessmentItem item, {String? subtitle, int? ageMonth}) {
+  Widget _buildAnswerItemCard(AssessmentItem item, {String? subtitle, int? ageMonth, String? area}) {
     final bool passed = _answers[item.id] ?? false;
     final Color bg = passed ? Colors.green[50]! : Colors.red[50]!;
     final Color border = passed ? Colors.green[200]! : Colors.red[200]!;
@@ -352,18 +376,33 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('#${item.id} · ${item.name}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  '#${item.id} · ${item.name}',
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+              ),
+              if (area != null && ageMonth != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey[300]!),
+                  ),
+                  child: Text(
+                    '${AreaUtils.displayName(area)} · ${ageMonth}月龄',
+                    style: TextStyle(fontSize: 11, color: Colors.grey[700]),
+                  ),
+                ),
+            ],
+          ),
           if (item.name.contains('R') || item.name.contains('*')) ...[
             const SizedBox(height: 6),
             _buildSpecialMarkerTips(item.name),
-          ],
-          if (subtitle != null) ...[
-            const SizedBox(height: 2),
-            Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
-          ],
-          if (!passed && ageMonth != null && _actualAge != null && ageMonth > _actualAge!) ...[
-            const SizedBox(height: 6),
-            _buildBeyondAgeReassureTip(),
           ],
           const SizedBox(height: 8),
           _buildKeyValueRow('操作说明', item.operation),
