@@ -303,21 +303,31 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                             ),
                             const SizedBox(height: 16),
 
-                            // 能区分数卡片一行布局
-                            Row(
-                              children: result.areaScores.entries.map((entry) {
-                                final areaDQ = _calculateAreaDQ(entry.value);
-                                return Expanded(
-                                  child: AreaScoreCard(
-                                    title: _getAreaDisplayName(entry.key),
-                                    score: entry.value,
-                                    dq: areaDQ,
-                                    unit: '月',
-                                    showDQ: true,
-                                    margin: const EdgeInsets.symmetric(horizontal: 2),
-                                  ),
+                            // 能区分数卡片：两列自适应布局
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                const double spacing = 8;
+                                final double itemWidth = (constraints.maxWidth - spacing) / 2;
+                                final cards = result.areaScores.entries.map((entry) {
+                                  final areaDQ = _calculateAreaDQ(entry.value);
+                                  return SizedBox(
+                                    width: itemWidth,
+                                    child: AreaScoreCard(
+                                      title: _getAreaDisplayName(entry.key),
+                                      score: entry.value,
+                                      dq: areaDQ,
+                                      unit: '月',
+                                      showDQ: true,
+                                      margin: const EdgeInsets.symmetric(vertical: 4),
+                                    ),
+                                  );
+                                }).toList();
+                                return Wrap(
+                                  spacing: spacing,
+                                  runSpacing: spacing,
+                                  children: cards,
                                 );
-                              }).toList(),
+                              },
                             ),
                           ],
                         ),

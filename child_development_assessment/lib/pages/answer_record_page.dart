@@ -30,12 +30,18 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
   // 快速跳转 section key
   final Map<int, GlobalKey> _ageSectionKeys = {};
   final Map<String, GlobalKey> _areaSectionKeys = {};
+  final ScrollController _ageScrollController = ScrollController();
+  final ScrollController _areaScrollController = ScrollController();
+  int? _currentAgeSection; // 当前高亮月龄
+  String? _currentAreaSection; // 当前高亮能区
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _load();
+    _ageScrollController.addListener(_onAgeScroll);
+    _areaScrollController.addListener(_onAreaScroll);
   }
 
   Future<void> _load() async {
@@ -79,6 +85,8 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
   @override
   void dispose() {
     _tabController.dispose();
+    _ageScrollController.dispose();
+    _areaScrollController.dispose();
     super.dispose();
   }
 
@@ -150,6 +158,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
     }
 
     return CustomScrollView(
+      controller: _ageScrollController,
       slivers: [
         SliverPersistentHeader(
           pinned: true,
@@ -167,7 +176,9 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
                       .map((age) => Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: ActionChip(
-                              label: Text('$age 月龄'),
+                              backgroundColor: _currentAgeSection == age ? Colors.blue[50] : null,
+                              shape: StadiumBorder(side: BorderSide(color: _currentAgeSection == age ? Colors.blue[200]! : Colors.grey[300]!)),
+                              label: Text('$age 月龄', style: TextStyle(color: _currentAgeSection == age ? Colors.blue[700] : null)),
                               onPressed: () => _scrollToAge(age),
                             ),
                           ))
@@ -242,6 +253,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
     }
 
     return CustomScrollView(
+      controller: _areaScrollController,
       slivers: [
         SliverPersistentHeader(
           pinned: true,
@@ -259,7 +271,9 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
                       .map((area) => Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: ActionChip(
-                              label: Text(AreaUtils.displayName(area)),
+                              backgroundColor: _currentAreaSection == area ? Colors.blue[50] : null,
+                              shape: StadiumBorder(side: BorderSide(color: _currentAreaSection == area ? Colors.blue[200]! : Colors.grey[300]!)),
+                              label: Text(AreaUtils.displayName(area), style: TextStyle(color: _currentAreaSection == area ? Colors.blue[700] : null)),
                               onPressed: () => _scrollToArea(area),
                             ),
                           ))
@@ -336,6 +350,10 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('#${item.id} · ${item.name}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+          if (item.name.contains('R') || item.name.contains('*')) ...[
+            const SizedBox(height: 6),
+            _buildSpecialMarkerTips(item.name),
+          ],
           if (subtitle != null) ...[
             const SizedBox(height: 2),
             Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
@@ -360,6 +378,143 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
         Expanded(child: Text(v, style: TextStyle(color: Colors.grey[900], fontSize: 12))),
       ],
     );
+  }
+
+  // 特殊标记提示（与速查一致）
+  Widget _buildSpecialMarkerTips(String name) {
+    List<Widget> tips = [];
+
+    if (name.contains('R')) {
+      tips.add(_buildTipItem(
+        icon: Icons.family_restroom,
+        iconColor: Colors.blue[600]!,
+        backgroundColor: Colors.blue[50]!,
+        borderColor: Colors.blue[200]!,
+        title: 'R 标记说明',
+        content: '该项目的表现可以通过询问家长获得',
+      ));
+    }
+
+    if (name.contains('*')) {
+      tips.add(_buildTipItem(
+        icon: Icons.warning_amber_rounded,
+        iconColor: Colors.orange[600]!,
+        backgroundColor: Colors.orange[50]!,
+        borderColor: Colors.orange[200]!,
+        title: '* 标记说明',
+        content: '该项目如果未通过需要引起注意',
+      ));
+    }
+
+    return Column(
+      children: tips
+          .map((tip) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: tip,
+              ))
+          .toList(),
+    );
+  }
+
+  Widget _buildTipItem({
+    required IconData icon,
+    required Color iconColor,
+    required Color backgroundColor,
+    required Color borderColor,
+    required String title,
+    required String content,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: borderColor),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(icon, size: 16, color: iconColor),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: iconColor,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  content,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onAgeScroll() {
+    _updateCurrentAgeSection();
+  }
+
+  void _onAreaScroll() {
+    _updateCurrentAreaSection();
+  }
+
+  void _updateCurrentAgeSection() {
+    if (_ageSectionKeys.isEmpty) return;
+    int? nearest;
+    double minDy = double.infinity;
+    _ageSectionKeys.forEach((age, key) {
+      final ctx = key.currentContext;
+      if (ctx == null) return;
+      final box = ctx.findRenderObject() as RenderBox?;
+      if (box == null) return;
+      final pos = box.localToGlobal(Offset.zero);
+      final dy = (pos.dy - kToolbarHeight - 56).abs(); // 距离顶部 pinned header 的距离
+      if (dy < minDy) {
+        minDy = dy;
+        nearest = age;
+      }
+    });
+    if (nearest != null && nearest != _currentAgeSection) {
+      setState(() => _currentAgeSection = nearest);
+    }
+  }
+
+  void _updateCurrentAreaSection() {
+    if (_areaSectionKeys.isEmpty) return;
+    String? nearest;
+    double minDy = double.infinity;
+    _areaSectionKeys.forEach((area, key) {
+      final ctx = key.currentContext;
+      if (ctx == null) return;
+      final box = ctx.findRenderObject() as RenderBox?;
+      if (box == null) return;
+      final pos = box.localToGlobal(Offset.zero);
+      final dy = (pos.dy - kToolbarHeight - 56).abs();
+      if (dy < minDy) {
+        minDy = dy;
+        nearest = area;
+      }
+    });
+    if (nearest != null && nearest != _currentAreaSection) {
+      setState(() => _currentAreaSection = nearest);
+    }
   }
 }
 
