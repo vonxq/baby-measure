@@ -421,12 +421,7 @@ def render_single_image(
     # 主体灰色圆角面板（替代参考图内层灰色背景）
     panel = Image.new("RGBA", (style.width, style.height), (0, 0, 0, 0))
     panel_draw = ImageDraw.Draw(panel)
-    panel_rect = [
-        style.panel_margin,
-        style.panel_margin,
-        style.width - style.panel_margin,
-        style.height - style.panel_margin,
-    ]
+    panel_rect = [0, 0, style.width, style.height]
     # 面板渐变
     grad_panel = Image.new("RGBA", (1, panel_rect[3] - panel_rect[1]), (0, 0, 0, 0))
     top_c = style.panel_top_color
@@ -447,7 +442,7 @@ def render_single_image(
         radius=style.panel_corner_radius,
         fill=255,
     )
-    panel.paste(grad_panel, (panel_rect[0], panel_rect[1]), mask)
+    panel.paste(grad_panel, (0, 0), mask)
     canvas.alpha_composite(panel)
     draw = ImageDraw.Draw(canvas)
 
@@ -464,7 +459,7 @@ def render_single_image(
     max_text_width = int(style.width * style.max_text_width_ratio) - style.padding * (0 if style.text_align == "center" else 1)
 
     # 标题与副标题：支持“副标题更醒目”的风格
-    current_y = style.panel_margin + style.panel_padding
+    current_y = style.panel_padding
     if style.subtitle_is_headline:
         # 先绘制小标题（原 title）
         title_lines = wrap_text_to_width(draw, title or " ", title_font, max_text_width)
@@ -519,9 +514,9 @@ def render_single_image(
 
         # 截图最大显示区域（左右各留 padding）
         # 截图放置在主体面板内部，底部对齐
-        panel_left = style.panel_margin + style.panel_padding
-        panel_right = style.width - style.panel_margin - style.panel_padding
-        panel_bottom = style.height - style.panel_margin - style.panel_padding
+        panel_left = style.panel_padding
+        panel_right = style.width - style.panel_padding
+        panel_bottom = style.height - style.panel_padding
         max_w = panel_right - panel_left
         max_h = min(available_height, panel_bottom - current_y)
         if max_w <= 0 or max_h <= 0:
