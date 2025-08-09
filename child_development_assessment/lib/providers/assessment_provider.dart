@@ -557,6 +557,11 @@ class AssessmentProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // 对外暴露的结果生成接口，供界面在跳转前主动生成最终结果
+  void finalizeResults() {
+    _generateFinalResult();
+  }
+
   // 获取总进度
   double _getTotalProgress() {
     if (_currentStage == TestStage.allCompleted) return 1.0;

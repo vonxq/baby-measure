@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../providers/assessment_provider.dart';
+import 'package:provider/provider.dart';
 import 'result_page.dart';
 import '../utils/dq_utils.dart';
 
@@ -170,6 +171,11 @@ class AreaResultPage extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: () {
                       if (isLastArea) {
+                        // 确保在跳转前已生成最终结果
+                        try {
+                          final provider = Provider.of<AssessmentProvider>(context, listen: false);
+                          provider.finalizeResults();
+                        } catch (_) {}
                         Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (_) => const ResultPage()),
                         );
