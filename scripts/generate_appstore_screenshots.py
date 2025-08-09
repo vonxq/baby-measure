@@ -480,7 +480,7 @@ def render_single_image(
     current_y = style.panel_margin + style.panel_padding
     if style.subtitle_is_headline:
         # 先绘制小标题（原 title）
-        title_lines = wrap_text_to_width(draw, title or "", title_font, max_text_width)
+        title_lines = wrap_text_to_width(draw, title or " ", title_font, max_text_width)
         logging.debug("title raw=%r -> lines=%s", title, title_lines)
         for line in title_lines:
             x = compute_text_x(style, draw, line, title_font)
@@ -491,7 +491,7 @@ def render_single_image(
 
         # 再绘制大字号副标题
         big_subtitle_font = try_load_font(None, int(style.subtitle_font_size * style.subtitle_scale), require_open_font=True)
-        subtitle_lines = wrap_text_to_width(draw, subtitle or "", big_subtitle_font, max_text_width)
+        subtitle_lines = wrap_text_to_width(draw, subtitle or " ", big_subtitle_font, max_text_width)
         logging.debug("subtitle(headline) raw=%r -> lines=%s", subtitle, subtitle_lines)
         for line in subtitle_lines:
             x = compute_text_x(style, draw, line, big_subtitle_font)
@@ -501,7 +501,7 @@ def render_single_image(
             current_y += line_h + style.line_spacing
     else:
         # 常规：大标题 + 小副标题
-        title_lines = wrap_text_to_width(draw, title or "", title_font, max_text_width)
+        title_lines = wrap_text_to_width(draw, title or " ", title_font, max_text_width)
         logging.debug("title raw=%r -> lines=%s", title, title_lines)
         for line in title_lines:
             x = compute_text_x(style, draw, line, title_font)
@@ -510,7 +510,7 @@ def render_single_image(
             line_h = bbox[3] - bbox[1]
             current_y += line_h + style.line_spacing
 
-        subtitle_lines = wrap_text_to_width(draw, subtitle or "", subtitle_font, max_text_width)
+        subtitle_lines = wrap_text_to_width(draw, subtitle or " ", subtitle_font, max_text_width)
         logging.debug("subtitle raw=%r -> lines=%s", subtitle, subtitle_lines)
         for line in subtitle_lines:
             x = compute_text_x(style, draw, line, subtitle_font)
