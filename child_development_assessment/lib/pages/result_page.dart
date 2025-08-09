@@ -76,6 +76,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
 
       await DataService().saveAssessmentHistory(history);
       // 同步保存答题记录，使用相同的 history id 建立关联
+      final testResultsStringKey = result.testResults.map((key, value) => MapEntry(key.toString(), value));
       await DataService().saveTestResult({
         'id': history.id,
         'userName': result.userName,
@@ -83,7 +84,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
         'mainTestAge': result.mainTestAge,
         'areaScores': result.areaScores,
         'dq': result.dq,
-        'testResults': result.testResults,
+        'testResults': testResultsStringKey,
         'timestamp': DateTime.now().toIso8601String(),
       });
     } catch (e) {
