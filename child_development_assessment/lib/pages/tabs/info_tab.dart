@@ -44,7 +44,7 @@ class InfoTab extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  '本应用基于0-6岁儿童发育行为评估量表（儿心量表-Ⅱ），为家长提供专业的儿童发育评估工具。通过科学的测评方法，帮助了解儿童在五大能区的发展情况。',
+                  '本应用基于《0-6岁儿童发育行为评估量表》（儿心量表-Ⅱ），为家长提供专业的儿童发育评估工具。通过科学的测评方法，帮助了解儿童在五大能区的发展情况。',
                   style: TextStyle(fontSize: 16, color: Colors.grey[700], height: 1.5),
                 ),
               ],
