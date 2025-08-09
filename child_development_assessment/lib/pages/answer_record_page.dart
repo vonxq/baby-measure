@@ -34,8 +34,10 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
   final Map<String, GlobalKey> _areaSectionKeys = {};
   final ScrollController _ageScrollController = ScrollController();
   final ScrollController _areaScrollController = ScrollController();
-  int? _currentAgeSection; // 当前高亮月龄
-  String? _currentAreaSection; // 当前高亮能区
+  int? _currentAgeSection; // 当前高亮月龄（滚动模式遗留，不再用于渲染）
+  String? _currentAreaSection; // 当前高亮能区（滚动模式遗留，不再用于渲染）
+  int? _selectedAge; // 选中的月龄，仅展示该月龄
+  String? _selectedArea; // 选中的能区，仅展示该能区
   bool _ageAnimating = false; // 按月龄视图是否在程序滚动中
 
   @override
@@ -81,9 +83,9 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
         _answers = testResults!;
         _isLoading = false;
       });
-      // 初始化高亮到第一个分段
+      // 初始化选择项
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _resetHighlightForActiveTab(forceTop: true);
+        _ensureValidSelections(forceReset: true);
       });
     } catch (e) {
       setState(() {
@@ -189,10 +191,10 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
                       .map((age) => Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: ActionChip(
-                              backgroundColor: _currentAgeSection == age ? Colors.blue[50] : null,
-                              shape: StadiumBorder(side: BorderSide(color: _currentAgeSection == age ? Colors.blue[200]! : Colors.grey[300]!)),
-                              label: Text('$age 月龄', style: TextStyle(color: _currentAgeSection == age ? Colors.blue[700] : null)),
-                              onPressed: () => _scrollToAge(age),
+                              backgroundColor: _selectedAge == age ? Colors.blue[50] : null,
+                              shape: StadiumBorder(side: BorderSide(color: _selectedAge == age ? Colors.blue[200]! : Colors.grey[300]!)),
+                              label: Text('$age 月龄', style: TextStyle(color: _selectedAge == age ? Colors.blue[700] : null)),
+                              onPressed: () => setState(() => _selectedAge = age),
                             ),
                           ))
                       .toList(),
@@ -204,11 +206,14 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
         SliverList(
           delegate: SliverChildListDelegate([
             const SizedBox(height: 8),
-            ...sortedAges.map((age) {
-              _ageSectionKeys.putIfAbsent(age, () => GlobalKey());
-              final items = ageToItems[age]!..sort((a, b) => a.id.compareTo(b.id));
-              return _buildAgeSection(age, items);
-            }).toList(),
+            () {
+              final int selected = (_selectedAge != null && sortedAges.contains(_selectedAge))
+                  ? _selectedAge!
+                  : sortedAges.first;
+              _ageSectionKeys.putIfAbsent(selected, () => GlobalKey());
+              final items = [...(ageToItems[selected] ?? [])]..sort((a, b) => a.id.compareTo(b.id));
+              return _buildAgeSection(selected, items);
+            }(),
           ]),
         ),
       ],
@@ -236,51 +241,47 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
   }
 
   void _scrollToAge(int age) {
-    final key = _ageSectionKeys[age];
-    if (key?.currentContext == null) return;
-    final renderObject = key!.currentContext!.findRenderObject();
-    if (renderObject == null) return;
-    final viewport = RenderAbstractViewport.of(renderObject);
-    if (viewport == null) return;
-    // 计算顶部/底部对齐两种偏移，优先选择位移更大的那个，提升从上到下/从下到上的可达性
-    final currentOffset = _ageScrollController.hasClients ? _ageScrollController.offset : 0.0;
-    final topAlignOffset = viewport.getOffsetToReveal(renderObject, 0).offset - 56; // 顶对齐，扣除pinned header
-    final bottomAlignOffset = viewport.getOffsetToReveal(renderObject, 1).offset; // 底对齐
-    double targetOffset;
-    if ((topAlignOffset - currentOffset).abs() >= (bottomAlignOffset - currentOffset).abs()) {
-      targetOffset = topAlignOffset;
-    } else {
-      targetOffset = bottomAlignOffset;
-    }
-    final clamped = targetOffset.clamp(0.0, _ageScrollController.position.maxScrollExtent);
+  final key = _ageSectionKeys[age];
+  if (key?.currentContext == null) return;
+  final renderObject = key!.currentContext!.findRenderObject();
+  if (renderObject == null) return;
+  final viewport = RenderAbstractViewport.of(renderObject);
+  if (viewport == null) return;
 
-    _ageAnimating = true;
-    final before = currentOffset;
-    _ageScrollController
-        .animateTo(
-          clamped,
-          duration: const Duration(milliseconds: 320),
+  final currentOffset = _ageScrollController.hasClients ? _ageScrollController.offset : 0.0;
+  final topAlignOffset = viewport.getOffsetToReveal(renderObject, 0).offset - 56; // 顶对齐
+  final bottomAlignOffset = viewport.getOffsetToReveal(renderObject, 1).offset; // 底对齐
+
+  // 优先选择能让目标可见的偏移量
+  double targetOffset = (currentOffset < topAlignOffset) ? topAlignOffset : bottomAlignOffset;
+  targetOffset = targetOffset.clamp(0.0, _ageScrollController.position.maxScrollExtent);
+
+  _ageAnimating = true;
+  final before = currentOffset;
+  _ageScrollController
+      .animateTo(
+        targetOffset,
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeInOut,
+      )
+      .whenComplete(() async {
+    // 若位移过小，回退使用 ensureVisible 兜底
+    final after = _ageScrollController.hasClients ? _ageScrollController.offset : before;
+    if ((after - before).abs() < 1.0) {
+      try {
+        await Scrollable.ensureVisible(
+          key.currentContext!,
+          duration: const Duration(milliseconds: 240),
           curve: Curves.easeInOut,
-        )
-        .whenComplete(() async {
-      // 若位移过小，回退使用 ensureVisible 兜底
-      final after = _ageScrollController.hasClients ? _ageScrollController.offset : before;
-      if ((after - before).abs() < 1.0) {
-        try {
-          await Scrollable.ensureVisible(
-            key.currentContext!,
-            duration: const Duration(milliseconds: 240),
-            curve: Curves.easeInOut,
-            alignment: 0.0,
-            alignmentPolicy: ScrollPositionAlignmentPolicy.explicit,
-          );
-        } catch (_) {}
-      }
-      _ageAnimating = false;
-      if (mounted) setState(() => _currentAgeSection = age);
-    });
-  }
-
+          alignment: 0.5,  // 改为居中
+          alignmentPolicy: ScrollPositionAlignmentPolicy.explicit,
+        );
+      } catch (_) {}
+    }
+    _ageAnimating = false;
+    if (mounted) setState(() => _currentAgeSection = age);
+  });
+}
   // =============== 按能区查看 ===============
   Widget _buildByAreaView() {
     final Map<String, List<_ItemWithAge>> areaToItems = {};
@@ -319,10 +320,10 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
                       .map((area) => Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: ActionChip(
-                              backgroundColor: _currentAreaSection == area ? Colors.blue[50] : null,
-                              shape: StadiumBorder(side: BorderSide(color: _currentAreaSection == area ? Colors.blue[200]! : Colors.grey[300]!)),
-                              label: Text(AreaUtils.displayName(area), style: TextStyle(color: _currentAreaSection == area ? Colors.blue[700] : null)),
-                              onPressed: () => _scrollToArea(area),
+                              backgroundColor: _selectedArea == area ? Colors.blue[50] : null,
+                              shape: StadiumBorder(side: BorderSide(color: _selectedArea == area ? Colors.blue[200]! : Colors.grey[300]!)),
+                              label: Text(AreaUtils.displayName(area), style: TextStyle(color: _selectedArea == area ? Colors.blue[700] : null)),
+                              onPressed: () => setState(() => _selectedArea = area),
                             ),
                           ))
                       .toList(),
@@ -334,15 +335,19 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
         SliverList(
           delegate: SliverChildListDelegate([
             const SizedBox(height: 8),
-            ...areas.map((area) {
-              _areaSectionKeys.putIfAbsent(area, () => GlobalKey());
-              final list = areaToItems[area]!..sort((a, b) {
-                final c = a.age.compareTo(b.age);
-                if (c != 0) return c;
-                return a.item.id.compareTo(b.item.id);
-              });
-              return _buildAreaSection(area, list);
-            }).toList(),
+            () {
+              final String selected = (_selectedArea != null && areas.contains(_selectedArea))
+                  ? _selectedArea!
+                  : areas.first;
+              _areaSectionKeys.putIfAbsent(selected, () => GlobalKey());
+              final list = [...(areaToItems[selected] ?? [])]
+                ..sort((a, b) {
+                  final c = a.age.compareTo(b.age);
+                  if (c != 0) return c;
+                  return a.item.id.compareTo(b.item.id);
+                });
+              return _buildAreaSection(selected, list);
+            }(),
           ]),
         ),
       ],
@@ -587,34 +592,28 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
 
   void _onTabChanged() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _resetHighlightForActiveTab();
+      _ensureValidSelections();
     });
   }
 
   void _resetHighlightForActiveTab({bool forceTop = false}) {
+    // 兼容旧逻辑占位，已不使用滚动高亮
+  }
+
+  void _ensureValidSelections({bool forceReset = false}) {
     if (_tabController.index == 0) {
-      if (!_ageScrollController.hasClients) return;
-      if (forceTop || _ageScrollController.offset <= 1.0) {
+      if (forceReset || _selectedAge == null) {
         if (_ageSectionKeys.isNotEmpty) {
           final ages = _ageSectionKeys.keys.toList()..sort();
-          setState(() => _currentAgeSection = ages.first);
-        } else {
-          setState(() => _currentAgeSection = null);
+          setState(() => _selectedAge = ages.first);
         }
-      } else {
-        _updateCurrentAgeSection();
       }
     } else {
-      if (!_areaScrollController.hasClients) return;
-      if (forceTop || _areaScrollController.offset <= 1.0) {
+      if (forceReset || _selectedArea == null) {
         if (_areaSectionKeys.isNotEmpty) {
           final areas = _areaSectionKeys.keys.toList()..sort();
-          setState(() => _currentAreaSection = areas.first);
-        } else {
-          setState(() => _currentAreaSection = null);
+          setState(() => _selectedArea = areas.first);
         }
-      } else {
-        _updateCurrentAreaSection();
       }
     }
   }

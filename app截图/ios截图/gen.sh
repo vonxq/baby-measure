@@ -1,0 +1,1 @@
+python3 ../../scripts/generate_appstore_screenshots.py --input-dir "." --config config.json --output-dir "./output" --verbose | cat

@@ -105,73 +105,16 @@ def parse_color(value: Optional[str], default: Tuple[int, int, int, int]) -> Tup
     return default
 
 
-def _font_candidates() -> List[str]:
-    # 常见系统中可用的中文或全量字符覆盖的可缩放字体
-    return [
-        # macOS CJK
-        "/System/Library/Fonts/Hiragino Sans GB.ttc",
-        "/System/Library/Fonts/STHeiti Medium.ttc",
-        "/System/Library/Fonts/STHeiti Light.ttc",
-        "/System/Library/Fonts/Supplemental/Songti.ttc",
-        "/System/Library/Fonts/Supplemental/Arial Unicode.ttf",
-        # Windows
-        "C:/Windows/Fonts/msyh.ttc",              # 微软雅黑
-        "C:/Windows/Fonts/simhei.ttf",            # 黑体
-        "C:/Windows/Fonts/simsun.ttc",            # 宋体
-        "C:/Windows/Fonts/arialuni.ttf",          # Arial Unicode
-        # Linux 常见
-        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
-        "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
+def _resolve_noto_cjk_ttc_path() -> Path:
+    """返回本机 NotoSansCJK.ttc 的路径，若不存在则抛错。"""
+    candidates = [
+        Path.home() / "Library/Fonts/NotoSansCJK.ttc",
+        Path("/Library/Fonts/NotoSansCJK.ttc"),
     ]
-
-
-def _open_font_candidates() -> List[str]:
-    # 仅包含开源许可字体（SIL OFL 等）：Noto / 思源黑体（Source Han Sans）
-    return [
-        # 项目内可选字体目录（请将 NotoSansSC-Regular.otf 放在 scripts/fonts/ 下）
-        str((Path(__file__).parent / "fonts" / "NotoSansSC-Regular.otf").resolve()),
-        str((Path(__file__).parent / "fonts" / "NotoSansSC-Regular.ttf").resolve()),
-        str((Path(__file__).parent / "fonts" / "NotoSansCJKsc-Regular.otf").resolve()),
-        str((Path(__file__).parent / "fonts" / "NotoSansCJKsc-Regular.ttf").resolve()),
-        str((Path(__file__).parent / "fonts" / "SourceHanSansCN-Regular.otf").resolve()),
-        str((Path(__file__).parent / "fonts" / "SourceHanSansCN-Regular.ttf").resolve()),
-        str((Path(__file__).parent / "fonts" / "SourceHanSansSC-Regular.otf").resolve()),
-        str((Path(__file__).parent / "fonts" / "SourceHanSansSC-Regular.ttf").resolve()),
-
-        # 用户字体（常见安装位置）
-        str(Path.home() / "Library/Fonts/NotoSansSC-Regular.otf"),
-        str(Path.home() / "Library/Fonts/NotoSansTC-Regular.otf"),
-        str(Path.home() / "Library/Fonts/NotoSansCJKsc-Regular.otf"),
-        str(Path.home() / "Library/Fonts/NotoSansCJK.ttc"),
-        str(Path.home() / "Library/Fonts/NotoSansSC-Regular.ttf"),
-        str(Path.home() / "Library/Fonts/NotoSansTC-Regular.ttf"),
-        str(Path.home() / "Library/Fonts/NotoSansCJKsc-Regular.ttf"),
-        str(Path.home() / "Library/Fonts/SourceHanSansCN-Regular.otf"),
-        str(Path.home() / "Library/Fonts/SourceHanSansSC-Regular.otf"),
-        str(Path.home() / "Library/Fonts/SourceHanSansCN-Regular.ttf"),
-        str(Path.home() / "Library/Fonts/SourceHanSansSC-Regular.ttf"),
-
-        # 系统字体目录（如有）
-        "/Library/Fonts/NotoSansSC-Regular.otf",
-        "/Library/Fonts/NotoSansCJK.ttc",
-        "/Library/Fonts/NotoSansSC-Regular.ttf",
-        "/Library/Fonts/NotoSansCJKsc-Regular.otf",
-        "/Library/Fonts/NotoSansCJKsc-Regular.ttf",
-        "/Library/Fonts/SourceHanSansCN-Regular.otf",
-        "/Library/Fonts/SourceHanSansCN-Regular.ttf",
-        "/Library/Fonts/SourceHanSansSC-Regular.otf",
-        "/Library/Fonts/SourceHanSansSC-Regular.ttf",
-
-        # Linux 常见路径
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJKsc-Regular.otf",
-        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/noto/NotoSansSC-Regular.otf",
-        "/usr/share/fonts/opentype/adobe-fonts/source-han-sans/SourceHanSansCN-Regular.otf",
-        "/usr/share/fonts/opentype/adobe-fonts/source-han-sans/SourceHanSansSC-Regular.otf",
-    ]
+    for p in candidates:
+        if p.exists():
+            return p
+    raise FileNotFoundError("未找到 NotoSansCJK.ttc，请先安装 'font-noto-sans-cjk'。")
 
 
 def _is_font_effective(draw: ImageDraw.ImageDraw, font: ImageFont.ImageFont, target_size: int) -> bool:
@@ -230,65 +173,24 @@ def try_load_font(font_path: Optional[str], font_size: int, require_open_font: b
     return fallback
 
 
-def _load_bold_open_font(font_size: int) -> Optional[ImageFont.FreeTypeFont]:
-    """尝试在开源字体集合中寻找更粗的字重（Bold/SemiBold/Medium/Black/Heavy）。
-    优先扫描本机已安装的 Noto Sans CJK TTC，再回退到常见 OTF。
-    """
-    weight_keywords_priority: List[List[str]] = [
-        ["Bold", "SemiBold", "DemiBold"],
-        ["Medium"],
-        ["Black", "Heavy"]
-    ]
-
-    ttc_candidates = [
-        str(Path.home() / "Library/Fonts/NotoSansCJK.ttc"),
-        "/Library/Fonts/NotoSansCJK.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
-    ]
-    otf_candidates = [
-        str(Path.home() / "Library/Fonts/NotoSerifCJKsc-Bold.otf"),
-        "/Library/Fonts/NotoSerifCJKsc-Bold.otf",
-        str((Path(__file__).parent / "fonts" / "NotoSansSC-Bold.otf").resolve()),
-        str((Path(__file__).parent / "fonts" / "SourceHanSansSC-Bold.otf").resolve()),
-    ]
-
-    # 先扫描 TTC 的权重面（index）
+def _load_noto_cjk_jp_medium(font_size: int) -> ImageFont.FreeTypeFont:
+    """固定使用 Noto Sans CJK JP Medium。若找不到则报错。"""
+    ttc = str(_resolve_noto_cjk_ttc_path())
     tmp_img = Image.new("RGB", (10, 10), (255, 255, 255))
     tmp_draw = ImageDraw.Draw(tmp_img)
-    for ttc in ttc_candidates:
-        if not Path(ttc).exists():
-            continue
-        # Pillow 一般 TTC 面数不会很大，这里扫到 32 以内
+    target_family = "Noto Sans CJK JP"
+    target_style = "Medium"
+    # 扫描较大的 index 范围以兼容不同版本
+    for idx in range(0, 128):
         try:
-            # 分优先级查找目标权重
-            for keywords in weight_keywords_priority:
-                for idx in range(0, 32):
-                    try:
-                        f = ImageFont.truetype(ttc, font_size, index=idx)
-                        name = getattr(f, "getname", lambda: ("", ""))()
-                        family, subfam = (name + ("",))[:2] if isinstance(name, tuple) else (str(name), "")
-                        if any(k.lower() in (family.lower() + " " + subfam.lower()) for k in keywords):
-                            if _is_font_effective(tmp_draw, f, font_size):
-                                return f
-                    except Exception:
-                        continue
+            f = ImageFont.truetype(ttc, font_size, index=idx)
+            name = getattr(f, "getname", lambda: ("", ""))()
+            family, subfam = (name + ("",))[:2] if isinstance(name, tuple) else (str(name), "")
+            if family == target_family and subfam == target_style and _is_font_effective(tmp_draw, f, font_size):
+                return ImageFont.truetype(ttc, font_size, index=idx)
         except Exception:
             continue
-
-    # 回退到常见 OTF 粗体
-    for otf in otf_candidates:
-        p = Path(otf)
-        if not p.exists():
-            continue
-        try:
-            f = ImageFont.truetype(str(p), font_size)
-            if _is_font_effective(tmp_draw, f, font_size):
-                return f
-        except Exception:
-            continue
-
-    return None
+    raise RuntimeError("未在 NotoSansCJK.ttc 中找到 'Noto Sans CJK JP Medium' 字面。请确认字体版本。")
 
 def measure_multiline_text(draw: ImageDraw.ImageDraw, text_lines: List[str], font: ImageFont.ImageFont, line_spacing: int) -> Tuple[int, int]:
     max_width = 0
@@ -358,6 +260,7 @@ class Style:
     open_font_only: bool
     # 布局增强
     text_to_image_spacing: int
+    text_top_offset: int
     screenshot_bottom_margin: int
     screenshot_border_width: int
     screenshot_border_color: Tuple[int, int, int, int]
@@ -365,6 +268,8 @@ class Style:
     use_background_gradient: bool
     background_top_color: Tuple[int, int, int, int]
     background_bottom_color: Tuple[int, int, int, int]
+    # 是否绘制主体灰色面板（开启则会覆盖 backgroundColor）
+    use_panel: bool
     # 主体灰色面板（代替外层白边），圆角与内边距
     panel_corner_radius: int
     panel_top_color: Tuple[int, int, int, int]
@@ -398,6 +303,7 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
     screenshot_top_offset = int(screenshot_top_offset) if screenshot_top_offset is not None else None
     # 布局增强默认值
     text_to_image_spacing = int(get_value_case_insensitive(style_cfg, "texttoimagespacing", 32))
+    text_top_offset = int(get_value_case_insensitive(style_cfg, "texttopoffset", 32))
     screenshot_bottom_margin = int(get_value_case_insensitive(style_cfg, "screenshotbottommargin", 96))
     screenshot_border_width = int(get_value_case_insensitive(style_cfg, "screenshotborderwidth", 8))
     screenshot_border_color = parse_color(
@@ -409,6 +315,8 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
     use_background_gradient = bool(get_value_case_insensitive(style_cfg, "usebackgroundgradient", False))
     background_top_color = parse_color(get_value_case_insensitive(style_cfg, "backgroundtopcolor", "#FFFFFF"), (255, 255, 255, 255))
     background_bottom_color = parse_color(get_value_case_insensitive(style_cfg, "backgroundbottomcolor", "#FFFFFF"), (255, 255, 255, 255))
+    # 默认不再绘制灰色面板，直接使用 backgroundColor 作为背景色
+    use_panel = bool(get_value_case_insensitive(style_cfg, "usepanel", False))
     # 灰色主体面板（参考图视觉主体）
     panel_corner_radius = int(get_value_case_insensitive(style_cfg, "panelcornerradius", 80))
     panel_top_color = parse_color(get_value_case_insensitive(style_cfg, "paneltopcolor", "#F6F7FB"), (246, 247, 251, 255))
@@ -445,12 +353,14 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
         screenshot_top_offset=screenshot_top_offset,
         open_font_only=open_font_only,
         text_to_image_spacing=text_to_image_spacing,
+        text_top_offset=text_top_offset,
         screenshot_bottom_margin=screenshot_bottom_margin,
         screenshot_border_width=screenshot_border_width,
         screenshot_border_color=screenshot_border_color,
         use_background_gradient=use_background_gradient,
         background_top_color=background_top_color,
         background_bottom_color=background_bottom_color,
+        use_panel=use_panel,
         panel_corner_radius=panel_corner_radius,
         panel_top_color=panel_top_color,
         panel_bottom_color=panel_bottom_color,
@@ -494,35 +404,30 @@ def render_single_image(
     # 背景：纯白画布（外层白边忽略，仅作画布），不再绘制背景渐变
     canvas = Image.new("RGBA", (style.width, style.height), style.background)
 
-    # 主体灰色圆角面板（替代参考图内层灰色背景）
-    panel = Image.new("RGBA", (style.width, style.height), (0, 0, 0, 0))
-    panel_draw = ImageDraw.Draw(panel)
-    panel_rect = [0, 0, style.width, style.height]
-    # 面板渐变
-    grad_panel = Image.new("RGBA", (1, panel_rect[3] - panel_rect[1]), (0, 0, 0, 0))
-    top_c = style.panel_top_color
-    bot_c = style.panel_bottom_color
-    for y in range(grad_panel.height):
-        t = y / max(1, grad_panel.height - 1)
-        r = int(top_c[0] * (1 - t) + bot_c[0] * t)
-        g = int(top_c[1] * (1 - t) + bot_c[1] * t)
-        b = int(top_c[2] * (1 - t) + bot_c[2] * t)
-        a = int(top_c[3] * (1 - t) + bot_c[3] * t)
-        grad_panel.putpixel((0, y), (r, g, b, a))
-    grad_panel = grad_panel.resize((panel_rect[2] - panel_rect[0], panel_rect[3] - panel_rect[1]))
-    # 无圆角：直接填充主体灰色面板
-    panel.paste(grad_panel, (0, 0))
-    canvas.alpha_composite(panel)
+    # 主体面板：默认关闭，若 use_panel=true 则按旧逻辑绘制灰面板；否则直接用 backgroundColor
+    if style.use_panel:
+        panel = Image.new("RGBA", (style.width, style.height), (0, 0, 0, 0))
+        panel_draw = ImageDraw.Draw(panel)
+        panel_rect = [0, 0, style.width, style.height]
+        grad_panel = Image.new("RGBA", (1, panel_rect[3] - panel_rect[1]), (0, 0, 0, 0))
+        top_c = style.panel_top_color
+        bot_c = style.panel_bottom_color
+        for y in range(grad_panel.height):
+            t = y / max(1, grad_panel.height - 1)
+            r = int(top_c[0] * (1 - t) + bot_c[0] * t)
+            g = int(top_c[1] * (1 - t) + bot_c[1] * t)
+            b = int(top_c[2] * (1 - t) + bot_c[2] * t)
+            a = int(top_c[3] * (1 - t) + bot_c[3] * t)
+            grad_panel.putpixel((0, y), (r, g, b, a))
+        grad_panel = grad_panel.resize((panel_rect[2] - panel_rect[0], panel_rect[3] - panel_rect[1]))
+        panel.paste(grad_panel, (0, 0))
+        canvas.alpha_composite(panel)
     draw = ImageDraw.Draw(canvas)
 
     # 根据配置决定是否仅限开源字体
-    # 标题尝试使用更粗的开源字重
-    title_font = None
-    if style.open_font_only:
-        title_font = _load_bold_open_font(style.title_font_size)
-    if title_font is None:
-        title_font = try_load_font(style.title_font_path, style.title_font_size, require_open_font=style.open_font_only)
-    subtitle_font = try_load_font(style.subtitle_font_path, style.subtitle_font_size, require_open_font=style.open_font_only)
+    # 固定使用 Noto Sans CJK JP Medium（标题与副标题统一）
+    title_font = _load_noto_cjk_jp_medium(style.title_font_size)
+    subtitle_font = _load_noto_cjk_jp_medium(style.subtitle_font_size)
     try:
         logging.debug("title_font: %s", getattr(title_font, "getname", lambda: (str(title_font), ""))())
         logging.debug("subtitle_font: %s", getattr(subtitle_font, "getname", lambda: (str(subtitle_font), ""))())
@@ -533,7 +438,8 @@ def render_single_image(
     max_text_width = int(style.width * style.max_text_width_ratio) - style.padding * (0 if style.text_align == "center" else 1)
 
     # 标题与副标题：支持“副标题更醒目”的风格
-    current_y = style.panel_padding
+    # 将文本整体下移：使用 text_top_offset
+    current_y = style.panel_padding + max(0, style.text_top_offset)
     if style.subtitle_is_headline:
         # 先绘制小标题（原 title）
         title_lines = wrap_text_to_width(draw, title or " ", title_font, max_text_width)
@@ -546,7 +452,8 @@ def render_single_image(
             current_y += line_h + style.line_spacing
 
         # 再绘制大字号副标题
-        big_subtitle_font = try_load_font(None, int(style.subtitle_font_size * style.subtitle_scale), require_open_font=style.open_font_only)
+        # 副标题采用与主标题相同的字体族（保持一致性），字号为放大后的副标题尺寸
+        big_subtitle_font = title_font if isinstance(title_font, ImageFont.FreeTypeFont) else try_load_font(None, int(style.subtitle_font_size * style.subtitle_scale), require_open_font=style.open_font_only)
         subtitle_lines = wrap_text_to_width(draw, subtitle or " ", big_subtitle_font, max_text_width)
         logging.debug("subtitle(headline) raw=%r -> lines=%s", subtitle, subtitle_lines)
         for line in subtitle_lines:
