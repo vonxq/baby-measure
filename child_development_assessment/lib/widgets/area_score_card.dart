@@ -38,10 +38,10 @@ class AreaScoreCard extends StatelessWidget {
       margin: margin ?? const EdgeInsets.all(4),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: cardColor.withOpacity(0.1),
+        color: cardColor.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: cardColor.withOpacity(0.3),
+          color: cardColor.withValues(alpha: 0.45),
           width: 1,
         ),
       ),
@@ -97,10 +97,10 @@ class AreaScoreCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 decoration: BoxDecoration(
-                  color: _getLevelColor(dq!).withOpacity(0.2),
+                   color: _getLevelColor(dq!).withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(
-                    color: _getLevelColor(dq!).withOpacity(0.5),
+                    color: _getLevelColor(dq!).withValues(alpha: 0.5),
                     width: 0.5,
                   ),
                 ),

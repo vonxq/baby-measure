@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../providers/assessment_provider.dart';
+import 'result_page.dart';
 import '../utils/dq_utils.dart';
 
 class AreaResultPage extends StatelessWidget {
@@ -7,6 +8,7 @@ class AreaResultPage extends StatelessWidget {
   final double mentalAge;
   final double developmentQuotient;
   final VoidCallback? onContinue;
+  final bool isLastArea;
 
   const AreaResultPage({
     super.key,
@@ -14,6 +16,7 @@ class AreaResultPage extends StatelessWidget {
     required this.mentalAge,
     required this.developmentQuotient,
     this.onContinue,
+    this.isLastArea = false,
   });
 
   @override
@@ -165,13 +168,23 @@ class AreaResultPage extends StatelessWidget {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: onContinue ?? () {
-                      Navigator.of(context).pop();
+                    onPressed: () {
+                      if (isLastArea) {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (_) => const ResultPage()),
+                        );
+                      } else {
+                        if (onContinue != null) {
+                          onContinue!();
+                        } else {
+                          Navigator.of(context).pop();
+                        }
+                      }
                     },
-                    icon: const Icon(Icons.arrow_forward),
-                    label: const Text('继续下一个能区'),
+                    icon: Icon(isLastArea ? Icons.assignment_turned_in : Icons.arrow_forward),
+                    label: Text(isLastArea ? '查看最终结果' : '继续下一个能区'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[600],
+                      backgroundColor: Colors.blue[700],
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -199,9 +212,9 @@ class AreaResultPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.45)),
       ),
       child: Row(
         children: [

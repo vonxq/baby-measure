@@ -659,10 +659,13 @@ class _DynamicTestPageState extends State<DynamicTestPage> with TickerProviderSt
     double mentalAge = provider.getCurrentAreaMentalAge();
     double developmentQuotient = provider.getCurrentAreaDevelopmentQuotient();
     
+    final bool isLastArea = provider.currentStage == TestStage.allCompleted ||
+        (provider.currentArea == TestArea.values.last && provider.currentStage == TestStage.areaCompleted);
     return AreaResultPage(
       area: provider.currentArea,
       mentalAge: mentalAge,
       developmentQuotient: developmentQuotient,
+      isLastArea: isLastArea,
       onContinue: () {
         provider.nextItem();
       },
