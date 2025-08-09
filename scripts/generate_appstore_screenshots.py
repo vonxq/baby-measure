@@ -269,16 +269,23 @@ def render_single_image(
 
     title_font = try_load_font(style.title_font_path, style.title_font_size)
     subtitle_font = try_load_font(style.subtitle_font_path, style.subtitle_font_size)
+    try:
+        logging.debug("title_font: %s", getattr(title_font, "getname", lambda: (str(title_font), ""))())
+        logging.debug("subtitle_font: %s", getattr(subtitle_font, "getname", lambda: (str(subtitle_font), ""))())
+    except Exception:
+        pass
 
     # 文本区域最大宽度
     max_text_width = int(style.width * style.max_text_width_ratio) - style.padding * (0 if style.text_align == "center" else 1)
 
     # 1) 绘制标题
     title_lines = wrap_text_to_width(draw, title or "", title_font, max_text_width)
+    logging.debug("title raw=%r -> lines=%s", title, title_lines)
     title_block_w, title_block_h = measure_multiline_text(draw, title_lines, title_font, style.line_spacing)
     current_y = style.padding
     for line in title_lines:
         x = compute_text_x(style, draw, line, title_font)
+        logging.debug("draw title line at x=%d, y=%d: %r", x, current_y, line)
         draw.text((x, current_y), line, font=title_font, fill=style.title_color)
         bbox = draw.textbbox((x, current_y), line, font=title_font)
         line_h = bbox[3] - bbox[1]
@@ -286,9 +293,11 @@ def render_single_image(
 
     # 2) 绘制副标题
     subtitle_lines = wrap_text_to_width(draw, subtitle or "", subtitle_font, max_text_width)
+    logging.debug("subtitle raw=%r -> lines=%s", subtitle, subtitle_lines)
     subtitle_block_w, subtitle_block_h = measure_multiline_text(draw, subtitle_lines, subtitle_font, style.line_spacing)
     for line in subtitle_lines:
         x = compute_text_x(style, draw, line, subtitle_font)
+        logging.debug("draw subtitle line at x=%d, y=%d: %r", x, current_y, line)
         draw.text((x, current_y), line, font=subtitle_font, fill=style.subtitle_color)
         bbox = draw.textbbox((x, current_y), line, font=subtitle_font)
         line_h = bbox[3] - bbox[1]
