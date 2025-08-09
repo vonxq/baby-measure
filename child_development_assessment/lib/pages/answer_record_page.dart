@@ -137,6 +137,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
               ? Center(child: Text(_error!))
               : TabBarView(
                   controller: _tabController,
+                  physics: const NeverScrollableScrollPhysics(),
                   children: [
                     _buildByAgeView(),
                     _buildByAreaView(),
