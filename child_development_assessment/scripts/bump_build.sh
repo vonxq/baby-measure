@@ -3,30 +3,25 @@ set -euo pipefail
 
 # 快速调整 Flutter 项目的 build 号（仅修改 pubspec.yaml 的 +buildNumber 部分）
 # 使用：
-#   bash scripts/bump_build.sh <build_number> [--no-commit] [--verify-ios]
-# 示例：
-#   bash scripts/bump_build.sh 3 --verify-ios
+#   bash scripts/bump_build.sh <build_number> [--no-commit]
+# 每次更新后会自动执行 `flutter build ios`，如需跳过构建，可手动修改脚本或临时注释。
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJ_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 PUBSPEC_FILE="${PROJ_DIR}/pubspec.yaml"
 
 if [[ $# -lt 1 ]]; then
-  echo "用法：bash scripts/bump_build.sh <build_number> [--no-commit] [--verify-ios]" >&2
+  echo "用法：bash scripts/bump_build.sh <build_number> [--no-commit]" >&2
   exit 1
 fi
 
 NEW_BUILD="$1"; shift || true
 DO_COMMIT=1
-VERIFY_IOS=0
 
 while (("$#")); do
   case "$1" in
     --no-commit)
       DO_COMMIT=0
-      ;;
-    --verify-ios)
-      VERIFY_IOS=1
       ;;
     *)
       echo "未知参数：$1" >&2; exit 1;
@@ -72,10 +67,8 @@ pushd "$PROJ_DIR" >/dev/null
 echo "执行 flutter pub get..."
 flutter pub get >/dev/null
 
-if [[ $VERIFY_IOS -eq 1 ]]; then
-  echo "验证 iOS debug 构建...（如不需要可移除 --verify-ios）"
-  flutter build ios --debug >/dev/null
-fi
+echo "开始 iOS 构建（flutter build ios）..."
+flutter build ios >/dev/null
 
 if [[ $DO_COMMIT -eq 1 ]]; then
   git add pubspec.yaml
