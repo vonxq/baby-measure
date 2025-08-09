@@ -64,7 +64,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-dir", required=True, help="输入目录，包含 JSON 配置与原始截图")
     parser.add_argument("--config", default="config.json", help="配置文件名（位于输入目录下），默认 config.json")
     parser.add_argument("--output-dir", default=None, help="输出目录，默认为输入目录下的 output 子目录")
-    parser.add_argument("--require-open-font", action="store_true", default=False, help="仅允许使用开源字体（如 Noto/思源）；若未找到则回退到默认字体并给出警告")
+    # 字体策略：始终使用开源字体（Noto/思源 等）。该参数保留但不再生效。
     parser.add_argument("--verbose", action="store_true", help="输出详细日志")
     return parser.parse_args()
 
@@ -275,6 +275,11 @@ class Style:
     screenshot_max_height_ratio: float
     screenshot_top_offset: Optional[int]
     open_font_only: bool
+    # 布局增强
+    text_to_image_spacing: int
+    screenshot_bottom_margin: int
+    screenshot_border_width: int
+    screenshot_border_color: Tuple[int, int, int, int]
 
 
 def build_style(style_cfg: Dict[str, Any]) -> Style:
@@ -284,19 +289,27 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
     background = parse_color(get_value_case_insensitive(style_cfg, "backgroundcolor", "#FFFFFF"), (255, 255, 255, 255))
     title_color = parse_color(get_value_case_insensitive(style_cfg, "titlecolor", "#000000"), (0, 0, 0, 255))
     subtitle_color = parse_color(get_value_case_insensitive(style_cfg, "subtitlecolor", "#333333"), (51, 51, 51, 255))
-    title_font_size = int(get_value_case_insensitive(style_cfg, "titlefontsize", 72))
-    subtitle_font_size = int(get_value_case_insensitive(style_cfg, "subtitlefontsize", 40))
-    title_font_path = get_value_case_insensitive(style_cfg, "titlefontpath")
-    subtitle_font_path = get_value_case_insensitive(style_cfg, "subtitlefontpath")
-    padding = int(get_value_case_insensitive(style_cfg, "padding", 48))
-    line_spacing = int(get_value_case_insensitive(style_cfg, "linespacing", 10))
-    max_text_width_ratio = float(get_value_case_insensitive(style_cfg, "maxtextwidthratio", 0.9))
+    title_font_size = int(get_value_case_insensitive(style_cfg, "titlefontsize", 76))
+    subtitle_font_size = int(get_value_case_insensitive(style_cfg, "subtitlefontsize", 42))
+    # 强制仅使用开源字体：忽略自定义路径
+    title_font_path = None
+    subtitle_font_path = None
+    padding = int(get_value_case_insensitive(style_cfg, "padding", 64))
+    line_spacing = int(get_value_case_insensitive(style_cfg, "linespacing", 12))
+    max_text_width_ratio = float(get_value_case_insensitive(style_cfg, "maxtextwidthratio", 0.88))
     text_align = str(get_value_case_insensitive(style_cfg, "textalign", "center")).lower()
     screenshot_mode = str(get_value_case_insensitive(style_cfg, "screenshotmode", "fit")).lower()
-    screenshot_max_height_ratio = float(get_value_case_insensitive(style_cfg, "screenshotmaxheightratio", 0.72))
+    screenshot_max_height_ratio = float(get_value_case_insensitive(style_cfg, "screenshotmaxheightratio", 0.70))
     screenshot_top_offset = get_value_case_insensitive(style_cfg, "screenshottopoffset")
     screenshot_top_offset = int(screenshot_top_offset) if screenshot_top_offset is not None else None
-    open_font_only = bool(get_value_case_insensitive(style_cfg, "openfontonly", False))
+    # 布局增强默认值
+    text_to_image_spacing = int(get_value_case_insensitive(style_cfg, "texttoimagespacing", 32))
+    screenshot_bottom_margin = int(get_value_case_insensitive(style_cfg, "screenshotbottommargin", 96))
+    screenshot_border_width = int(get_value_case_insensitive(style_cfg, "screenshotborderwidth", 8))
+    screenshot_border_color = parse_color(
+        get_value_case_insensitive(style_cfg, "screenshotbordercolor", "#E5E8EF"), (229, 232, 239, 255)
+    )
+    open_font_only = True
 
     if text_align not in {"center", "left", "right"}:
         logging.warning("textAlign=%r 无效，回退为 center", text_align)
@@ -323,6 +336,10 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
         screenshot_max_height_ratio=screenshot_max_height_ratio,
         screenshot_top_offset=screenshot_top_offset,
         open_font_only=open_font_only,
+        text_to_image_spacing=text_to_image_spacing,
+        screenshot_bottom_margin=screenshot_bottom_margin,
+        screenshot_border_width=screenshot_border_width,
+        screenshot_border_color=screenshot_border_color,
     )
 
 
@@ -359,18 +376,9 @@ def render_single_image(
     canvas = Image.new("RGBA", (style.width, style.height), style.background)
     draw = ImageDraw.Draw(canvas)
 
-    # 若命令行传入 --require-open-font，优先覆盖 style.open_font_only
-    from argparse import Namespace
-    require_open = False
-    try:
-        # 读取全局解析的 args（通过 main() 传递更安全，但为避免大改保持局部）
-        import sys
-        require_open = "--require-open-font" in sys.argv
-    except Exception:
-        require_open = False
-
-    title_font = try_load_font(style.title_font_path, style.title_font_size, require_open_font=style.open_font_only or require_open)
-    subtitle_font = try_load_font(style.subtitle_font_path, style.subtitle_font_size, require_open_font=style.open_font_only or require_open)
+    # 始终仅使用开源字体
+    title_font = try_load_font(style.title_font_path, style.title_font_size, require_open_font=True)
+    subtitle_font = try_load_font(style.subtitle_font_path, style.subtitle_font_size, require_open_font=True)
     try:
         logging.debug("title_font: %s", getattr(title_font, "getname", lambda: (str(title_font), ""))())
         logging.debug("subtitle_font: %s", getattr(subtitle_font, "getname", lambda: (str(subtitle_font), ""))())
@@ -405,8 +413,8 @@ def render_single_image(
         line_h = bbox[3] - bbox[1]
         current_y += line_h + style.line_spacing
 
-    # 文本区到截图之间增加一个基础 padding
-    current_y += style.padding
+    # 文本区到截图之间美观间距
+    current_y += max(style.text_to_image_spacing, style.padding // 2)
 
     # 3) 绘制截图（保持比例缩放居中）
     with Image.open(screenshot_path) as src:
@@ -418,7 +426,7 @@ def render_single_image(
 
         # 截图最大显示区域（左右各留 padding）
         max_w = style.width - style.padding * 2
-        max_h = min(available_height, style.height - current_y - style.padding)
+        max_h = min(available_height, style.height - current_y - max(style.screenshot_bottom_margin, style.padding))
         if max_w <= 0 or max_h <= 0:
             logging.warning("可用区域不足，跳过截图绘制: %s", screenshot_path)
         else:
@@ -428,6 +436,19 @@ def render_single_image(
             resized = src.resize(target_size, Image.LANCZOS)
             x = (style.width - target_size[0]) // 2
             y = current_y
+            # 绘制边框（先画矩形，再贴图）
+            if style.screenshot_border_width > 0:
+                border_x0 = x - style.screenshot_border_width
+                border_y0 = y - style.screenshot_border_width
+                border_x1 = x + target_size[0] + style.screenshot_border_width
+                border_y1 = y + target_size[1] + style.screenshot_border_width
+                draw.rounded_rectangle(
+                    [border_x0, border_y0, border_x1, border_y1],
+                    radius=max(12, style.screenshot_border_width * 2),
+                    fill=None,
+                    outline=style.screenshot_border_color,
+                    width=style.screenshot_border_width,
+                )
             canvas.alpha_composite(resized, (x, y))
 
     # 导出文件名
