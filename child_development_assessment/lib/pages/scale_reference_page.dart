@@ -302,12 +302,6 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
       child: Row(
         children: [
           left,
-          const Spacer(),
-          IconButton(
-            tooltip: '刷新',
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadData,
-          ),
         ],
       ),
     );
