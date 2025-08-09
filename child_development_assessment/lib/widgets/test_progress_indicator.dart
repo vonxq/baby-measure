@@ -200,22 +200,22 @@ class TestProgressIndicator extends StatelessWidget {
               ),
             ],
           ),
-          // 添加分数分段信息
-          if (completed && areaScore != null) ...[
+          // 添加分数分段信息（直接显示紧凑等级与DQ数值）
+          if (dq != null) ...[
             const SizedBox(height: 4),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: levelColor.withValues(alpha: 0.2),
+                color: levelColor,
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: levelColor.withValues(alpha: 0.5)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.6)),
               ),
               child: Text(
-                levelText,
+                '${DqUtils.compactLabelByDq(dq!)}·${dq!.toStringAsFixed(0)}',
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
-                  color: levelColor,
+                  color: Colors.white,
                 ),
               ),
             ),
