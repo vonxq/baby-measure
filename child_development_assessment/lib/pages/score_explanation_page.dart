@@ -250,45 +250,7 @@ class ScoreExplanationPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // 分数范围说明卡片
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.score, color: Colors.purple[600], size: 28),
-                        const SizedBox(width: 12),
-                        Text(
-                          '分数范围说明',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.purple[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    _buildScoreRangeItem('3.0分及以上', Colors.green[600]!, '发展优秀，超出同龄儿童平均水平'),
-                    _buildScoreRangeItem('1.0-2.9分', Colors.blue[600]!, '发展正常，符合同龄儿童发展水平'),
-                    _buildScoreRangeItem('1.0分以下', Colors.orange[600]!, '发展需要关注，建议加强相关训练'),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
+              // 已移除：分数范围说明
 
               // 注意事项卡片
               Container(
@@ -447,51 +409,5 @@ class ScoreExplanationPage extends StatelessWidget {
     );
   }
 
-  Widget _buildScoreRangeItem(String range, Color color, String description) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  range,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: color,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // 已移除：分数范围说明构建方法
 } 

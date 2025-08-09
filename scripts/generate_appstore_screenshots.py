@@ -132,22 +132,35 @@ def _open_font_candidates() -> List[str]:
     return [
         # 项目内可选字体目录（请将 NotoSansSC-Regular.otf 放在 scripts/fonts/ 下）
         str((Path(__file__).parent / "fonts" / "NotoSansSC-Regular.otf").resolve()),
+        str((Path(__file__).parent / "fonts" / "NotoSansSC-Regular.ttf").resolve()),
         str((Path(__file__).parent / "fonts" / "NotoSansCJKsc-Regular.otf").resolve()),
+        str((Path(__file__).parent / "fonts" / "NotoSansCJKsc-Regular.ttf").resolve()),
         str((Path(__file__).parent / "fonts" / "SourceHanSansCN-Regular.otf").resolve()),
+        str((Path(__file__).parent / "fonts" / "SourceHanSansCN-Regular.ttf").resolve()),
         str((Path(__file__).parent / "fonts" / "SourceHanSansSC-Regular.otf").resolve()),
+        str((Path(__file__).parent / "fonts" / "SourceHanSansSC-Regular.ttf").resolve()),
 
         # 用户字体（常见安装位置）
         str(Path.home() / "Library/Fonts/NotoSansSC-Regular.otf"),
         str(Path.home() / "Library/Fonts/NotoSansTC-Regular.otf"),
         str(Path.home() / "Library/Fonts/NotoSansCJKsc-Regular.otf"),
+        str(Path.home() / "Library/Fonts/NotoSansSC-Regular.ttf"),
+        str(Path.home() / "Library/Fonts/NotoSansTC-Regular.ttf"),
+        str(Path.home() / "Library/Fonts/NotoSansCJKsc-Regular.ttf"),
         str(Path.home() / "Library/Fonts/SourceHanSansCN-Regular.otf"),
         str(Path.home() / "Library/Fonts/SourceHanSansSC-Regular.otf"),
+        str(Path.home() / "Library/Fonts/SourceHanSansCN-Regular.ttf"),
+        str(Path.home() / "Library/Fonts/SourceHanSansSC-Regular.ttf"),
 
         # 系统字体目录（如有）
         "/Library/Fonts/NotoSansSC-Regular.otf",
+        "/Library/Fonts/NotoSansSC-Regular.ttf",
         "/Library/Fonts/NotoSansCJKsc-Regular.otf",
+        "/Library/Fonts/NotoSansCJKsc-Regular.ttf",
         "/Library/Fonts/SourceHanSansCN-Regular.otf",
+        "/Library/Fonts/SourceHanSansCN-Regular.ttf",
         "/Library/Fonts/SourceHanSansSC-Regular.otf",
+        "/Library/Fonts/SourceHanSansSC-Regular.ttf",
 
         # Linux 常见路径
         "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
@@ -328,8 +341,8 @@ def build_style(style_cfg: Dict[str, Any]) -> Style:
     screenshot_border_color = parse_color(
         get_value_case_insensitive(style_cfg, "screenshotbordercolor", "#E5E8EF"), (229, 232, 239, 255)
     )
-    # 是否仅允许开源字体（Noto/思源）。默认关闭以便在无网络时可使用系统字体
-    open_font_only = bool(get_value_case_insensitive(style_cfg, "openfontonly", False))
+    # 是否仅允许开源字体（Noto/思源）。默认开启，保障合规
+    open_font_only = bool(get_value_case_insensitive(style_cfg, "openfontonly", True))
     # 背景与设备卡片默认（参考 IMG_2762 风格）
     use_background_gradient = bool(get_value_case_insensitive(style_cfg, "usebackgroundgradient", False))
     background_top_color = parse_color(get_value_case_insensitive(style_cfg, "backgroundtopcolor", "#FFFFFF"), (255, 255, 255, 255))
