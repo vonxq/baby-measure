@@ -15,7 +15,8 @@
     "textAlign": "center",
     "screenshotMode": "fit",
     "screenshotMaxHeightRatio": 0.72,
-    "screenshotTopOffset": null
+    "screenshotTopOffset": null,
+    "openFontOnly": true
   },
   "configs": [
     { "title": "应用介绍", "subtitle": "了解评估流程与方法", "screenshot": "intro.png", "outputName": "01_intro.png" },
