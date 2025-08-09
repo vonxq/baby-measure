@@ -4,11 +4,17 @@ enum DqLevel { excellent, good, medium, borderlineLow, impaired }
 
 class DqUtils {
   // 颜色方案（用户提供）
-  static const Color colorExcellent = Color(0xFFA8E6CF); // 青柠绿
-  static const Color colorGood = Color(0xFF87CEEB); // 天空蓝
-  static const Color colorMedium = Color(0xFF98FB98); // 薄荷绿
-  static const Color colorBorderlineLow = Color(0xFFFF7F50); // 珊瑚橙
-  static const Color colorImpaired = Color(0xFFE6E6FA); // 薰衣草紫
+  // 新配色
+  // 优秀（≥130） → #00A896
+  static const Color colorExcellent = Color(0xFF00A896);
+  // 良好（110～129） → #48B0A3
+  static const Color colorGood = Color(0xFF48B0A3);
+  // 中等（80～109） → #66C2A5
+  static const Color colorMedium = Color(0xFF66C2A5);
+  // 临界偏低（70～79） → #7FB8D9
+  static const Color colorBorderlineLow = Color(0xFF7FB8D9);
+  // 发育障碍（＜70） → #FF4D4D
+  static const Color colorImpaired = Color(0xFFFF4D4D);
 
   static DqLevel levelOf(double dq) {
     if (dq >= 130) return DqLevel.excellent;
