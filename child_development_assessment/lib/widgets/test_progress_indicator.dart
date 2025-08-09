@@ -139,9 +139,15 @@ class TestProgressIndicator extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: completed ? Colors.green[50] : Colors.orange[50],
+        color: (areaScore != null)
+            ? levelColor.withValues(alpha: 0.12)
+            : (completed ? Colors.green[50] : Colors.orange[50]),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: completed ? Colors.green[300]! : Colors.orange[300]!),
+        border: Border.all(
+          color: (areaScore != null)
+              ? levelColor.withValues(alpha: 0.4)
+              : (completed ? Colors.green[300]! : Colors.orange[300]!),
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -152,7 +158,9 @@ class TestProgressIndicator extends StatelessWidget {
               Icon(
                 completed ? Icons.check_circle : Icons.pending,
                 size: 16,
-                color: completed ? Colors.green[600] : Colors.orange[600],
+                color: (areaScore != null)
+                    ? levelColor
+                    : (completed ? Colors.green[600] : Colors.orange[600]),
               ),
               const SizedBox(width: 6),
               Text(
@@ -160,14 +168,18 @@ class TestProgressIndicator extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: completed ? Colors.green[700] : Colors.orange[700],
+                  color: (areaScore != null)
+                      ? levelColor
+                      : (completed ? Colors.green[700] : Colors.orange[700]),
                 ),
               ),
               const SizedBox(width: 4),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: completed ? Colors.green[600] : Colors.orange[600],
+                  color: (areaScore != null)
+                      ? levelColor
+                      : (completed ? Colors.green[600] : Colors.orange[600]),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
