@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 enum DqLevel { excellent, good, medium, borderlineLow, impaired }
 
 class DqUtils {
   // 颜色方案（用户提供）
-  // 新配色
-  // 优秀（≥130） → #00A896
-  static const Color colorExcellent = Color(0xFF00A896);
-  // 良好（110～129） → #48B0A3
-  static const Color colorGood = Color(0xFF48B0A3);
-  // 中等（80～109） → #66C2A5
-  static const Color colorMedium = Color(0xFF66C2A5);
-  // 临界偏低（70～79） → #7FB8D9
-  static const Color colorBorderlineLow = Color(0xFF7FB8D9);
-  // 发育障碍（＜70） → #FF4D4D
-  static const Color colorImpaired = Color(0xFFFF4D4D);
+  // 最新配色（按用户指定）
+  // 优秀（≥130） → #52C41A
+  static const Color colorExcellent = Color(0xFF52C41A);
+  // 良好（110～129） → #13C2C2
+  static const Color colorGood = Color(0xFF13C2C2);
+  // 中等（80～109） → #1677FF
+  static const Color colorMedium = Color(0xFF1677FF);
+  // 临界偏低（70～79） → #FAAD14
+  static const Color colorBorderlineLow = Color(0xFFFAAD14);
+  // 发育障碍（＜70） → #F5222D
+  static const Color colorImpaired = Color(0xFFF5222D);
 
   static DqLevel levelOf(double dq) {
     if (dq >= 130) return DqLevel.excellent;
@@ -71,6 +72,16 @@ class DqUtils {
         return '发育水平临界偏低，建议咨询专业医生进一步评估。';
       case DqLevel.impaired:
         return '可能存在发育障碍，请尽快咨询专业医生进行评估。';
+    }
+  }
+
+  static IconData iconByDq(double dq) {
+    final level = levelOf(dq);
+    switch (level) {
+      case DqLevel.impaired:
+        return Icons.warning_amber_rounded;
+      default:
+        return Icons.check_circle_outline;
     }
   }
 }
