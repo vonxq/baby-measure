@@ -36,6 +36,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
   final ScrollController _areaScrollController = ScrollController();
   int? _currentAgeSection; // 当前高亮月龄
   String? _currentAreaSection; // 当前高亮能区
+  bool _ageAnimating = false; // 按月龄视图是否在程序滚动中
 
   @override
   void initState() {
@@ -43,8 +44,8 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
     _load();
-    // 简化：去掉按月龄视图的滚动监听，避免高亮逻辑影响跳转
-    // _ageScrollController.addListener(_onAgeScroll);
+    // 重新启用按月龄视图的滚动监听
+    _ageScrollController.addListener(_onAgeScroll);
     _areaScrollController.addListener(_onAreaScroll);
   }
 
@@ -236,18 +237,25 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
 
   void _scrollToAge(int age) {
     final key = _ageSectionKeys[age];
-    final ctx = key?.currentContext;
-    if (ctx == null) return;
-    // 最简单可靠的方式：直接确保目标可见
-    Scrollable.ensureVisible(
-      ctx,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      alignment: 0.0,
-      alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
-    );
-    // 直接设置当前高亮，避免依赖滚动监听
-    setState(() => _currentAgeSection = age);
+    if (key?.currentContext == null) return;
+    final renderObject = key!.currentContext!.findRenderObject();
+    if (renderObject == null) return;
+    final viewport = RenderAbstractViewport.of(renderObject);
+    if (viewport == null) return;
+    // 将目标对齐到可视区域顶部（0），再减去 pinned header 高度 56
+    final target = viewport.getOffsetToReveal(renderObject, 0).offset - 56;
+    final clamped = target.clamp(0.0, _ageScrollController.position.maxScrollExtent);
+    _ageAnimating = true;
+    _ageScrollController
+        .animateTo(
+          clamped,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        )
+        .whenComplete(() {
+      _ageAnimating = false;
+      if (mounted) setState(() => _currentAgeSection = age);
+    });
   }
 
   // =============== 按能区查看 ===============
@@ -546,6 +554,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
   }
 
   void _onAgeScroll() {
+    if (_ageAnimating) return;
     _updateCurrentAgeSection();
   }
 
