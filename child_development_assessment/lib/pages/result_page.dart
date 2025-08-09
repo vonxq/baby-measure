@@ -764,18 +764,33 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
         children: [
           Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
           const SizedBox(height: 6),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                value,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.blue[700]),
-              ),
-              if (unit != null) ...[
-                const SizedBox(width: 4),
-                Text(unit, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-              ]
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return FittedBox(
+                alignment: Alignment.bottomLeft,
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      value,
+                      softWrap: false,
+                      overflow: TextOverflow.fade,
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.blue[700]),
+                    ),
+                    if (unit != null) ...[
+                      const SizedBox(width: 4),
+                      Text(
+                        unit,
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                        style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                      ),
+                    ]
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),
