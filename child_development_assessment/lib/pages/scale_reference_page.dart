@@ -332,6 +332,7 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
                   operation: i.operation,
                   passCondition: i.passCondition,
                   score: i.score,
+                  rawName: i.name,
                 )),
           ],
         ),
@@ -345,6 +346,7 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
     required String operation,
     required String passCondition,
     required double score,
+    String? rawName,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -367,6 +369,10 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
           const SizedBox(height: 6),
           _buildKeyValueRow('通过标准', passCondition),
           const SizedBox(height: 6),
+          if (rawName != null && _hasSpecialMarkers(rawName)) ...[
+            _buildSpecialMarkerTips(rawName),
+            const SizedBox(height: 6),
+          ],
           _buildKeyValueRow('本题分数', score.toStringAsFixed(1)),
         ],
       ),
@@ -384,6 +390,99 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
     );
   }
 }
+
+  // 检查题目名称是否包含特殊标记（R 或 *）
+  bool _hasSpecialMarkers(String name) {
+    return name.contains('*') || name.contains('R');
+  }
+
+  // 构建特殊标记提示信息，样式与动态测评页保持一致
+  Widget _buildSpecialMarkerTips(String name) {
+    List<Widget> tips = [];
+
+    if (name.contains('R')) {
+      tips.add(_buildTipItem(
+        icon: Icons.family_restroom,
+        iconColor: Colors.blue[600]!,
+        backgroundColor: Colors.blue[50]!,
+        borderColor: Colors.blue[200]!,
+        title: 'R 标记说明',
+        content: '该项目的表现可以通过询问家长获得',
+      ));
+    }
+
+    if (name.contains('*')) {
+      tips.add(_buildTipItem(
+        icon: Icons.warning_amber_rounded,
+        iconColor: Colors.orange[600]!,
+        backgroundColor: Colors.orange[50]!,
+        borderColor: Colors.orange[200]!,
+        title: '* 标记说明',
+        content: '该项目如果未通过需要引起注意',
+      ));
+    }
+
+    return Column(
+      children: tips
+          .map((tip) => Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: tip,
+              ))
+          .toList(),
+    );
+  }
+
+  // 构建单个提示项
+  Widget _buildTipItem({
+    required IconData icon,
+    required Color iconColor,
+    required Color backgroundColor,
+    required Color borderColor,
+    required String title,
+    required String content,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: borderColor),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(icon, size: 16, color: iconColor),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: iconColor,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  content,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
 class _ItemRow {
   final int id;
