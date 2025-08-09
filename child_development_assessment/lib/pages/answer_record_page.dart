@@ -242,17 +242,40 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
     if (renderObject == null) return;
     final viewport = RenderAbstractViewport.of(renderObject);
     if (viewport == null) return;
-    // 将目标对齐到可视区域顶部（0），再减去 pinned header 高度 56
-    final target = viewport.getOffsetToReveal(renderObject, 0).offset - 56;
-    final clamped = target.clamp(0.0, _ageScrollController.position.maxScrollExtent);
+    // 计算顶部/底部对齐两种偏移，优先选择位移更大的那个，提升从上到下/从下到上的可达性
+    final currentOffset = _ageScrollController.hasClients ? _ageScrollController.offset : 0.0;
+    final topAlignOffset = viewport.getOffsetToReveal(renderObject, 0).offset - 56; // 顶对齐，扣除pinned header
+    final bottomAlignOffset = viewport.getOffsetToReveal(renderObject, 1).offset; // 底对齐
+    double targetOffset;
+    if ((topAlignOffset - currentOffset).abs() >= (bottomAlignOffset - currentOffset).abs()) {
+      targetOffset = topAlignOffset;
+    } else {
+      targetOffset = bottomAlignOffset;
+    }
+    final clamped = targetOffset.clamp(0.0, _ageScrollController.position.maxScrollExtent);
+
     _ageAnimating = true;
+    final before = currentOffset;
     _ageScrollController
         .animateTo(
           clamped,
-          duration: const Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 320),
           curve: Curves.easeInOut,
         )
-        .whenComplete(() {
+        .whenComplete(() async {
+      // 若位移过小，回退使用 ensureVisible 兜底
+      final after = _ageScrollController.hasClients ? _ageScrollController.offset : before;
+      if ((after - before).abs() < 1.0) {
+        try {
+          await Scrollable.ensureVisible(
+            key.currentContext!,
+            duration: const Duration(milliseconds: 240),
+            curve: Curves.easeInOut,
+            alignment: 0.0,
+            alignmentPolicy: ScrollPositionAlignmentPolicy.explicit,
+          );
+        } catch (_) {}
+      }
       _ageAnimating = false;
       if (mounted) setState(() => _currentAgeSection = age);
     });
