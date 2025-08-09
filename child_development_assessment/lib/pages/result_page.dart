@@ -478,7 +478,7 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
   String _getDevelopmentLevelDescription(double dq) {
     if (dq > 130) return '您的孩子发育水平优秀，各项能力发展良好。';
     if (dq >= 110) return '您的孩子发育水平良好，各项能力发展正常。';
-    if (dq >= 80) return '您的孩子发育水平中等，建议关注发展情况。';
+    if (dq >= 80) return '您的孩子总体发育处于正常范围，日常互动中持续支持与鼓励即可。';
     if (dq >= 70) return '您的孩子发育水平偏低，建议咨询专业医生。';
     return '您的孩子可能存在发育障碍，请及时咨询专业医生进行评估。';
   }
