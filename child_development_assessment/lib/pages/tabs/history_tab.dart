@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/assessment_history.dart';
 import '../../providers/assessment_provider.dart';
 import '../../widgets/area_score_card.dart';
+import '../answer_record_page.dart';
 
 class HistoryTab extends StatelessWidget {
   const HistoryTab({
@@ -198,6 +199,22 @@ class HistoryTab extends StatelessWidget {
                       dq: dq,
                     );
                   }).toList(),
+                ),
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AnswerRecordPage(historyId: history.id),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.list_alt),
+                    label: const Text('查看答题记录'),
+                  ),
                 ),
               ],
             ),

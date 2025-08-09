@@ -7,6 +7,7 @@ import '../models/test_result.dart';
 import '../models/assessment_history.dart';
 import '../services/data_service.dart';
 import 'score_explanation_page.dart';
+import 'answer_record_page.dart';
 import '../widgets/area_score_card.dart';
 
 class ResultPage extends StatefulWidget {
@@ -74,6 +75,17 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
       );
 
       await DataService().saveAssessmentHistory(history);
+      // 同步保存答题记录，使用相同的 history id 建立关联
+      await DataService().saveTestResult({
+        'id': history.id,
+        'userName': result.userName,
+        'actualAge': result.actualAge,
+        'mainTestAge': result.mainTestAge,
+        'areaScores': result.areaScores,
+        'dq': result.dq,
+        'testResults': result.testResults,
+        'timestamp': DateTime.now().toIso8601String(),
+      });
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -354,6 +366,33 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                             ),
                           ),
                         
+                        // 答题记录按钮
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              final provider = Provider.of<AssessmentProvider>(context, listen: false);
+                              if (provider.finalResult != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AnswerRecordPage(runtimeResult: provider.finalResult),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.list_alt),
+                            label: const Text('查看答题记录'),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
                         // 分数说明按钮
                         SizedBox(
                           width: double.infinity,
