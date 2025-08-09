@@ -224,17 +224,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
             children: [
               Text('${age}月龄', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
-              ...items.expand((it) {
-                final passed = _answers[it.id] ?? false;
-                final needsTip = !passed && _actualAge != null && age > _actualAge!;
-                return [
-                  _buildAnswerItemCard(it, area: it.area, ageMonth: age),
-                  if (needsTip) ...[
-                    const SizedBox(height: 6),
-                    _buildBeyondAgeReassureTip(),
-                  ],
-                ];
-              }),
+              ...items.map((it) => _buildAnswerItemCard(it, area: it.area, ageMonth: age)),
             ],
           ),
         ),
@@ -340,21 +330,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
             children: [
               Text('${AreaUtils.displayName(area)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
-              ...items.expand((iwa) {
-                final passed = _answers[iwa.item.id] ?? false;
-                final needsTip = !passed && _actualAge != null && iwa.age > _actualAge!;
-                return [
-                  _buildAnswerItemCard(
-                    iwa.item,
-                    area: area,
-                    ageMonth: iwa.age,
-                  ),
-                  if (needsTip) ...[
-                    const SizedBox(height: 6),
-                    _buildBeyondAgeReassureTip(),
-                  ],
-                ];
-              }),
+              ...items.map((iwa) => _buildAnswerItemCard(iwa.item, area: area, ageMonth: iwa.age)),
             ],
           ),
         ),
@@ -429,6 +405,10 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
           const SizedBox(height: 6),
           _buildKeyValueRow('通过标准', item.passCondition),
           const SizedBox(height: 6),
+          if (!passed && ageMonth != null && _actualAge != null && ageMonth > _actualAge!) ...[
+            _buildBeyondAgeReassureTip(),
+            const SizedBox(height: 6),
+          ],
           _buildKeyValueRow('本题分数', item.score.toStringAsFixed(1)),
         ],
       ),
