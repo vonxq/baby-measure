@@ -211,7 +211,9 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
                   ? _selectedAge!
                   : sortedAges.first;
               _ageSectionKeys.putIfAbsent(selected, () => GlobalKey());
-              final items = [...(ageToItems[selected] ?? [])]..sort((a, b) => a.id.compareTo(b.id));
+              final List<AssessmentItem> items =
+                  List<AssessmentItem>.from(ageToItems[selected] ?? const <AssessmentItem>[]);
+              items.sort((a, b) => a.id.compareTo(b.id));
               return _buildAgeSection(selected, items);
             }(),
           ]),
@@ -340,12 +342,13 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
                   ? _selectedArea!
                   : areas.first;
               _areaSectionKeys.putIfAbsent(selected, () => GlobalKey());
-              final list = [...(areaToItems[selected] ?? [])]
-                ..sort((a, b) {
-                  final c = a.age.compareTo(b.age);
-                  if (c != 0) return c;
-                  return a.item.id.compareTo(b.item.id);
-                });
+              final List<_ItemWithAge> list =
+                  List<_ItemWithAge>.from(areaToItems[selected] ?? const <_ItemWithAge>[]);
+              list.sort((a, b) {
+                final c = a.age.compareTo(b.age);
+                if (c != 0) return c;
+                return a.item.id.compareTo(b.item.id);
+              });
               return _buildAreaSection(selected, list);
             }(),
           ]),
