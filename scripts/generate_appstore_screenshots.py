@@ -434,15 +434,8 @@ def render_single_image(
         a = int(top_c[3] * (1 - t) + bot_c[3] * t)
         grad_panel.putpixel((0, y), (r, g, b, a))
     grad_panel = grad_panel.resize((panel_rect[2] - panel_rect[0], panel_rect[3] - panel_rect[1]))
-    # 圆角遮罩
-    mask = Image.new("L", (grad_panel.width, grad_panel.height), 0)
-    mask_draw = ImageDraw.Draw(mask)
-    mask_draw.rounded_rectangle(
-        [0, 0, grad_panel.width, grad_panel.height],
-        radius=style.panel_corner_radius,
-        fill=255,
-    )
-    panel.paste(grad_panel, (0, 0), mask)
+    # 无圆角：直接填充主体灰色面板
+    panel.paste(grad_panel, (0, 0))
     canvas.alpha_composite(panel)
     draw = ImageDraw.Draw(canvas)
 
