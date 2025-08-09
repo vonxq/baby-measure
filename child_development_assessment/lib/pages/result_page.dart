@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/dq_utils.dart';
 import 'package:provider/provider.dart';
 import '../providers/assessment_provider.dart';
 import '../models/test_result.dart';
@@ -623,22 +624,10 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
   }
 
   // 获取能区发育商评级
-  String _getAreaDQLevel(double dq) {
-    if (dq > 130) return '优秀';
-    if (dq >= 110) return '良好';
-    if (dq >= 80) return '中等';
-    if (dq >= 70) return '偏低';
-    return '障碍';
-  }
+  String _getAreaDQLevel(double dq) => DqUtils.labelByDq(dq);
 
   // 获取能区发育商颜色
-  Color _getAreaDQColor(double dq) {
-    if (dq > 130) return Colors.green[800]!; // 优秀：深绿色
-    if (dq >= 110) return Colors.green[600]!; // 良好：中绿色
-    if (dq >= 80) return Colors.green[400]!; // 中等：浅绿色
-    if (dq >= 70) return Colors.orange[600]!; // 偏低：橙色
-    return Colors.red[600]!; // 障碍：红色
-  }
+  Color _getAreaDQColor(double dq) => DqUtils.colorByDq(dq);
 
 
   String _getAreaDisplayName(String areaName) {

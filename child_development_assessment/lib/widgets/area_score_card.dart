@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/dq_utils.dart';
 
 /// 能区分数卡片组件
 /// 
@@ -166,22 +167,10 @@ class AreaScoreCard extends StatelessWidget {
   }
 
   /// 根据DQ获取等级颜色
-  Color _getLevelColor(double dq) {
-    if (dq > 130) return Colors.green[800]!; // 优秀：深绿色
-    if (dq >= 110) return Colors.green[600]!; // 良好：中绿色
-    if (dq >= 80) return Colors.green[400]!; // 中等：浅绿色
-    if (dq >= 70) return Colors.orange[600]!; // 偏低：橙色
-    return Colors.red[600]!; // 障碍：红色
-  }
+  Color _getLevelColor(double dq) => DqUtils.colorByDq(dq);
 
   /// 根据DQ获取等级文本
-  String _getLevelText(double dq) {
-    if (dq > 130) return '优秀';
-    if (dq >= 110) return '良好';
-    if (dq >= 80) return '中等';
-    if (dq >= 70) return '偏低';
-    return '障碍';
-  }
+  String _getLevelText(double dq) => DqUtils.labelByDq(dq);
 
   /// 根据能区名称获取默认颜色
   Color _getAreaDefaultColor() {

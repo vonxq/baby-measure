@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/assessment_item.dart';
 import '../providers/assessment_provider.dart';
+import '../utils/dq_utils.dart';
 
 class TestProgressIndicator extends StatelessWidget {
   final int currentIndex;
@@ -242,20 +243,12 @@ class TestProgressIndicator extends StatelessWidget {
   // 获取分段文本
   String _getLevelText(double? score) {
     if (score == null) return '';
-    if (score > 130) return '优秀';
-    if (score >= 110) return '良好';
-    if (score >= 80) return '中等';
-    if (score >= 70) return '临界偏低';
-    return '智力发育障碍';
+    return DqUtils.labelByDq(score);
   }
 
   // 获取分段颜色
   Color _getLevelColor(double? score) {
     if (score == null) return Colors.grey[600]!;
-    if (score > 130) return Colors.green[800]!; // 优秀：深绿色
-    if (score >= 110) return Colors.green[600]!; // 良好：中绿色
-    if (score >= 80) return Colors.green[400]!; // 中等：浅绿色
-    if (score >= 70) return Colors.orange[600]!; // 偏低：橙色
-    return Colors.red[600]!; // 障碍：红色
+    return DqUtils.colorByDq(score);
   }
 }

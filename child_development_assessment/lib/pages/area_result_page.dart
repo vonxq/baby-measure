@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../providers/assessment_provider.dart';
+import '../utils/dq_utils.dart';
 
 class AreaResultPage extends StatelessWidget {
   final TestArea area;
@@ -267,19 +268,7 @@ class AreaResultPage extends StatelessWidget {
     }
   }
 
-  String _getDqLevel(double dq) {
-    if (dq > 130) return '优秀';
-    if (dq >= 110) return '良好';
-    if (dq >= 80) return '中等';
-    if (dq >= 70) return '临界偏低';
-    return '智力发育障碍';
-  }
+  String _getDqLevel(double dq) => DqUtils.labelByDq(dq);
 
-  Color _getDqLevelColor(double dq) {
-    if (dq > 130) return Colors.green[800]!; // 优秀：深绿色
-    if (dq >= 110) return Colors.green[600]!; // 良好：中绿色
-    if (dq >= 80) return Colors.green[400]!; // 中等：浅绿色
-    if (dq >= 70) return Colors.orange[600]!; // 偏低：橙色
-    return Colors.red[600]!; // 障碍：红色
-  }
+  Color _getDqLevelColor(double dq) => DqUtils.colorByDq(dq);
 } 

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import '../models/test_result.dart';
+import '../utils/dq_utils.dart';
 
 class ExportService {
   // 导出测试结果为JSON文件
@@ -81,13 +82,7 @@ class ExportService {
   }
 
   // 获取发育商评级
-  static String _getDevelopmentLevel(double dq) {
-    if (dq > 130) return '优秀';
-    if (dq >= 110) return '良好';
-    if (dq >= 80) return '中等';
-    if (dq >= 70) return '临界偏低';
-    return '智力发育障碍';
-  }
+  static String _getDevelopmentLevel(double dq) => DqUtils.labelByDq(dq);
 
   // 生成测试报告
   static String generateReport(TestResult result) {
@@ -123,11 +118,11 @@ class ExportService {
     
     // 说明
     buffer.writeln('说明:');
-    buffer.writeln('• 发育商 > 130: 优秀');
-    buffer.writeln('• 发育商 110-129: 良好');
-    buffer.writeln('• 发育商 80-109: 中等');
-    buffer.writeln('• 发育商 70-79: 临界偏低');
-    buffer.writeln('• 发育商 < 70: 智力发育障碍');
+    buffer.writeln('• 优秀（≥130）');
+    buffer.writeln('• 良好（110～129）');
+    buffer.writeln('• 中等（80～109）');
+    buffer.writeln('• 临界偏低（70～79）');
+    buffer.writeln('• 智力发育障碍（＜70）');
     buffer.writeln();
     buffer.writeln('注意: 本报告仅供参考，如有疑问请咨询专业医生。');
     

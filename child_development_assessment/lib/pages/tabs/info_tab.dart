@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../utils/dq_utils.dart';
 
 class InfoTab extends StatelessWidget {
   const InfoTab({super.key});
@@ -175,20 +176,13 @@ class InfoTab extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  '发育商评级标准：',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
-                  ),
-                ),
+                Text('发育商评级标准：', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey[800])),
                 const SizedBox(height: 8),
-                _buildRatingItem('优秀', '>130', Colors.green[800]!),
-                _buildRatingItem('良好', '110-129', Colors.green[600]!),
-                _buildRatingItem('中等', '80-109', Colors.green[400]!),
-                _buildRatingItem('临界偏低', '70-79', Colors.orange[700]!),
-                _buildRatingItem('智力发育障碍', '<70', Colors.red[600]!),
+                _buildRatingItem('优秀', '≥130', DqUtils.colorExcellent),
+                _buildRatingItem('良好', '110～129', DqUtils.colorGood),
+                _buildRatingItem('中等', '80～109', DqUtils.colorMedium),
+                _buildRatingItem('临界偏低', '70～79', DqUtils.colorBorderlineLow),
+                _buildRatingItem('智力发育障碍', '＜70', DqUtils.colorImpaired),
               ],
             ),
           ),

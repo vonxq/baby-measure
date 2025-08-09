@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/dq_utils.dart';
 import '../providers/assessment_provider.dart';
 
 class AssessmentHistory {
@@ -91,13 +92,7 @@ class AssessmentHistory {
   }
 
   // 获取整体发育商颜色
-  Color get overallDQColor {
-    if (overallDQ > 130) return Colors.green[800]!; // 优秀：深绿色
-    if (overallDQ >= 110) return Colors.green[600]!; // 良好：中绿色
-    if (overallDQ >= 80) return Colors.green[400]!; // 中等：浅绿色
-    if (overallDQ >= 70) return Colors.orange[600]!; // 偏低：橙色
-    return Colors.red[600]!; // 障碍：红色
-  }
+  Color get overallDQColor => DqUtils.colorByDq(overallDQ);
 }
 
 extension TestAreaExtension on TestArea {

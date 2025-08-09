@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/dq_utils.dart';
 
 class ScoreExplanationPage extends StatelessWidget {
   const ScoreExplanationPage({super.key});
@@ -197,11 +198,11 @@ class ScoreExplanationPage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 16),
-                            _buildRatingItem('优秀', '>130', Colors.green[800]!, '发育水平优秀，各项能力发展良好'),
-        _buildRatingItem('良好', '110-129', Colors.green[600]!, '发育水平良好，各项能力发展正常'),
-        _buildRatingItem('中等', '80-109', Colors.green[400]!, '发育水平中等，建议关注发展情况'),
-                    _buildRatingItem('临界偏低', '70-79', Colors.orange[700]!, '发育水平偏低，建议咨询专业医生'),
-                    _buildRatingItem('智力发育障碍', '<70', Colors.red[600]!, '可能存在发育障碍，请及时咨询专业医生'),
+                    _buildRatingItem('优秀', '≥130', DqUtils.colorExcellent, '发育水平优秀，各项能力发展非常好'),
+                    _buildRatingItem('良好', '110～129', DqUtils.colorGood, '发育水平良好，各项能力发展正常'),
+                    _buildRatingItem('中等', '80～109', DqUtils.colorMedium, '发育水平中等，建议持续关注'),
+                    _buildRatingItem('临界偏低', '70～79', DqUtils.colorBorderlineLow, '发育水平临界偏低，建议咨询专业医生'),
+                    _buildRatingItem('智力发育障碍', '＜70', DqUtils.colorImpaired, '可能存在发育障碍，请及时咨询专业医生'),
                   ],
                 ),
               ),

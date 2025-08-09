@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/dq_utils.dart';
 
 class TestResult {
   final String userName;
@@ -48,22 +49,10 @@ class TestResult {
   }
 
   // 获取发育商等级描述
-  String get dqLevel {
-    if (dq > 130) return '优秀';
-    if (dq >= 110) return '良好';
-    if (dq >= 80) return '中等';
-    if (dq >= 70) return '临界偏低';
-    return '智力发育障碍';
-  }
+  String get dqLevel => DqUtils.labelByDq(dq);
 
-  // 获取发育商等级颜色
-  Color get dqLevelColor {
-    if (dq > 130) return Colors.green[800]!; // 优秀：深绿色
-    if (dq >= 110) return Colors.green[600]!; // 良好：中绿色
-    if (dq >= 80) return Colors.green[400]!; // 中等：浅绿色
-    if (dq >= 70) return Colors.orange[600]!; // 偏低：橙色
-    return Colors.red[600]!; // 障碍：红色
-  }
+  // 获取发育商等级颜色（新方案）
+  Color get dqLevelColor => DqUtils.colorByDq(dq);
 }
 
 class AreaResult {
