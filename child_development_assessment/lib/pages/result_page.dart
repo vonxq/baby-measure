@@ -303,23 +303,15 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
                             ),
                             const SizedBox(height: 16),
 
-                            // 能区分数卡片：两列自适应布局
+                            // 能区分数卡片：两列自适应布局（定制更丰满的样式）
                             LayoutBuilder(
                               builder: (context, constraints) {
-                                const double spacing = 8;
+                                const double spacing = 12;
                                 final double itemWidth = (constraints.maxWidth - spacing) / 2;
                                 final cards = result.areaScores.entries.map((entry) {
-                                  final areaDQ = _calculateAreaDQ(entry.value);
                                   return SizedBox(
                                     width: itemWidth,
-                                    child: AreaScoreCard(
-                                      title: _getAreaDisplayName(entry.key),
-                                      score: entry.value,
-                                      dq: areaDQ,
-                                      unit: '月',
-                                      showDQ: true,
-                                      margin: const EdgeInsets.symmetric(vertical: 4),
-                                    ),
+                                    child: _buildAreaSummaryCard(entry.key, entry.value),
                                   );
                                 }).toList();
                                 return Wrap(
@@ -682,4 +674,111 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
 
 
   String _getAreaDisplayName(String areaName) => AreaUtils.displayName(areaName);
+
+  // 自定义能区卡片（更大字体、更满的布局）
+  Widget _buildAreaSummaryCard(String areaKey, double mentalAge) {
+    final String title = _getAreaDisplayName(areaKey);
+    final double dq = _calculateAreaDQ(mentalAge);
+    final String dqLevel = _getAreaDQLevel(dq);
+    final Color dqColor = _getAreaDQColor(dq);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey[200]!),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 标题行 + 等级Tag
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.grey[800],
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: dqColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: dqColor.withValues(alpha: 0.4)),
+                ),
+                child: Text(
+                  dqLevel,
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: dqColor),
+                ),
+              )
+            ],
+          ),
+          const SizedBox(height: 12),
+          // 两列信息：智龄 + 发育商
+          Row(
+            children: [
+              Expanded(
+                child: _buildBigMetric(label: '智龄', value: '${mentalAge.toStringAsFixed(1)}', unit: '月'),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildBigMetric(label: '发育商', value: dq.toStringAsFixed(1)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // 简述
+          Text(
+            dq >= 80 ? '该能区发展水平良好' : '建议持续关注该能区发展',
+            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBigMetric({required String label, required String value, String? unit}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+          const SizedBox(height: 6),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                value,
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.blue[700]),
+              ),
+              if (unit != null) ...[
+                const SizedBox(width: 4),
+                Text(unit, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+              ]
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 } 
