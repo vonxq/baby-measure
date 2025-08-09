@@ -26,6 +26,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
   List<AssessmentData> _allData = [];
   late Map<int, bool> _answers; // itemId -> passed
   bool _onlyWrong = false; // 是否只显示错题
+  double? _actualAge; // 实际月龄（用于超过实际月龄的错题提示）
 
   // 快速跳转 section key
   final Map<int, GlobalKey> _ageSectionKeys = {};
@@ -51,6 +52,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
 
       if (widget.runtimeResult != null) {
         testResults = widget.runtimeResult!.testResults;
+        _actualAge = widget.runtimeResult!.actualAge;
       } else if (widget.historyId != null) {
         final list = await _dataService.loadTestResults();
         final found = list.firstWhere(
@@ -63,6 +65,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
         final raw = Map<String, dynamic>.from(found['testResults'] as Map);
         // JSON 反序列化后 key 可能是字符串，需要转为 int
         testResults = raw.map((k, v) => MapEntry(int.parse(k), v as bool));
+        _actualAge = (found['actualAge'] as num?)?.toDouble();
       }
 
       if (testResults == null) {
@@ -214,7 +217,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
             children: [
               Text('${age}月龄', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
-              ...items.map(_buildAnswerItemCard),
+              ...items.map((it) => _buildAnswerItemCard(it, ageMonth: age)),
             ],
           ),
         ),
@@ -313,7 +316,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
             children: [
               Text('${AreaUtils.displayName(area)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
-              ...items.map((iwa) => _buildAnswerItemCard(iwa.item, subtitle: '${iwa.age}月龄')),
+              ...items.map((iwa) => _buildAnswerItemCard(iwa.item, subtitle: '${iwa.age}月龄', ageMonth: iwa.age)),
             ],
           ),
         ),
@@ -333,7 +336,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
   }
 
   // =============== 题目卡片（复用速查样式 + 背景区分） ===============
-  Widget _buildAnswerItemCard(AssessmentItem item, {String? subtitle}) {
+  Widget _buildAnswerItemCard(AssessmentItem item, {String? subtitle, int? ageMonth}) {
     final bool passed = _answers[item.id] ?? false;
     final Color bg = passed ? Colors.green[50]! : Colors.red[50]!;
     final Color border = passed ? Colors.green[200]! : Colors.red[200]!;
@@ -357,6 +360,10 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
           if (subtitle != null) ...[
             const SizedBox(height: 2),
             Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+          ],
+          if (!passed && ageMonth != null && _actualAge != null && ageMonth > _actualAge!) ...[
+            const SizedBox(height: 6),
+            _buildBeyondAgeReassureTip(),
           ],
           const SizedBox(height: 8),
           _buildKeyValueRow('操作说明', item.operation),
@@ -460,6 +467,38 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
                   style: TextStyle(fontSize: 12, color: Colors.grey[700]),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 超出实际月龄的错题安心提示
+  Widget _buildBeyondAgeReassureTip() {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.blue[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.blue[200]!),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.blue[100],
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(Icons.info_outline, size: 16, color: Colors.blue[700]),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '该项目属于超出宝宝实际月龄的测查，不通过并不代表异常，属正常测试过程，请不必担心。',
+              style: TextStyle(fontSize: 12, color: Colors.blue[800]),
             ),
           ),
         ],
