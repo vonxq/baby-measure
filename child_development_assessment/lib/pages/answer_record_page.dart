@@ -25,6 +25,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
 
   List<AssessmentData> _allData = [];
   late Map<int, bool> _answers; // itemId -> passed
+  bool _onlyWrong = false; // 是否只显示错题
 
   // 快速跳转 section key
   final Map<int, GlobalKey> _ageSectionKeys = {};
@@ -86,6 +87,24 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
     return Scaffold(
       appBar: AppBar(
         title: const Text('答题记录'),
+        actions: [
+          TextButton.icon(
+            onPressed: () => setState(() => _onlyWrong = !_onlyWrong),
+            icon: Icon(
+              _onlyWrong ? Icons.filter_alt : Icons.filter_alt_off,
+              color: _onlyWrong ? Colors.red[600] : Colors.grey[700],
+              size: 18,
+            ),
+            label: Text(
+              _onlyWrong ? '只看错题' : '查看全部',
+              style: TextStyle(
+                fontSize: 12,
+                color: _onlyWrong ? Colors.red[600] : Colors.grey[700],
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -116,7 +135,8 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
 
     for (final data in _allData) {
       for (final item in data.testItems) {
-        if (_answers.containsKey(item.id)) {
+        final bool? passed = _answers[item.id];
+        if (passed != null && (!_onlyWrong || passed == false)) {
           ages.add(data.ageMonth);
           ageToItems.putIfAbsent(data.ageMonth, () => []);
           ageToItems[data.ageMonth]!.add(item);
@@ -124,6 +144,10 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
       }
     }
     final sortedAges = ages.toList()..sort();
+
+    if (sortedAges.isEmpty) {
+      return Center(child: Text(_onlyWrong ? '暂无错题' : '暂无答题记录'));
+    }
 
     return CustomScrollView(
       slivers: [
@@ -203,7 +227,8 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
     final Map<String, List<_ItemWithAge>> areaToItems = {};
     for (final data in _allData) {
       for (final item in data.testItems) {
-        if (_answers.containsKey(item.id)) {
+        final bool? passed = _answers[item.id];
+        if (passed != null && (!_onlyWrong || passed == false)) {
           areaToItems.putIfAbsent(data.area, () => []);
           areaToItems[data.area]!.add(_ItemWithAge(item: item, age: data.ageMonth));
         }
@@ -211,6 +236,10 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
     }
 
     final areas = areaToItems.keys.toList()..sort();
+
+    if (areas.isEmpty) {
+      return Center(child: Text(_onlyWrong ? '暂无错题' : '暂无答题记录'));
+    }
 
     return CustomScrollView(
       slivers: [
