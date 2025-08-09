@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import '../models/test_result.dart';
 import '../services/data_service.dart';
 import '../models/assessment_data.dart';
@@ -237,13 +238,18 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
 
   void _scrollToAge(int age) {
     final key = _ageSectionKeys[age];
-    if (key?.currentContext != null) {
-      Scrollable.ensureVisible(
-        key!.currentContext!,
-        duration: const Duration(milliseconds: 250),
-        alignment: 0,
-      );
-    }
+    if (key?.currentContext == null) return;
+    final renderObject = key!.currentContext!.findRenderObject();
+    if (renderObject == null) return;
+    final viewport = RenderAbstractViewport.of(renderObject);
+    if (viewport == null) return;
+    final target = viewport.getOffsetToReveal(renderObject, 0).offset - 56; // 减去pinned header高度
+    final clamped = target.clamp(0.0, _ageScrollController.position.maxScrollExtent);
+    _ageScrollController.animateTo(
+      clamped,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   // =============== 按能区查看 ===============
@@ -350,13 +356,18 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
 
   void _scrollToArea(String area) {
     final key = _areaSectionKeys[area];
-    if (key?.currentContext != null) {
-      Scrollable.ensureVisible(
-        key!.currentContext!,
-        duration: const Duration(milliseconds: 250),
-        alignment: 0,
-      );
-    }
+    if (key?.currentContext == null) return;
+    final renderObject = key!.currentContext!.findRenderObject();
+    if (renderObject == null) return;
+    final viewport = RenderAbstractViewport.of(renderObject);
+    if (viewport == null) return;
+    final target = viewport.getOffsetToReveal(renderObject, 0).offset - 56;
+    final clamped = target.clamp(0.0, _areaScrollController.position.maxScrollExtent);
+    _areaScrollController.animateTo(
+      clamped,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   // =============== 题目卡片（复用速查样式 + 背景区分） ===============
