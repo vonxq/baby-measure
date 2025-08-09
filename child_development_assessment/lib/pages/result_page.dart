@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/dq_utils.dart';
+import '../utils/area_utils.dart';
 import 'package:provider/provider.dart';
 import '../providers/assessment_provider.dart';
 import '../models/test_result.dart';
@@ -630,20 +631,5 @@ class _ResultPageState extends State<ResultPage> with TickerProviderStateMixin {
   Color _getAreaDQColor(double dq) => DqUtils.colorByDq(dq);
 
 
-  String _getAreaDisplayName(String areaName) {
-    switch (areaName) {
-      case 'motor':
-        return '大运动';
-      case 'fineMotor':
-        return '精细动作';
-      case 'language':
-        return '语言';
-      case 'adaptive':
-        return '适应能力';
-      case 'social':
-        return '社会行为';
-      default:
-        return areaName;
-    }
-  }
+  String _getAreaDisplayName(String areaName) => AreaUtils.displayName(areaName);
 } 

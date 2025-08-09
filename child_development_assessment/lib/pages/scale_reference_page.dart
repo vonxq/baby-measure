@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import '../models/assessment_data.dart';
 import '../models/assessment_item.dart';
 import '../services/data_service.dart';
+import '../utils/area_utils.dart';
 
 class ScaleReferencePage extends StatefulWidget {
   const ScaleReferencePage({super.key});
@@ -101,21 +103,12 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
     return Column(
       children: [
         _buildToolbar(
-          left: Row(
-            children: [
-              const Text('月龄：'),
-              const SizedBox(width: 8),
-              DropdownButton<int>(
-                value: _selectedAge,
-                items: _allAges
-                    .map((age) => DropdownMenuItem(
-                          value: age,
-                          child: Text('$age 月龄'),
-                        ))
-                    .toList(),
-                onChanged: (v) => setState(() => _selectedAge = v ?? _selectedAge),
-              ),
-            ],
+          left: _buildCupertinoSelector<int>(
+            label: '月龄',
+            value: _selectedAge,
+            options: _allAges,
+            toText: (v) => '$v 月龄',
+            onChanged: (v) => setState(() => _selectedAge = v),
           ),
         ),
         Expanded(
@@ -123,7 +116,7 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
             padding: const EdgeInsets.all(12),
             children: areaToItems.entries
                 .map((entry) => _buildAreaSection(
-                      header: '${entry.key}（${_selectedAge}月龄）',
+                      header: '${AreaUtils.displayName(entry.key)}（${_selectedAge}月龄）',
                       items: entry.value,
                     ))
                 .toList(),
@@ -140,22 +133,12 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
     return Column(
       children: [
         _buildToolbar(
-          left: Row(
-            children: [
-              const Text('能区：'),
-              const SizedBox(width: 8),
-              DropdownButton<String>(
-                value: _selectedArea.isEmpty ? null : _selectedArea,
-                hint: const Text('选择能区'),
-                items: _allAreas
-                    .map((area) => DropdownMenuItem(
-                          value: area,
-                          child: Text(area),
-                        ))
-                    .toList(),
-                onChanged: (v) => setState(() => _selectedArea = v ?? _selectedArea),
-              ),
-            ],
+          left: _buildCupertinoSelector<String>(
+            label: '能区',
+            value: _selectedArea,
+            options: _allAreas,
+            toText: (v) => AreaUtils.displayName(v),
+            onChanged: (v) => setState(() => _selectedArea = v),
           ),
         ),
         Expanded(
@@ -165,7 +148,7 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
             itemBuilder: (context, index) {
               final d = filtered[index];
               return _buildAreaSection(
-                header: '${d.area} · ${d.ageMonth}月龄',
+                header: '${AreaUtils.displayName(d.area)} · ${d.ageMonth}月龄',
                 items: d.testItems,
               );
             },
@@ -203,7 +186,7 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
               final r = flattened[index];
               return _buildItemCard(
                 header: '#${r.id} · ${r.name}',
-                subtitle: '${r.area} · ${r.ageMonth}月龄',
+                subtitle: '${AreaUtils.displayName(r.area)} · ${r.ageMonth}月龄',
                 operation: r.operation,
                 passCondition: r.passCondition,
                 score: r.score,
@@ -212,6 +195,76 @@ class _ScaleReferencePageState extends State<ScaleReferencePage>
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildCupertinoSelector<T>({
+    required String label,
+    required T value,
+    required List<T> options,
+    required String Function(T) toText,
+    required ValueChanged<T> onChanged,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        showCupertinoModalPopup(
+          context: context,
+          builder: (_) => Container(
+            height: 260,
+            color: Colors.white,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 44,
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 12),
+                      Text('选择$label', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      const Spacer(),
+                      CupertinoButton(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: const Text('完成'),
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                Expanded(
+                  child: CupertinoPicker(
+                    itemExtent: 36,
+                    scrollController: FixedExtentScrollController(
+                      initialItem: options.indexOf(value),
+                    ),
+                    onSelectedItemChanged: (index) => onChanged(options[index]),
+                    children: options.map((e) => Center(child: Text(toText(e)))).toList(),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+      child: Row(
+        children: [
+          Text('$label：'),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey[300]!),
+            ),
+            child: Row(
+              children: [
+                Text(toText(value)),
+                const Icon(Icons.arrow_drop_down),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
