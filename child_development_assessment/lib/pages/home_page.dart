@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/assessment_history.dart';
 import '../services/data_service.dart';
 import 'assessment_guide_page.dart';
+import 'scale_reference_page.dart';
 import 'tabs/start_tab.dart';
 import 'tabs/history_tab.dart';
 import 'tabs/info_tab.dart';
@@ -158,6 +159,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             ),
                         ],
                       ),
+                    ),
+                    // 量表说明入口
+                    IconButton(
+                      tooltip: '评估量表说明',
+                      icon: const Icon(Icons.menu_book_outlined),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => const ScaleReferencePage()),
+                        );
+                      },
                     ),
                   ],
                 ),
