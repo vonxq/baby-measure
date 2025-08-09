@@ -1,0 +1,31 @@
+{
+  "styleConfig": {
+    "width": 1242,
+    "height": 2688,
+    "backgroundColor": "#FFFFFF",
+    "titleColor": "#000000",
+    "subtitleColor": "#333333",
+    "titleFontSize": 72,
+    "subtitleFontSize": 40,
+    "titleFontPath": "/System/Library/Fonts/PingFang.ttc",
+    "subtitleFontPath": "/System/Library/Fonts/PingFang.ttc",
+    "padding": 48,
+    "lineSpacing": 10,
+    "maxTextWidthRatio": 0.9,
+    "textAlign": "center",
+    "screenshotMode": "fit",
+    "screenshotMaxHeightRatio": 0.72,
+    "screenshotTopOffset": null
+  },
+  "configs": [
+    { "title": "应用介绍", "subtitle": "了解评估流程与方法", "screenshot": "intro.png", "outputName": "01_intro.png" },
+    { "title": "一键开始评估", "subtitle": "选择年龄段，快速进入测评", "screenshot": "start.png", "outputName": "02_start.png" },
+    { "title": "动态测评过程", "subtitle": "清晰进度指示，便捷作答操作", "screenshot": "processing.png", "outputName": "03_processing.png" },
+    { "title": "量表参考检索", "subtitle": "支持快速查阅与定位相关条目", "screenshot": "search.png", "outputName": "04_search.png" },
+    { "title": "分区结果展示", "subtitle": "直观查看各发育领域得分与等级", "screenshot": "area_result.png", "outputName": "05_area_result.png" },
+    { "title": "答题记录回看", "subtitle": "逐题浏览作答与备注信息", "screenshot": "answer_record.png", "outputName": "06_answer_record.png" },
+    { "title": "异常记录复核", "subtitle": "定位需修订的条目，提升准确性", "screenshot": "answer_record_error.png", "outputName": "07_answer_record_error.png" },
+    { "title": "测评历史管理", "subtitle": "按时间轴管理与检索往期测评", "screenshot": "history.png", "outputName": "08_history.png" },
+    { "title": "综合结果报告", "subtitle": "DQ 总分与详细解读，一图掌握", "screenshot": "result.png", "outputName": "09_result.png" }
+  ]
+}
