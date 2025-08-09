@@ -41,6 +41,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
     _load();
     _ageScrollController.addListener(_onAgeScroll);
     _areaScrollController.addListener(_onAreaScroll);
@@ -78,6 +79,10 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
         _answers = testResults!;
         _isLoading = false;
       });
+      // 初始化高亮到第一个分段
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _resetHighlightForActiveTab(forceTop: true);
+      });
     } catch (e) {
       setState(() {
         _error = '加载答题记录失败：$e';
@@ -88,6 +93,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
 
   @override
   void dispose() {
+    _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     _ageScrollController.dispose();
     _areaScrollController.dispose();
@@ -250,6 +256,8 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+    // 动画结束后校正高亮
+    Future.delayed(const Duration(milliseconds: 320), _updateCurrentAgeSection);
   }
 
   // =============== 按能区查看 ===============
@@ -368,6 +376,7 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+    Future.delayed(const Duration(milliseconds: 320), _updateCurrentAreaSection);
   }
 
   // =============== 题目卡片（复用速查样式 + 背景区分） ===============
@@ -562,6 +571,40 @@ class _AnswerRecordPageState extends State<AnswerRecordPage> with SingleTickerPr
 
   void _onAreaScroll() {
     _updateCurrentAreaSection();
+  }
+
+  void _onTabChanged() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _resetHighlightForActiveTab();
+    });
+  }
+
+  void _resetHighlightForActiveTab({bool forceTop = false}) {
+    if (_tabController.index == 0) {
+      if (!_ageScrollController.hasClients) return;
+      if (forceTop || _ageScrollController.offset <= 1.0) {
+        if (_ageSectionKeys.isNotEmpty) {
+          final ages = _ageSectionKeys.keys.toList()..sort();
+          setState(() => _currentAgeSection = ages.first);
+        } else {
+          setState(() => _currentAgeSection = null);
+        }
+      } else {
+        _updateCurrentAgeSection();
+      }
+    } else {
+      if (!_areaScrollController.hasClients) return;
+      if (forceTop || _areaScrollController.offset <= 1.0) {
+        if (_areaSectionKeys.isNotEmpty) {
+          final areas = _areaSectionKeys.keys.toList()..sort();
+          setState(() => _currentAreaSection = areas.first);
+        } else {
+          setState(() => _currentAreaSection = null);
+        }
+      } else {
+        _updateCurrentAreaSection();
+      }
+    }
   }
 
   void _updateCurrentAgeSection() {
