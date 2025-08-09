@@ -204,6 +204,41 @@ class AssessmentGuidePage extends StatelessWidget {
                                  ),
                                ),
                              ),
+                             const SizedBox(height: 12),
+                             // 启动与结束标准
+                             Container(
+                               decoration: BoxDecoration(
+                                 color: Colors.teal[50],
+                                 borderRadius: BorderRadius.circular(8),
+                                 border: Border.all(color: Colors.teal[100]!),
+                               ),
+                               child: Theme(
+                                 data: Theme.of(context).copyWith(
+                                   dividerColor: Colors.transparent,
+                                   splashColor: Colors.transparent,
+                                   highlightColor: Colors.transparent,
+                                 ),
+                                 child: ExpansionTile(
+                                   tilePadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                   childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                                   leading: Icon(Icons.flag_circle, color: Colors.teal[700], size: 20),
+                                   title: Text(
+                                     '测查启动与结束标准',
+                                     style: TextStyle(
+                                       fontSize: 14,
+                                       fontWeight: FontWeight.bold,
+                                       color: Colors.teal[800],
+                                     ),
+                                   ),
+                                   children: [
+                                     _buildBulletLine('启动：主测月龄为启动月龄。先测主测月龄的项目，并需分别向前、向后各测2个月龄，共覆盖5个月龄。'),
+                                     _buildBulletLine('向前：若该能区向前连续2个月龄项目均通过，则向前测查结束；若任一不通过，则继续向前，直到连续2个月龄均通过。'),
+                                     _buildBulletLine('向后：从主测月龄向后连续测2个月龄。若该能区向后连续2个月龄均不通过，则向后测查结束；若任一通过，则继续向后，直到连续2个月龄均不通过。'),
+                                     _buildBulletLine('范围：上述规则适用于所有能区，均应按同一标准执行。'),
+                                   ],
+                                 ),
+                               ),
+                             ),
                             const SizedBox(height: 12),
                             _buildNoticeItem(
                               icon: Icons.medical_services,
